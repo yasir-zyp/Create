@@ -51,6 +51,7 @@ public class UserController {
     public ServerResponseEntity<Void> update(@Valid @RequestBody UserDTO userDTO) {
         User user = mapperFacade.map(userDTO, User.class);
         userService.update(user);
+
         return ServerResponseEntity.success();
     }
 
