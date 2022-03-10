@@ -33,6 +33,10 @@ public interface CategoryService {
 	 * @param category 分类信息
 	 */
 	void update(Category category);
+	/**
+	 * 更新分类信息
+	 */
+	void updateAll();
 
 	/**
 	 * 根据分类信息id删除分类信息

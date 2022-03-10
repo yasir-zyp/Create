@@ -38,6 +38,9 @@
       <if test="category.desc != null">
         `desc` = #{category.desc},
       </if>
+      <if test="category.path != null">
+        `path` = #{category.path},
+      </if>
       <if test="category.icon != null">
         `icon` = #{category.icon},
       </if>

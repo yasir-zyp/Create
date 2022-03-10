@@ -14,6 +14,7 @@ import com.mall4j.cloud.product.mapper.CategoryMapper;
 import com.mall4j.cloud.product.service.CategoryService;
 import com.mall4j.cloud.api.product.vo.CategoryVO;
 import com.mall4j.cloud.product.service.SpuService;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -38,6 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private SpuService spuService;
+    @Autowired
+    private MapperFacade mapperFacade;
 
     @Override
     public CategoryVO getById(Long categoryId) {
@@ -56,18 +59,40 @@ public class CategoryServiceImpl implements CategoryService {
     public void save(Category category) {
         existCategoryName(category);
         category.setShopId(AuthUserContext.get().getTenantId());
-        String path = "";
-        if (!Objects.equals(CategoryLevel.First.value(), category.getLevel())) {
-            String parentId = String.valueOf(category.getParentId());
-            CategoryVO categoryDb = categoryMapper.getById(category.getParentId());
-            if (StrUtil.isBlank(categoryDb.getPath())) {
-                path = parentId;
-            } else {
-                path = categoryDb.getPath() + Constant.CATEGORY_INTERVAL + parentId;
+            String path = "";
+            if (!Objects.equals(CategoryLevel.First.value(), category.getLevel())) {
+                String parentId = String.valueOf(category.getParentId());
+                CategoryVO categoryDb = categoryMapper.getById(category.getParentId());
+                if (StrUtil.isBlank(categoryDb.getPath())) {
+                    path = parentId;
+                } else {
+                    path = categoryDb.getPath() + Constant.CATEGORY_INTERVAL + parentId;
+                }
             }
-        }
-        category.setPath(path);
+            category.setPath(path);
+
+
         categoryMapper.save(category);
+    }
+    @Override
+    public void updateAll() {
+        List<CategoryVO> categoryVOList=categoryMapper.list(0l);
+        for (CategoryVO c:categoryVOList
+        ) {
+            Category category = mapperFacade.map(c, Category.class);
+            String path = "";
+            if (!Objects.equals(CategoryLevel.First.value(), category.getLevel())) {
+                String parentId = String.valueOf(category.getParentId());
+                CategoryVO categoryDb = categoryMapper.getById(category.getParentId());
+                if (StrUtil.isBlank(categoryDb.getPath())) {
+                    path = parentId;
+                } else {
+                    path = categoryDb.getPath() + Constant.CATEGORY_INTERVAL + parentId;
+                }
+            }
+            category.setPath(path);
+            int updateCount = categoryMapper.update(category);
+        }
     }
 
     @Override
@@ -79,6 +104,8 @@ public class CategoryServiceImpl implements CategoryService {
         existCategoryName(category);
         int updateCount = categoryMapper.update(category);
     }
+
+
 
     @Override
     public void deleteById(Long categoryId) {
