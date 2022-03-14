@@ -6,6 +6,7 @@ import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-12-05 15:50:25
  */
+@Repository
 public interface ShopDetailMapper {
 
 	/**
@@ -108,4 +110,5 @@ public interface ShopDetailMapper {
 	 * @return 店铺扩展信息
 	 */
 	ShopDetailVO getShoExtensionsByShopId(Long shopId);
+
 }

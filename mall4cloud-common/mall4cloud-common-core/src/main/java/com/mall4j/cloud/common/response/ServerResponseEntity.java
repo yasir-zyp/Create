@@ -68,6 +68,7 @@ public class ServerResponseEntity<T> implements Serializable {
 		ServerResponseEntity<T> serverResponseEntity = new ServerResponseEntity<>();
 		serverResponseEntity.setData(data);
 		serverResponseEntity.setCode(ResponseEnum.OK.value());
+		serverResponseEntity.setMsg(ResponseEnum.OK.getMsg());
 		return serverResponseEntity;
 	}
 

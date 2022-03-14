@@ -92,4 +92,7 @@ public interface AccountFeignClient {
 	 */
 	@GetMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/account/getMerchantInfoByTenantId")
 	ServerResponseEntity<AuthAccountVO> getMerchantInfoByTenantId(@RequestParam("tenantId") Long tenantId);
+
+	@PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/account/getByUsernameByName")
+	ServerResponseEntity<AuthAccountVO> getByUsernameByName(@RequestParam("username") String username);
 }

@@ -1,8 +1,12 @@
 package com.mall4j.cloud.multishop.service;
 
+import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
+import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.multishop.dto.AuthDTO;
+import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
 import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
@@ -103,8 +107,9 @@ public interface ShopDetailService {
 	 * 创建店铺
 	 *
 	 * @param shopDetailDTO
+	 * @return
 	 */
-    void createShop(ShopDetailDTO shopDetailDTO);
+    ServerResponseEntity<Object> createShop(ShopDetailDTO shopDetailDTO);
 
 	/**
 	 * 获取店铺信息及扩展信息
@@ -120,4 +125,9 @@ public interface ShopDetailService {
 	 * @return
 	 */
     Boolean checkShopName(String shopName);
+
+	ServerResponseEntity<UserInfoInTokenBO> createShops(AuthDTO authDTO);
+
+
+	void creatBasicInformation(UserInfoInTokenBO userInfoInTokenBO, BasicInformationDTO basicInformationDTO);
 }

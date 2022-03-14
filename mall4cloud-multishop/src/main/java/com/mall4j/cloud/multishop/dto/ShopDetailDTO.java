@@ -1,11 +1,13 @@
 package com.mall4j.cloud.multishop.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * 店铺详情DTO
@@ -13,6 +15,7 @@ import javax.validation.constraints.Size;
  * @author FrozenWatermelon
  * @date 2020-12-05 15:50:25
  */
+@Data
 public class ShopDetailDTO{
     private static final long serialVersionUID = 1L;
 
@@ -56,117 +59,39 @@ public class ShopDetailDTO{
 	@NotBlank(message="移动端背景图不能为空")
 	private String mobileBackgroundPic;
 
-	public String getMobileBackgroundPic() {
-		return mobileBackgroundPic;
-	}
+	@ApiModelProperty("法人代表")
+	private String legalRepresentative;
 
-	public void setMobileBackgroundPic(String mobileBackgroundPic) {
-		this.mobileBackgroundPic = mobileBackgroundPic;
-	}
+	@ApiModelProperty("统一社会信用代码")
+	private String creditCode;
 
-	public Long getShopId() {
-		return shopId;
-	}
+	@ApiModelProperty("业务范围")
+	private String businessScope;
 
-	public void setShopId(Long shopId) {
-		this.shopId = shopId;
-	}
+	@ApiModelProperty("联系方式（座机）")
+	private String landlinePhone;
 
-	public Integer getType() {
-		return type;
-	}
+	@ApiModelProperty("区")
+	private String area;
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+	@ApiModelProperty("城市")
+	private String city;
 
-	public String getShopName() {
-		return shopName;
-	}
+	@ApiModelProperty("省")
+	private String province;
 
-	public void setShopName(String shopName) {
-		this.shopName = shopName;
-	}
+	@ApiModelProperty("区ID,页面不显示")
+	private Integer areaId;
 
-	public String getIntro() {
-		return intro;
-	}
+	@ApiModelProperty("城市ID，页面不显示")
+	private Integer cityId;
 
-	public void setIntro(String intro) {
-		this.intro = intro;
-	}
+	@ApiModelProperty("省ID，页面不显示")
+	private Integer provinceId;
 
-	public String getShopLogo() {
-		return shopLogo;
-	}
+    @ApiModelProperty("电话")
+    private String accountPhone;
 
-	public void setShopLogo(String shopLogo) {
-		this.shopLogo = shopLogo;
-	}
-
-	public Integer getShopStatus() {
-		return shopStatus;
-	}
-
-	public void setShopStatus(Integer shopStatus) {
-		this.shopStatus = shopStatus;
-	}
-
-	public String getBusinessLicense() {
-		return businessLicense;
-	}
-
-	public void setBusinessLicense(String businessLicense) {
-		this.businessLicense = businessLicense;
-	}
-
-	public String getIdentityCardFront() {
-		return identityCardFront;
-	}
-
-	public void setIdentityCardFront(String identityCardFront) {
-		this.identityCardFront = identityCardFront;
-	}
-
-	public String getIdentityCardLater() {
-		return identityCardLater;
-	}
-
-	public void setIdentityCardLater(String identityCardLater) {
-		this.identityCardLater = identityCardLater;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@Override
-	public String toString() {
-		return "ShopDetailDTO{" +
-				"shopId=" + shopId +
-				", type=" + type +
-				", shopName='" + shopName + '\'' +
-				", intro='" + intro + '\'' +
-				", shopLogo='" + shopLogo + '\'' +
-				", shopStatus=" + shopStatus +
-				", businessLicense='" + businessLicense + '\'' +
-				", identityCardFront='" + identityCardFront + '\'' +
-				", identityCardLater='" + identityCardLater + '\'' +
-				", username='" + username + '\'' +
-				", password='" + password + '\'' +
-				", mobileBackgroundPic='" + mobileBackgroundPic + '\'' +
-				'}';
-	}
+    @ApiModelProperty("验证码")
+    private String code;
 }

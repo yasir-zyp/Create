@@ -3,6 +3,7 @@ package com.mall4j.cloud.user.mapper;
 import com.mall4j.cloud.api.user.vo.AreaVO;
 import com.mall4j.cloud.user.model.Area;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @author YXF
  * @date 2020-11-25 15:10:06
  */
+@Repository
 public interface AreaMapper {
 
 	/**

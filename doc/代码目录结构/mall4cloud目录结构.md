@@ -82,7 +82,7 @@ mall4cloud
 ├─mall4cloud-payment  -- 支付服务
 ├─mall4cloud-platform  -- 平台端
 ├─mall4cloud-product  -- 商品服务
-├─mall4cloud-rbac  -- 用户角色权限模块
+├─mall4cloud-rbac  -- 用户角色权限模块 
 ├─mall4cloud-search  -- 搜索模块
 └─mall4cloud-user  -- 用户服务
 ```

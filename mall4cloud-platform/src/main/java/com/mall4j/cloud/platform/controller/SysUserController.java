@@ -50,7 +50,7 @@ public class SysUserController {
 		return ServerResponseEntity.success(sysUserPage);
 	}
 
-	@GetMapping
+	@GetMapping("/getPlat")
 	@ApiOperation(value = "获取平台用户信息", notes = "根据用户id获取平台用户信息")
 	public ServerResponseEntity<SysUserVO> detail(@RequestParam Long sysUserId) {
 		return ServerResponseEntity.success(sysUserService.getByUserId(sysUserId));

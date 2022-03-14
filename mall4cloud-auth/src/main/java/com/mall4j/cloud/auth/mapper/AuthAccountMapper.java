@@ -1,14 +1,17 @@
 package com.mall4j.cloud.auth.mapper;
 
+import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.api.auth.vo.AuthAccountVO;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author FrozenWatermelon
  * @date 2020/7/2
  */
+@Repository
 public interface AuthAccountMapper {
 
 	/**
@@ -101,4 +104,10 @@ public interface AuthAccountMapper {
 	 * @return
 	 */
 	AuthAccountVO getMerchantInfoByTenantId(@Param("tenantId") Long tenantId);
+
+
+	AuthAccount findPhone(@Param("accountPhone") String accountPhone);
+
+
+	AuthAccountVO getByUsernameByName(@Param("username") String username);
 }

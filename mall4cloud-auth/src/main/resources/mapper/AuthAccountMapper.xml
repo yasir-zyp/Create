@@ -9,6 +9,7 @@
     <result column="update_time" property="updateTime" />
     <result column="username" property="username" />
     <result column="password" property="password" />
+    <result column="account_phone" property="accountPhone" />
     <result column="create_ip" property="createIp" />
     <result column="status" property="status" />
     <result column="sys_type" property="sysType" />
@@ -19,7 +20,7 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     `uid`, create_time, update_time, username, `password`, create_ip,
-     `status`, sys_type, user_id, tenant_id, is_admin
+     `status`, sys_type, user_id, tenant_id, is_admin,account_phone
   </sql>
 
   <select id="getAuthAccountInVerifyByInputUserName" resultType="com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO">
@@ -43,8 +44,8 @@
     update auth_account set password = #{newPassWord} where sys_type = #{sysType} and user_id = #{userId}
   </update>
   <insert id="save">
-    insert into auth_account (`uid`,`username`,`password`,`create_ip`,`status`,`sys_type`,`user_id`,`tenant_id`,`is_admin`)
-    values (#{authAccount.uid},#{authAccount.username},#{authAccount.password},#{authAccount.createIp},#{authAccount.status},#{authAccount.sysType},#{authAccount.userId},#{authAccount.tenantId},#{authAccount.isAdmin});
+    insert into auth_account (`uid`,`username`,`password`,`create_ip`,`status`,`sys_type`,`user_id`,`tenant_id`,`is_admin`,`account_phone`)
+    values (#{authAccount.uid},#{authAccount.username},#{authAccount.password},#{authAccount.createIp},#{authAccount.status},#{authAccount.sysType},#{authAccount.userId},#{authAccount.tenantId},#{authAccount.isAdmin},#{authAccount.accountPhone});
   </insert>
   <update id="updateAccountInfo">
     update auth_account
@@ -89,5 +90,18 @@
   <select id="getMerchantInfoByTenantId" resultType="com.mall4j.cloud.api.auth.vo.AuthAccountVO">
     select user_id, sys_type, uid, username, password, is_admin, tenant_id, status from auth_account
     where sys_type = 1 and is_admin = 1 and tenant_id = #{tenantId} limit 1
+  </select>
+  <select id="findPhone" resultType="com.mall4j.cloud.auth.model.AuthAccount">
+    select user_id, sys_type, uid, username, password, is_admin, tenant_id, status,account_phone from auth_account
+    where status='1'
+    <if test="accountPhone != null">
+      and account_phone = #{accountPhone}
+    </if>
+  </select>
+  <select id="getByUsernameByName" resultType="com.mall4j.cloud.api.auth.vo.AuthAccountVO">
+    select uid, username from auth_account where status = 1
+    <if test="username != null and username != ''">
+      and username = #{username}
+    </if>
   </select>
 </mapper>

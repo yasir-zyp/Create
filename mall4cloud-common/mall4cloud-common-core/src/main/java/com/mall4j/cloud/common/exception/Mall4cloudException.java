@@ -17,7 +17,6 @@ public class Mall4cloudException extends RuntimeException {
 	public Mall4cloudException(String msg) {
 		super(msg);
 	}
-
 	public Mall4cloudException(String msg, Object object) {
 		super(msg);
 		this.object = object;

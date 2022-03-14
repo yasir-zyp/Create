@@ -1,6 +1,7 @@
 package com.mall4j.cloud.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.auth.constant.AuthAccountStatusEnum;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO;
@@ -103,7 +104,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         return authAccountMapper.getAccountByInputUserName(mobile,systemType);
     }
 
-    /**
+	@Override
+	public AuthAccount findPhone(String accountPhone) {
+		return authAccountMapper.findPhone(accountPhone);
+	}
+
+
+	/**
 	 * 防止计时攻击
 	 */
 	private void prepareTimingAttackProtection() {

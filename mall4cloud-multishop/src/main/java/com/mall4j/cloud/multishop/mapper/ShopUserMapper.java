@@ -4,6 +4,7 @@ import com.mall4j.cloud.multishop.model.ShopUser;
 import com.mall4j.cloud.multishop.vo.ShopUserVO;
 import com.mall4j.cloud.multishop.vo.ShopUserSimpleVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020/09/03
  */
+@Repository
 public interface ShopUserMapper {
 
     /**
@@ -66,5 +68,6 @@ public interface ShopUserMapper {
      * @return
      */
     Long getUserIdByShopId(@Param("shopId") Long shopId);
+
 
 }

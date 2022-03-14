@@ -1,10 +1,18 @@
 package com.mall4j.cloud.auth.controller;
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
+import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
+import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.rbac.dto.ClearUserPermissionsCacheDTO;
 import com.mall4j.cloud.api.rbac.feign.PermissionFeignClient;
 import com.mall4j.cloud.auth.dto.AuthenticationDTO;
+import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.manager.TokenStore;
+import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.auth.service.AuthAccountService;
+import com.mall4j.cloud.auth.service.impl.SendMessageService;
+import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.response.ResponseEnum;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
@@ -15,9 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author FrozenWatermelon
@@ -39,6 +51,11 @@ public class LoginController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private AccountFeignClient accountFeignClient;
+
+	@Autowired
+	SendMessageService sendMessageService;
 	@PostMapping("/ua/login")
 	@ApiOperation(value = "账号密码", notes = "通过账号登录，还要携带用户的类型，也就是用户所在的系统")
 	public ServerResponseEntity<TokenInfoVO> login(
@@ -70,7 +87,6 @@ public class LoginController {
 		// 保存token，返回token数据给前端，这里是最重要的
 		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
 	}
-
 	@PostMapping("/login_out")
 	@ApiOperation(value = "退出登陆", notes = "点击退出登陆，清除token，清除菜单缓存")
 	public ServerResponseEntity<TokenInfoVO> loginOut() {
@@ -84,5 +100,25 @@ public class LoginController {
 		tokenStore.deleteAllToken(userInfoInToken.getSysType().toString(), userInfoInToken.getUid());
 		return ServerResponseEntity.success();
 	}
+	@PostMapping("/ua/checkCode")
+	@ApiOperation(value = "发送短信", notes = "发送短信")
+	public ServerResponseEntity<Object> code(@RequestBody SmsMessageDTO smsMessageDTO) throws Exception {
+		//生成四位码
+		int a;
+		// a=(int)(Math.random()*899999+100000);//六位验证码
+		a = (int) ((Math.random() * 9 + 1) * 1000);// 4位验证码
 
+		String code = String.valueOf(a);
+
+		//查询是否存在手机号
+		AuthAccount authAccount=authAccountService.findPhone(smsMessageDTO.getAccountPhone());
+		if (authAccount!=null){
+			return ServerResponseEntity.showFailMsg("手机号已存在");
+		}
+		RedisUtil.set(smsMessageDTO.getAccountPhone(),a,1200);
+		sendMessageService.login(smsMessageDTO.getAccountPhone(), code);
+		Map<String,Object> map=new HashMap<>();
+		map.put("msg","验证码已发送");
+		return ServerResponseEntity.success(map);
+	}
 }

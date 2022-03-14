@@ -1,6 +1,7 @@
 package com.mall4j.cloud.auth.service;
 
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
+import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 
@@ -53,4 +54,7 @@ public interface AuthAccountService {
 	 * @return uid
 	 */
 	AuthAccount getAccountByInputUserName(String username, Integer systemType);
+
+
+	AuthAccount findPhone(String accountPhone);
 }

@@ -155,4 +155,10 @@ public class AccountFeignController implements AccountFeignClient {
         return ServerResponseEntity.success(authAccountVO);
     }
 
+    @Override
+    public ServerResponseEntity<AuthAccountVO> getByUsernameByName(String username) {
+        return ServerResponseEntity.success(authAccountMapper.getByUsernameByName(username));
+    }
+
+
 }

@@ -30,8 +30,8 @@
     order by shop_user_id desc
   </select>
   <insert id="save" useGeneratedKeys="true" keyProperty="shopUser.shopUserId">
-    insert into `shop_user` ( `shop_user_id`, `shop_id`, `nick_name`, `code`, `phone_num`,has_account)
-    values (#{shopUser.shopUserId},#{shopUser.shopId},#{shopUser.nickName},#{shopUser.code},#{shopUser.phoneNum}, #{shopUser.hasAccount});
+    insert into `shop_user` ( `shop_user_id`,`shop_id`,`nick_name`,`code`,`phone_num`,`has_account`)
+    values (#{shopUser.shopUserId},#{shopUser.shopId},#{shopUser.nickName},#{shopUser.code},#{shopUser.phoneNum},#{shopUser.hasAccount});
   </insert>
   <update id="update">
     update shop_user
@@ -59,4 +59,5 @@
   <select id="getUserIdByShopId" resultType="java.lang.Long">
     SELECT shop_user_id FROM shop_user WHERE shop_id = #{shopId} HAVING MAX(create_time) ORDER BY shop_user_id ASC
   </select>
+
 </mapper>

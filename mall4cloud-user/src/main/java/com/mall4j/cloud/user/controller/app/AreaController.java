@@ -26,10 +26,10 @@ public class AreaController {
     @Autowired
     private AreaService areaService;
 
-    @GetMapping("/list")
+    @GetMapping("/ua/list")
     @ApiOperation(value = "获取省市区地区信息列表", notes = "获取省市区地区信息列表")
     public ServerResponseEntity<List<AreaVO>> list() {
-        List<AreaVO> list = areaService.getAreaListInfo();
+        List<AreaVO> list = areaService.listAreaOfEnable();
         return ServerResponseEntity.success(list);
     }
 
