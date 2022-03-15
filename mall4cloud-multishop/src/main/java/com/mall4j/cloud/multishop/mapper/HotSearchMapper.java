@@ -4,6 +4,7 @@ import com.mall4j.cloud.multishop.dto.HotSearchDTO;
 import com.mall4j.cloud.multishop.model.HotSearch;
 import com.mall4j.cloud.multishop.vo.HotSearchVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author YXF
  * @date 2021-01-27 09:10:00
  */
+@Repository
 public interface HotSearchMapper {
 
 	/**

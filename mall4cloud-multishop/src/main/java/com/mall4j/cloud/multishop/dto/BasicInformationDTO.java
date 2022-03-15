@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 * */
 @Data
 public class BasicInformationDTO {
+
     @ApiModelProperty("店铺名称")
     private String shopName;
 
@@ -63,4 +64,8 @@ public class BasicInformationDTO {
 
     @ApiModelProperty("省ID，页面不显示")
     private Integer provinceId;
+
+    @ApiModelProperty("店铺类型1自营店 2普通店")
+    private Integer type;
+
 }

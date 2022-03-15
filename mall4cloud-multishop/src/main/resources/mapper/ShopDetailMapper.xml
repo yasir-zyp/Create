@@ -87,6 +87,36 @@
       <if test="shopDetail.identityCardLater != null">
         `identity_card_later` = #{shopDetail.identityCardLater},
       </if>
+      <if test="shopDetail.legalRepresentative != null">
+        `legal_representative` = #{shopDetail.legalRepresentative},
+      </if>
+      <if test="shopDetail.creditCode != null">
+        `credit_code` = #{shopDetail.creditCode},
+      </if>
+      <if test="shopDetail.businessScope != null">
+        `business_scope` = #{shopDetail.businessScope},
+      </if>
+      <if test="shopDetail.landlinePhone != null">
+        `landline_phone` = #{shopDetail.landlinePhone},
+      </if>
+      <if test="shopDetail.area != null">
+        `area` = #{shopDetail.area},
+      </if>
+      <if test="shopDetail.city != null">
+        `city` = #{shopDetail.city},
+      </if>
+      <if test="shopDetail.province != null">
+        `province` = #{shopDetail.province},
+      </if>
+      <if test="shopDetail.areaId != null">
+        `area_id` = #{shopDetail.areaId},
+      </if>
+      <if test="shopDetail.cityId != null">
+        `city_id` = #{shopDetail.cityId},
+      </if>
+      <if test="shopDetail.provinceId != null">
+        `province_id` = #{shopDetail.provinceId},
+      </if>
     </set>
     where shop_id = #{shopDetail.shopId}
   </update>

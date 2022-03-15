@@ -22,6 +22,7 @@ import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.exception.Mall4cloudException;
 import com.mall4j.cloud.common.response.ResponseEnum;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.common.util.IpHelper;
 import com.mall4j.cloud.common.util.PrincipalUtil;
 import com.mall4j.cloud.multishop.constant.ShopStatus;
@@ -29,9 +30,12 @@ import com.mall4j.cloud.multishop.constant.ShopType;
 import com.mall4j.cloud.multishop.dto.AuthDTO;
 import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
 import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
+import com.mall4j.cloud.multishop.dto.ShopQualificationDTO;
 import com.mall4j.cloud.multishop.mapper.ShopDetailMapper;
+import com.mall4j.cloud.multishop.mapper.ShopQualificationMapper;
 import com.mall4j.cloud.multishop.mapper.ShopUserMapper;
 import com.mall4j.cloud.multishop.model.ShopDetail;
+import com.mall4j.cloud.multishop.model.ShopQualification;
 import com.mall4j.cloud.multishop.model.ShopUser;
 import com.mall4j.cloud.multishop.service.ShopDetailService;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
@@ -73,7 +77,8 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     private AccountFeignClient accountFeignClient;
     @Autowired
     private ShopUserMapper shopUserMapper;
-
+    @Autowired
+    private ShopQualificationMapper shopQualificationMapper;
     @Override
     public PageVO<ShopDetailVO> page(PageDTO pageDTO, ShopDetailDTO shopDetailDTO) {
         return PageUtil.doPage(pageDTO, () -> shopDetailMapper.list(shopDetailDTO));
@@ -101,7 +106,8 @@ public class ShopDetailServiceImpl implements ShopDetailService {
 
     @Override
     @CacheEvict(cacheNames = CacheNames.SHOP_DETAIL_ID_KEY, key = "#shopDetail.shopId")
-    public void update(ShopDetail shopDetail) {
+    public void update(ShopDetail shopDetail,UserInfoInTokenBO userInfoInTokenBO) {
+        shopDetail.setShopId(userInfoInTokenBO.getTenantId());
         shopDetailMapper.update(shopDetail);
     }
 
@@ -184,7 +190,6 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         if (StrUtil.isBlank(shopDetailDTO.getPassword())) {
             return ServerResponseEntity.showFailMsg("密码不能为空");
         }
-        //判断用户名是否存在
         //判断验证码是否输入正确
         String codes= RedisUtil.getLongValues(shopDetailDTO.getAccountPhone());
         if (!codes.equals(shopDetailDTO.getCode())){
@@ -310,13 +315,17 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         shopDetailDTO.setCode(authDTO.getCode());
         shopDetailDTO.setAccountPhone(authDTO.getAccountPhone());
         //判断用户名账号密码是否为空
-        if (StrUtil.isBlank(shopDetailDTO.getUsername())) {
+     /*   if (StrUtil.isBlank(shopDetailDTO.getUsername())) {
             return ServerResponseEntity.showFailMsg("用户名不能为空");
         }
         if (StrUtil.isBlank(shopDetailDTO.getPassword())) {
             return ServerResponseEntity.showFailMsg("密码不能为空");
         }
         ServerResponseEntity<AuthAccountVO> serverResponseEntity=accountFeignClient.getByUsernameByName(authDTO.getUsername());
+        // 用户名
+        if (!PrincipalUtil.isUserName(authDTO.getUsername())) {
+            return ServerResponseEntity.showFailMsg("用户名格式不正确");
+        }
         if (serverResponseEntity.getData()!=null){
             return ServerResponseEntity.showFailMsg("用户名已存在");
         }
@@ -327,7 +336,8 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         }
         if (!codes.equals(shopDetailDTO.getCode())){
             return ServerResponseEntity.showFailMsg("验证码不正确");
-        }
+        }*/
+
         //加密密码
         String password=passwordEncoder.encode(shopDetailDTO.getPassword());
         // 保存店铺
@@ -379,5 +389,50 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         }
     }
 
+    @Override
+    public void creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO) {
+        for (int i = 0; i <shopQualificationDTOList.size() ; i++) {
+            ShopQualification shopQualification=mapperFacade.map(shopQualificationDTOList.get(i), ShopQualification.class);
+            shopQualification.setShopId(userInfoInTokenBO.getTenantId());
+            shopQualificationMapper.save(shopQualification);
+        }
+    }
+
+    @Override
+    public ServerResponseEntity<UserInfoInTokenBO> updateShops(AuthDTO authDTO) {
+        //获取token
+        UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
+        //通过用户名获取用户信息
+        ServerResponseEntity<AuthAccountVO> serverResponseEntity=accountFeignClient.getByUsernameByName(authDTO.getUsername());
+        AuthAccountDTO authAccountDTO = new AuthAccountDTO();
+        authAccountDTO.setUserId(userInfoInTokenBO.getUserId());
+        //判断验证码是否输入正确
+        String codes= RedisUtil.getLongValues(authDTO.getAccountPhone());
+        if (!codes.equals(authDTO.getCode())){
+            return ServerResponseEntity.showFailMsg("验证码不正确");
+        }
+        if (authDTO.getUsername()!=null){
+            if (!PrincipalUtil.isUserName(authDTO.getUsername())) {
+                return ServerResponseEntity.showFailMsg("用户名格式不正确");
+            }
+            if (serverResponseEntity.getData()!=null){
+                return ServerResponseEntity.showFailMsg("用户名已存在");
+            }
+            authAccountDTO.setUsername(authDTO.getUsername());
+        }
+        if (authDTO.getPassword()!=null){
+            String password=passwordEncoder.encode(authDTO.getPassword());
+            authAccountDTO.setPassword(password);
+        }
+        authAccountDTO.setSysType(SysTypeEnum.MULTISHOP.value());
+        authAccountDTO.setUserId(userInfoInTokenBO.getUserId());
+        accountFeignClient.update(authAccountDTO);
+        return ServerResponseEntity.success(userInfoInTokenBO);
+    }
+
+    @Override
+    public void deleteAptitude(Long shopQualificationId) {
+        shopQualificationMapper.deleteById(shopQualificationId);
+    }
 
 }

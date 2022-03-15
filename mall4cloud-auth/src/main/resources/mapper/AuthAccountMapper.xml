@@ -59,6 +59,9 @@
       <if test="authAccount.status != null">
         status = #{authAccount.status},
       </if>
+      <if test="authAccount.accountPhone != null">
+        status = #{authAccount.accountPhone},
+      </if>
     </set>
     where user_id = #{authAccount.userId} and sys_type = #{authAccount.sysType}
   </update>

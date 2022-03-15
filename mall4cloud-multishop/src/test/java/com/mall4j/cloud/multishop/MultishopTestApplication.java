@@ -1,6 +1,5 @@
-package java.com.mall4j.cloud.user;
+package com.mall4j.cloud.multishop;
 
-import com.mall4j.cloud.multishop.MultishopApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -8,6 +8,7 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.multishop.dto.AuthDTO;
 import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
 import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
+import com.mall4j.cloud.multishop.dto.ShopQualificationDTO;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
@@ -49,7 +50,7 @@ public interface ShopDetailService {
 	 * 更新店铺详情
 	 * @param shopDetail 店铺详情
 	 */
-	void update(ShopDetail shopDetail);
+	void update(ShopDetail shopDetail,UserInfoInTokenBO userInfoInTokenBO);
 
 	/**
 	 * 根据店铺详情id删除店铺详情
@@ -130,4 +131,11 @@ public interface ShopDetailService {
 
 
 	void creatBasicInformation(UserInfoInTokenBO userInfoInTokenBO, BasicInformationDTO basicInformationDTO);
+
+
+	void creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO);
+
+	ServerResponseEntity<UserInfoInTokenBO> updateShops(AuthDTO authDTO);
+
+	void deleteAptitude(Long shopQualificationId);
 }
