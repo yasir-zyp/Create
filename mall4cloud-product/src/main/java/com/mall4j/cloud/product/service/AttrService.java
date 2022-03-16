@@ -35,47 +35,18 @@ public interface AttrService {
 	/**
 	 * 保存属性信息
 	 * @param attr 属性信息
-	 * @param categoryIds 分类id列表
 	 */
-	void save(Attr attr, List<Long> categoryIds);
+	void save(Attr attr);
 
 	/**
 	 * 更新属性信息
 	 * @param attr 属性信息
-	 * @param categoryIds 分类id列表
 	 */
-	void update(Attr attr, List<Long> categoryIds);
+	void update(Attr attr);
 
 	/**
 	 * 根据属性信息id删除属性信息
 	 * @param attrId
 	 */
 	void deleteById(Long attrId);
-
-	/**
-	 * 根据分类和属性类型，获取对应的属性列表
-	 * @param categoryId
-	 * @return
-	 */
-	List<AttrVO> getAttrsByCategoryIdAndAttrType(Long categoryId);
-
-	/**
-	 * 根据属性id获取属性下的分类id列表
-	 * @param attrId
-	 * @return
-	 */
-	List<Long> getAttrOfCategoryIdByAttrId(Long attrId);
-
-	/**
-	 * 清除属性关联的分类列表中属性列表的缓存
-	 * @param categoryIds 属性关联的分类列表
-	 */
-	void removeAttrByCategoryId(List<Long> categoryIds);
-
-	/**
-	 * 获取店铺中的销售属性
-	 * @param shopId
-	 * @return
-	 */
-	List<AttrVO> getShopAttrs(Long shopId);
 }

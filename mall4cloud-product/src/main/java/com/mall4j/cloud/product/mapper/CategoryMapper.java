@@ -120,4 +120,11 @@ public interface CategoryMapper {
 	 * @return
 	 */
     List<CategoryVO> getCategoryAndChildCatogory(@Param("shopId") Long shopId, @Param("parentId") Long parentId);
+
+	/**
+	 * 通过分类名称查分类
+	 * @param categoryName
+	 * @return
+	 */
+    CategoryVO getByName(@Param("categoryName")Long categoryName);
 }

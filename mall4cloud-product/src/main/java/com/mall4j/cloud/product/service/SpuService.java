@@ -6,7 +6,6 @@ import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.api.product.vo.SpuVO;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
-import com.mall4j.cloud.product.model.SpuExtension;
 
 import java.util.List;
 
@@ -34,13 +33,7 @@ public interface SpuService {
 	 */
 	SpuVO getBySpuId(Long spuId);
 
-	/**
-	 * spu扩展信息
-	 *
-	 * @param spuId spu信息id
-	 * @return spu信息
-	 */
-	SpuExtension getSpuExtension(Long spuId);
+
 
 	/**
 	 * 保存spu信息
@@ -101,13 +94,11 @@ public interface SpuService {
 
 	/**
 	 * 获取 spuId列表
-	 * @param shopCategoryIds 店铺分类id列表
 	 * @param categoryIds 平台分类Id列表
-	 * @param brandId 品牌id
 	 * @param shopId 店铺id
 	 * @return spuId列表
 	 */
-	List<Long> getSpuIdsBySpuUpdateDTO(List<Long> shopCategoryIds, List<Long> categoryIds, Long brandId, Long shopId);
+	List<Long> getSpuIdsBySpuUpdateDTO( List<Long> categoryIds, Long shopId);
 
 	/**
 	 * 根据spuId列表，获取spu列表

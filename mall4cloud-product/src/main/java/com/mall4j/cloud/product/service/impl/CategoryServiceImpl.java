@@ -265,6 +265,11 @@ public class CategoryServiceImpl implements CategoryService {
         return firstCategories;
     }
 
+    @Override
+    public CategoryVO getByName(Long categoryName) {
+        return categoryMapper.getByName(categoryName);
+    }
+
     private void setChildCategory(List<CategoryVO> categories, List<CategoryVO> childCategories) {
         if (CollUtil.isEmpty(categories) || CollUtil.isEmpty(childCategories)) {
             return;

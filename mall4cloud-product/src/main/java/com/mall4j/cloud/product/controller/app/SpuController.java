@@ -2,7 +2,6 @@ package com.mall4j.cloud.product.controller.app;
 
 import com.mall4j.cloud.product.vo.app.*;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
-import com.mall4j.cloud.product.model.SpuExtension;
 import com.mall4j.cloud.product.service.SkuService;
 import com.mall4j.cloud.product.service.SpuService;
 import com.mall4j.cloud.api.product.vo.SpuVO;
@@ -41,15 +40,13 @@ public class SpuController {
     private MapperFacade mapperFacade;
 
     @GetMapping("/prod_info")
-    @ApiOperation(value = "商品详情信息", notes = "根据商品ID（prodId）获取商品信息")
-    @ApiImplicitParam(name = "spuId", value = "商品ID", required = true, dataType = "Long")
+    @ApiOperation(value = "服务方案详情信息", notes = "根据服务方案ID（prodId）获取商品信息")
+    @ApiImplicitParam(name = "spuId", value = "服务方案ID", required = true, dataType = "Long")
     public ServerResponseEntity<SpuAppVO> prodInfo(@RequestParam("spuId") Long spuId) {
 
         SpuVO spu = spuService.getBySpuId(spuId);
         SpuAppVO spuAppVO = mapperFacade.map(spu, SpuAppVO.class);
-        SpuExtension spuExtension = spuService.getSpuExtension(spuId);
-        spuAppVO.setTotalStock(spuExtension.getActualStock());
-        spuAppVO.setSaleNum(spuExtension.getSaleNum());
+
         List<SkuAppVO> skuAppVO = skuService.getSkuBySpuId(spu.getSpuId());
         spuAppVO.setSkus(skuAppVO);
         return ServerResponseEntity.success(spuAppVO);

@@ -125,5 +125,9 @@
   <select id="getCategoryAndChildCatogory" resultType="com.mall4j.cloud.api.product.vo.CategoryVO">
     SELECT `category_id`,`shop_id`,`parent_id`,`name`,`icon`,`img_url` FROM category WHERE status = 1 AND (parent_id = #{parentId} OR parent_id IN (SELECT category_id FROM category WHERE status = 1 AND parent_id = #{parentId}))
   </select>
+
+  <select id="getByName" resultType="com.mall4j.cloud.api.product.vo.CategoryVO">
+    select <include refid="Vo_Column_List"/> from category where category_name = #{categoryName}
+  </select>
 </mapper>
 

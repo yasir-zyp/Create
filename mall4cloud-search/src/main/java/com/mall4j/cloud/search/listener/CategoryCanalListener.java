@@ -83,14 +83,7 @@ public class CategoryCanalListener extends BaseCanalBinlogEventProcessor<Categor
                 esProductBO.setCategoryName(afterData.getName());
             }
         }
-        // 商家分类
-        else {
-            if (afterData.getLevel().equals(CategoryLevel.First.value())) {
-                esProductBO.setShopPrimaryCategoryName(afterData.getName());
-            } else if (afterData.getLevel().equals(CategoryLevel.SECOND.value())) {
-                esProductBO.setShopSecondaryCategoryName(afterData.getName());
-            }
-        }
+
 
     }
 
@@ -113,11 +106,8 @@ public class CategoryCanalListener extends BaseCanalBinlogEventProcessor<Categor
         } else {
             categoryIds.add(category.getCategoryId());
         }
-
         if (Objects.equals(category.getShopId(), Constant.PLATFORM_SHOP_ID)) {
             spuIdResponse = productFeignClient.getSpuIdsByCategoryIds(categoryIds);
-        } else {
-            spuIdResponse = productFeignClient.getSpuIdsByShopCategoryIds(categoryIds);
         }
         spuIds.addAll(spuIdResponse.getData());
         return spuIds;

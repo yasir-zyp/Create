@@ -60,19 +60,4 @@ public interface AttrMapper {
 	 * @param attrId
 	 */
 	void deleteById(@Param("attrId") Long attrId);
-
-	/**
-	 * 根据分类和属性类型，获取对应的属性列表
-	 *
-	 * @param categoryId
-	 * @return
-	 */
-	List<AttrVO> getAttrsByCategoryIdAndAttrType(@Param("categoryId") Long categoryId);
-
-	/**
-	 * 获取店铺中的销售属性
-	 * @param shopId
-	 * @return 销售属性列表
-	 */
-	List<AttrVO> getShopAttrs(Long shopId);
 }

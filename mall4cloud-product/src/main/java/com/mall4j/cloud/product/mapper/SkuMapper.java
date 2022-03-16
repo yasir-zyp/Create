@@ -4,6 +4,7 @@ import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.model.Sku;
 import com.mall4j.cloud.api.product.vo.SkuVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:24
  */
+@Repository
 public interface SkuMapper {
 
 	/**

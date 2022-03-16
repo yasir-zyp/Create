@@ -92,7 +92,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "parentId", value = "父类id")
     })
     public ServerResponseEntity<List<CategoryVO>> getListByParentId(@RequestParam(value = "parentId") Long parentId) {
-        return ServerResponseEntity.success(categoryService.listByShopIdAndParenId(parentId, AuthUserContext.get().getTenantId()));
+        return ServerResponseEntity.success(categoryService.listByShopIdAndParenId(parentId,Constant.PLATFORM_SHOP_ID));
     }
 
     @PutMapping(value = "/category_enable_or_disable")

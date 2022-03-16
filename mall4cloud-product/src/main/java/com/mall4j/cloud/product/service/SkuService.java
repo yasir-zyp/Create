@@ -71,10 +71,10 @@ public interface SkuService {
     SkuVO getSkuBySkuId(Long skuId);
 
 	/**
-	 * 更新sku金额或者库存信息
+	 * 更新sku金额
 	 * @param spuDTO
 	 */
-	void updateAmountOrStock(SpuDTO spuDTO);
+	void updateAmount(SpuDTO spuDTO);
 
 	/**
 	 * 获取商品的sku列表（仅获取启用状态）

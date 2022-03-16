@@ -39,36 +39,27 @@ public class ProductFeignController implements ProductFeignClient {
         return ServerResponseEntity.success(esProductBO);
     }
 
-    @Override
-    public ServerResponseEntity<List<Long>> getSpuIdsByShopCategoryIds(List<Long> shopCategoryIds) {
-        return getSpuIdsBySpuUpdateDTO(shopCategoryIds, null, null, null);
-    }
+
 
     @Override
     public ServerResponseEntity<List<Long>> getSpuIdsByCategoryIds(List<Long> categoryIds) {
-        return getSpuIdsBySpuUpdateDTO(null, categoryIds, null, null);
+        return getSpuIdsBySpuUpdateDTO( categoryIds,  null);
     }
 
-    @Override
-    public ServerResponseEntity<List<Long>> getSpuIdsByBrandId(Long brandId) {
-        return getSpuIdsBySpuUpdateDTO(null, null, brandId, null);
-    }
 
     @Override
     public ServerResponseEntity<List<Long>> getSpuIdsByShopId(Long shopId) {
-        return getSpuIdsBySpuUpdateDTO(null, null, null, shopId);
+        return getSpuIdsBySpuUpdateDTO(null,  shopId);
     }
 
     /**
      * 获取spuId列表
-     * @param shopCategoryIds 店铺分类id列表
      * @param categoryIds 平台分类Id列表
-     * @param brandId 品牌id
      * @param shopId 店铺id
      * @return
      */
-    public ServerResponseEntity<List<Long>> getSpuIdsBySpuUpdateDTO(List<Long> shopCategoryIds, List<Long> categoryIds, Long brandId, Long shopId) {
-        List<Long> spuIds = spuService.getSpuIdsBySpuUpdateDTO(shopCategoryIds, categoryIds, brandId, shopId);
+    public ServerResponseEntity<List<Long>> getSpuIdsBySpuUpdateDTO( List<Long> categoryIds,  Long shopId) {
+        List<Long> spuIds = spuService.getSpuIdsBySpuUpdateDTO( categoryIds, shopId);
         return ServerResponseEntity.success(spuIds);
     }
 }

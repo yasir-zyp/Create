@@ -7,7 +7,6 @@ import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.api.product.bo.EsAttrBO;
 import com.mall4j.cloud.api.product.bo.EsProductBO;
 import com.mall4j.cloud.api.product.vo.CategoryVO;
-import com.mall4j.cloud.api.product.vo.SpuAttrValueVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.Constant;
@@ -24,9 +23,8 @@ import com.mall4j.cloud.product.mapper.SpuMapper;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.SpuVO;
 import com.mall4j.cloud.product.model.Spu;
-import com.mall4j.cloud.product.model.SpuAttrValue;
 import com.mall4j.cloud.product.model.SpuDetail;
-import com.mall4j.cloud.product.model.SpuExtension;
+
 import io.seata.spring.annotation.GlobalTransactional;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.aop.framework.AopContext;
@@ -55,11 +53,6 @@ public class SpuServiceImpl implements SpuService {
     @Autowired
     private SpuDetailService spuDetailService;
 
-    @Autowired
-    private SpuExtensionService spuExtensionService;
-
-    @Autowired
-    private SpuAttrValueService spuAttrValueService;
 
     @Autowired
     private MapperFacade mapperFacade;
@@ -67,8 +60,6 @@ public class SpuServiceImpl implements SpuService {
     @Autowired
     private SkuService skuService;
 
-    @Autowired
-    private BrandService brandService;
 
     @Autowired
     private CategoryService categoryService;
@@ -91,12 +82,6 @@ public class SpuServiceImpl implements SpuService {
         return spuMapper.getBySpuId(spuId);
     }
 
-    @Override
-    @Cacheable(cacheNames = CacheNames.SPU_EXTENSION_KEY, key = "#spuId",sync = true)
-    public SpuExtension getSpuExtension(Long spuId) {
-        SpuExtension spuExtension = spuExtensionService.getBySpuId(spuId);
-        return spuExtension;
-    }
     @Override
     @Caching(evict = {
             @CacheEvict(cacheNames = CacheNames.SPU_KEY, key = "#spuId"),
@@ -133,24 +118,11 @@ public class SpuServiceImpl implements SpuService {
         spu.setShopId(AuthUserContext.get().getTenantId());
         // 1.保存商品信息
         spuMapper.save(spu);
-        // 2.保存商品其他信息，规格、详细、扩展信息
-        List<SpuAttrValue> spuAttrValues = mapperFacade.mapAsList(spuDTO.getSpuAttrValues(), SpuAttrValue.class);
-        for (SpuAttrValue spuAttrValue : spuAttrValues) {
-            if (Objects.isNull(spuAttrValue.getAttrValueId())) {
-                spuAttrValue.setAttrValueId(0L);
-            }
-        }
-        spuAttrValueService.saveBatch(spu.getSpuId(),spuAttrValues);
+        // 2.保存商品其他信息、详细、扩展信息
         SpuDetail spuDetail = new SpuDetail();
         spuDetail.setSpuId(spu.getSpuId());
         spuDetail.setDetail(spuDTO.getDetail());
         spuDetailService.save(spuDetail);
-
-        SpuExtension spuExtension = new SpuExtension();
-        spuExtension.setSpuId(spu.getSpuId());
-        spuExtension.setActualStock(spuDTO.getTotalStock());
-        spuExtension.setStock(spuDTO.getTotalStock());
-        spuExtensionService.save(spuExtension);
 
         // 3.保存sku信息
         skuService.save(spu.getSpuId(),spuDTO.getSkuList());
@@ -165,22 +137,12 @@ public class SpuServiceImpl implements SpuService {
         SpuVO dbSpu = spuService.getBySpuId(spu.getSpuId());
         // 1.修改商品信息
         spuMapper.update(spu);
-        List<SpuAttrValue> spuAttrValues = mapperFacade.mapAsList(spuDTO.getSpuAttrValues(), SpuAttrValue.class);
-        spuAttrValueService.update(spu.getSpuId(),spuAttrValues, dbSpu.getSpuAttrValues());
-
         // 2.修改商品详情
         SpuDetail spuDetail = new SpuDetail();
         spuDetail.setSpuId(spu.getSpuId());
         spuDetail.setDetail(spuDTO.getDetail());
         spuDetailService.update(spuDetail);
 
-        // 3.修改商品库存
-        if (Objects.nonNull(spuDTO.getChangeStock()) && spuDTO.getChangeStock() > 0) {
-            SpuExtension spuExtension = new SpuExtension();
-            spuExtension.setSpuId(spu.getSpuId());
-            spuExtension.setStock(spuDTO.getChangeStock());
-            spuExtensionService.updateStock(spu.getSpuId(), spuDTO.getTotalStock());
-        }
 
         // 4.修改商品sku信息
         skuService.update(spu.getSpuId(),spuDTO.getSkuList());
@@ -211,11 +173,7 @@ public class SpuServiceImpl implements SpuService {
         spu.setName(spuDTO.getName());
         spu.setSeq(spuDTO.getSeq());
         if (CollUtil.isNotEmpty(spuDTO.getSkuList())) {
-            skuService.updateAmountOrStock(spuDTO);
-        }
-        if (Objects.nonNull(spuDTO.getChangeStock()) && spuDTO.getChangeStock() > 0) {
-            spuExtensionService.updateStock(spuDTO.getSpuId(), spuDTO.getChangeStock());
-            return;
+            skuService.updateAmount(spuDTO);
         }
         spu.setPriceFee(spuDTO.getPriceFee());
         spuMapper.update(spu);
@@ -246,25 +204,15 @@ public class SpuServiceImpl implements SpuService {
                 esProductBO.setSecondaryCategoryName(category.getPathNames().get(i));
             }
         }
-        CategoryVO shopCategory = categoryService.getById(esProductBO.getShopSecondaryCategoryId());
-        if (Objects.nonNull(shopCategory)) {
-            esProductBO.setShopSecondaryCategoryName(shopCategory.getName());
-            esProductBO.setShopPrimaryCategoryId(shopCategory.getParentId());
-            esProductBO.setShopPrimaryCategoryName(shopCategory.getPathNames().get(0));
-        }
-        // 获取属性
-        List<SpuAttrValueVO> spuAttrsBySpuId = spuAttrValueService.getSpuAttrsBySpuId(spuId);
-        List<SpuAttrValueVO> attrs = spuAttrsBySpuId.stream().filter(spuAttrValueVO -> spuAttrValueVO.getSearchType().equals(1)).collect(Collectors.toList());
-        esProductBO.setAttrs(mapperFacade.mapAsList(attrs, EsAttrBO.class));
         return esProductBO;
     }
 
     @Override
-    public List<Long> getSpuIdsBySpuUpdateDTO(List<Long> shopCategoryIds, List<Long> categoryIds, Long brandId, Long shopId) {
-        if (CollUtil.isEmpty(shopCategoryIds) && CollUtil.isEmpty(categoryIds) && Objects.isNull(brandId) && Objects.isNull(shopId)) {
+    public List<Long> getSpuIdsBySpuUpdateDTO( List<Long> categoryIds,  Long shopId) {
+        if (CollUtil.isEmpty(categoryIds)  && Objects.isNull(shopId)) {
             return new ArrayList<>();
         }
-        return spuMapper.getSpuIdsBySpuUpdateDTO(shopCategoryIds, categoryIds, brandId, shopId);
+        return spuMapper.getSpuIdsBySpuUpdateDTO(categoryIds,  shopId);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.mall4j.cloud.product.service;
 
-import com.mall4j.cloud.product.model.SpuSkuAttrValue;
+import com.mall4j.cloud.product.model.SkuAttr;
 
 import java.util.List;
 
@@ -10,21 +10,21 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:24
  */
-public interface SpuSkuAttrValueService {
+public interface SkuAttrService {
 
 	/**
 	 * 保存商品sku销售属性关联信息
 	 *
 	 * @param spuSkuAttrValue 商品sku销售属性关联信息
 	 */
-	void save(SpuSkuAttrValue spuSkuAttrValue);
+	void save(SkuAttr spuSkuAttrValue);
 
 	/**
 	 * 批量更新商品sku销售属性关联信息
 	 *
 	 * @param spuSkuAttrValues 商品sku销售属性关联信息
 	 */
-	void updateBatch(List<SpuSkuAttrValue> spuSkuAttrValues);
+	void updateBatch(List<SkuAttr> spuSkuAttrValues);
 
 	/**
 	 * 根据商品sku销售属性关联信息id删除商品sku销售属性关联信息
@@ -38,14 +38,14 @@ public interface SpuSkuAttrValueService {
 	 *
 	 * @param spuSkuAttrValues attrList
 	 */
-	void saveBatch(List<SpuSkuAttrValue> spuSkuAttrValues);
+	void saveBatch(List<SkuAttr> spuSkuAttrValues);
 
 	/**
 	 * 根据spuId删除sku信息
 	 *
-	 * @param spuId spuId
+	 * @param skuId skuId
 	 */
-	void updateBySpuId(Long spuId);
+	void updateBySkuId(Long skuId);
 
 	/**
 	 * 根据skuId列表，改变销售属性状态

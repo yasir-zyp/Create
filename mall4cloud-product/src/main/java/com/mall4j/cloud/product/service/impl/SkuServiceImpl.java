@@ -1,7 +1,7 @@
 package com.mall4j.cloud.product.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import com.mall4j.cloud.api.product.vo.SpuSkuAttrValueVO;
+import com.mall4j.cloud.api.product.vo.SkuAttrVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.StatusEnum;
@@ -9,11 +9,9 @@ import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.mapper.SkuMapper;
 import com.mall4j.cloud.product.model.Sku;
-import com.mall4j.cloud.product.model.SkuStock;
-import com.mall4j.cloud.product.model.SpuSkuAttrValue;
+import com.mall4j.cloud.product.model.SkuAttr;
 import com.mall4j.cloud.product.service.SkuService;
-import com.mall4j.cloud.product.service.SkuStockService;
-import com.mall4j.cloud.product.service.SpuSkuAttrValueService;
+import com.mall4j.cloud.product.service.SkuAttrService;
 import com.mall4j.cloud.api.product.vo.SkuVO;
 import com.mall4j.cloud.product.vo.app.SkuAppVO;
 import ma.glasnost.orika.MapperFacade;
@@ -41,9 +39,7 @@ public class SkuServiceImpl implements SkuService {
     @Autowired
     private SkuMapper skuMapper;
     @Autowired
-    private SpuSkuAttrValueService spuSkuAttrValueService;
-    @Autowired
-    private SkuStockService skuStockService;
+    private SkuAttrService skuAttrService;
     @Autowired
     private MapperFacade mapperFacade;
 
@@ -55,25 +51,17 @@ public class SkuServiceImpl implements SkuService {
         });
         // 处理数据，保存库存、属性
         skuMapper.saveBatch(skuList);
-        List<SkuStock> skuStocks = new ArrayList<>();
-        List<SpuSkuAttrValue> spuSkuAttrValues = new ArrayList<>();
+        List<SkuAttr> skuAttrs = new ArrayList<>();
         for (SkuDTO skuDTO : skuList) {
-            SkuStock skuStock = new SkuStock();
-            skuStock.setSkuId(skuDTO.getSkuId());
-            skuStock.setStock(skuDTO.getStock());
-            skuStock.setActualStock(skuDTO.getStock());
-            skuStock.setLockStock(0);
-            skuStocks.add(skuStock);
-            List<SpuSkuAttrValue> spuSkuAttrValueList = mapperFacade.mapAsList(skuDTO.getSpuSkuAttrValues(), SpuSkuAttrValue.class);
-            for (SpuSkuAttrValue spuSkuAttrValue : spuSkuAttrValueList) {
-                spuSkuAttrValue.setSpuId(spuId);
-                spuSkuAttrValue.setSkuId(skuDTO.getSkuId());
-                spuSkuAttrValue.setStatus(StatusEnum.ENABLE.value());
-                spuSkuAttrValues.add(spuSkuAttrValue);
+            List<SkuAttr> skuAttrList = mapperFacade.mapAsList(skuDTO.getSkuAttrs(), SkuAttr.class);
+            for (SkuAttr skuAttr : skuAttrList) {
+                skuAttr.setSpuId(spuId);
+                skuAttr.setSkuId(skuDTO.getSkuId());
+                skuAttr.setStatus(StatusEnum.ENABLE.value());
+                skuAttrs.add(skuAttr);
             }
         }
-        skuStockService.saveBatch(skuStocks);
-        spuSkuAttrValueService.saveBatch(spuSkuAttrValues);
+        skuAttrService.saveBatch(skuAttrs);
     }
 
 
@@ -102,7 +90,6 @@ public class SkuServiceImpl implements SkuService {
         if(CollUtil.isNotEmpty(updateSkus)){
             List<Sku> skus = mapperFacade.mapAsList(updateSkus, Sku.class);
             skuMapper.updateBatch(skus);
-            skuStockService.updateBatch(updateSkus);
         }
         // 不存在的sku--删除
         skuIdsDb.removeAll(skuIds);
@@ -155,23 +142,16 @@ public class SkuServiceImpl implements SkuService {
     }
 
     @Override
-    public void updateAmountOrStock(SpuDTO spuDTO) {
+    public void updateAmount(SpuDTO spuDTO) {
         List<SkuDTO> skuList = spuDTO.getSkuList();
         List<Sku> skus = new ArrayList<>();
-        Boolean isUpdateStock = false;
         for (SkuDTO skuDTO : skuList) {
-            if (Objects.nonNull(skuDTO.getChangeStock())  && skuDTO.getChangeStock() > 0) {
-                isUpdateStock = true;
-                break;
-            } else if (Objects.nonNull(skuDTO.getPriceFee())) {
+            if (Objects.nonNull(skuDTO.getPriceFee())) {
                 Sku sku = new Sku();
                 sku.setSkuId(skuDTO.getSkuId());
                 sku.setPriceFee(skuDTO.getPriceFee());
                 skus.add(sku);
             }
-        }
-        if (isUpdateStock) {
-            skuStockService.updateBatch(skuList);
         }
         if (CollUtil.isNotEmpty(skus)) {
             skuMapper.updateBatch(skus);
@@ -188,8 +168,8 @@ public class SkuServiceImpl implements SkuService {
         for (SkuVO sku : skuData) {
             SkuAppVO skuAppVO = mapperFacade.map(sku, SkuAppVO.class);
             String properties = "";
-            for (SpuSkuAttrValueVO spuSkuAttrValue : sku.getSpuSkuAttrValues()) {
-                properties = properties + spuSkuAttrValue.getAttrName() + attrUnionAttrValue + spuSkuAttrValue.getAttrValueName() + attrUnionAttr;
+            for (SkuAttrVO spuSkuAttr : sku.getSkuAttrs()) {
+                properties = properties + spuSkuAttr.getAttrName()  + attrUnionAttr;
             }
             skuAppVO.setProperties(properties.substring(0, properties.length()-1));
             skuAppList.add(skuAppVO);
@@ -206,6 +186,6 @@ public class SkuServiceImpl implements SkuService {
             skus.add(sku);
         }
         skuMapper.updateBatch(skus);
-        spuSkuAttrValueService.changeStatusBySkuId(skuIds, StatusEnum.DELETE.value());
+        skuAttrService.changeStatusBySkuId(skuIds, StatusEnum.DELETE.value());
     }
 }

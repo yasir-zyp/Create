@@ -2,14 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mall4j.cloud.product.mapper.AttrMapper">
-  <resultMap id="attrMap" type="com.mall4j.cloud.product.model.Attr">
-    <id column="attr_id" property="attrId" />
-    <result column="create_time" property="createTime"/>
-    <result column="update_time" property="updateTime"/>
-    <result column="name" property="name"/>
-    <result column="desc" property="desc"/>
-  </resultMap>
-  <resultMap id="attrListMap" type="com.mall4j.cloud.api.product.vo.AttrVO">
+  <resultMap id="attrMap" type="com.mall4j.cloud.api.product.vo.AttrVO">
     <id column="attr_id" property="attrId" />
     <result column="create_time" property="createTime"/>
     <result column="update_time" property="updateTime"/>
@@ -18,17 +11,21 @@
     <result column="desc" property="desc"/>
     <result column="search_type" property="searchType"/>
     <result column="attr_type" property="attrType"/>
-    <collection property="attrValues" ofType="com.mall4j.cloud.api.product.vo.AttrValueVO">
-      <id column="attr_value_id" property="attrValueId"/>
-      <result column="value" property="value"/>
-    </collection>
+    <result column="category_id" property="categoryId"/>
+    <result column="category_name" property="categoryName"/>
+    <result column="name_english" property="nameEnglish"/>
+    <result column="standard" property="standard"/>
+    <result column="standard_name" property="standardName"/>
+    <result column="requirement" property="requirement"/>
+    <result column="cycle" property="cycle"/>
+    <result column="price" property="price"/>
   </resultMap>
   <sql id="Vo_Column_List">
-    `attr_id`,`shop_id`,`create_time`,`update_time`,`name`,`desc`,`search_type`,`attr_type`
+    `attr_id`,`shop_id`,`create_time`,`update_time`,`name`,`desc`,`search_type`,`attr_type`,
+    `category_id`,`category_name`,`name_english`,`standard`,`standard_name`,`requirement`,`cycle`,`price`
   </sql>
-  <select id="list" resultMap="attrListMap">
-    select a.*,av.attr_value_id,av.value from
-    (
+  <select id="list" resultMap="attrMap">
+
         select <include refid="Vo_Column_List"/> from attr
         <where>
           <if test="attr.name != null">
@@ -36,6 +33,9 @@
           </if>
           <if test="attr.searchType != null">
             and search_type = #{attr.searchType}
+          </if>
+          <if test="attr.categoryId != null">
+            and category_id = #{attr.categoryId}
           </if>
           <if test="attr.attrType != null">
             and attr_type = #{attr.attrType}
@@ -45,8 +45,6 @@
           </if>
         </where>
         limit #{page.begin}, #{page.size}
-    ) a
-    left join attr_value av on a.attr_id = av.attr_id
     order by attr_id desc
   </select>
   <select id="countAttr" resultType="java.lang.Long">
@@ -58,6 +56,9 @@
         <if test="attr.searchType != null">
         and search_type = #{attr.searchType}
         </if>
+      <if test="attr.categoryId != null">
+        and category_id = #{attr.categoryId}
+      </if>
         <if test="attr.attrType != null">
         and attr_type = #{attr.attrType}
         </if>
@@ -66,9 +67,9 @@
         </if>
     </where>
   </select>
-  <select id="getByAttrId" resultMap="attrListMap">
-    SELECT a.*,av.attr_value_id,av.value FROM attr AS a
-    LEFT JOIN attr_value av ON a.attr_id = av.attr_id
+  <select id="getByAttrId" resultMap="attrMap">
+    SELECT * FROM attr
+
     WHERE a.attr_id = #{attrId}
   </select>
   <insert id="save" useGeneratedKeys="true" keyProperty="attrId">
@@ -92,20 +93,5 @@
   </update>
   <delete id="deleteById">
     delete from attr where attr_id = #{attrId};
-    delete from attr_value where attr_id = #{attrId};
-    delete from attr_category where attr_id = #{attrId};
   </delete>
-
-  <select id="getAttrsByCategoryIdAndAttrType" resultMap="attrListMap">
-    SELECT a.*,av.attr_value_id,av.value FROM attr AS a
-    JOIN `attr_category` ac ON ac.attr_id = a.attr_id AND ac.category_id = #{categoryId}
-    LEFT JOIN attr_value av ON a.attr_id = av.attr_id
-    where a.attr_type = 1
-  </select>
-
-   <select id="getShopAttrs" resultMap="attrListMap">
-    SELECT a.*,av.attr_value_id,av.value FROM attr AS a
-    LEFT JOIN attr_value av ON a.attr_id = av.attr_id
-    WHERE a.shop_id = #{shopId} AND a.attr_type = 0
-  </select>
 </mapper>

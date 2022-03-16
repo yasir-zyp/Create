@@ -1,15 +1,14 @@
-package com.mall4j.cloud.api.product.vo;
+package com.mall4j.cloud.product.dto;
 
-import com.mall4j.cloud.common.vo.BaseVO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 商品sku销售属性关联信息VO
+ * 商品sku销售属性关联信息DTO
  *
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:24
  */
-public class SpuSkuAttrValueVO extends BaseVO {
+public class SkuAttrDTO {
 	private static final long serialVersionUID = 1L;
 
 	@ApiModelProperty("商品sku销售属性关联信息id")
@@ -22,18 +21,18 @@ public class SpuSkuAttrValueVO extends BaseVO {
 	private Long skuId;
 
 	@ApiModelProperty("销售属性ID")
-	private Integer attrId;
+	private Long attrId;
 
 	@ApiModelProperty("销售属性名称")
 	private String attrName;
 
 	@ApiModelProperty("销售属性值ID")
-	private Integer attrValueId;
+	private Long attrValueId;
 
 	@ApiModelProperty("销售属性值")
 	private String attrValueName;
 
-	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
+	@ApiModelProperty("状态 1:enable, 0:disable")
 	private Integer status;
 
 	public Integer getSpuSkuAttrId() {
@@ -60,11 +59,11 @@ public class SpuSkuAttrValueVO extends BaseVO {
 		this.skuId = skuId;
 	}
 
-	public Integer getAttrId() {
+	public Long getAttrId() {
 		return attrId;
 	}
 
-	public void setAttrId(Integer attrId) {
+	public void setAttrId(Long attrId) {
 		this.attrId = attrId;
 	}
 
@@ -76,11 +75,11 @@ public class SpuSkuAttrValueVO extends BaseVO {
 		this.attrName = attrName;
 	}
 
-	public Integer getAttrValueId() {
+	public Long getAttrValueId() {
 		return attrValueId;
 	}
 
-	public void setAttrValueId(Integer attrValueId) {
+	public void setAttrValueId(Long attrValueId) {
 		this.attrValueId = attrValueId;
 	}
 
@@ -102,7 +101,7 @@ public class SpuSkuAttrValueVO extends BaseVO {
 
 	@Override
 	public String toString() {
-		return "SpuSkuAttrValueVO{" +
+		return "SpuSkuAttrValueDTO{" +
 				"spuSkuAttrId=" + spuSkuAttrId +
 				", spuId=" + spuId +
 				", skuId=" + skuId +
@@ -111,8 +110,6 @@ public class SpuSkuAttrValueVO extends BaseVO {
 				", attrValueId=" + attrValueId +
 				", attrValueName='" + attrValueName + '\'' +
 				", status=" + status +
-				", createTime=" + createTime +
-				", updateTime=" + updateTime +
 				'}';
 	}
 }

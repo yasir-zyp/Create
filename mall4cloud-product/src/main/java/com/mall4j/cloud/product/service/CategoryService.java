@@ -108,4 +108,11 @@ public interface CategoryService {
 	 * @return
 	 */
 	List<CategoryVO> shopCategoryList(Long shopId);
+
+	/**
+	 * 根据分类名称获取分类
+	 * @param categoryName
+	 * @return
+	 */
+	CategoryVO getByName(Long categoryName);
 }

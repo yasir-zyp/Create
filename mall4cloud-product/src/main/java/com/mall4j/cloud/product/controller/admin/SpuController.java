@@ -12,7 +12,6 @@ import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
-import com.mall4j.cloud.product.model.SpuExtension;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.*;
 import io.swagger.annotations.Api;
@@ -43,8 +42,7 @@ public class SpuController {
     private CategoryService categoryService;
     @Autowired
     private AttrService attrService;
-    @Autowired
-    private BrandService brandService;
+
 
     @GetMapping("/platform_page")
     @ApiOperation(value = "获取平台spu信息列表", notes = "分页获取平台spu信息列表")
@@ -65,17 +63,10 @@ public class SpuController {
     public ServerResponseEntity<SpuVO> getBySpuId(@RequestParam Long spuId) {
         // 获取spu信息
         SpuVO spuVO = spuService.getBySpuId(spuId);
-        SpuExtension spuExtension = spuService.getSpuExtension(spuId);
-        spuVO.setTotalStock(spuExtension.getActualStock());
-        spuVO.setSaleNum(spuExtension.getSaleNum());
-        // 品牌信息
-        spuVO.setBrand(brandService.getByBrandId(spuVO.getBrandId()));
         // sku信息
         spuVO.setSkus(skuService.listBySpuIdAndExtendInfo(spuId));
-        loadSpuAttrs(spuVO);
-        // 平台分类、店铺分类信息
+        // 平台分类信息
         spuVO.setCategory(categoryService.getPathNameByCategoryId(spuVO.getCategoryId()));
-        spuVO.setShopCategory(categoryService.getPathNameByCategoryId(spuVO.getShopCategoryId()));
         return ServerResponseEntity.success(spuVO);
     }
 
@@ -180,42 +171,7 @@ public class SpuController {
         spuService.removeSpuCacheBySpuId(spu.getSpuId());
     }
 
-    /**
-     * 加载spu属性列表
-     * @param spuVO
-     */
-    private void loadSpuAttrs(SpuVO spuVO) {
-        Map<Long, SpuAttrValueVO> attrMap = null;
-        if (CollUtil.isNotEmpty(spuVO.getSpuAttrValues())) {
-            attrMap = spuVO.getSpuAttrValues().stream().collect(Collectors.toMap(SpuAttrValueVO::getAttrId, s -> s));
-        } else {
-             attrMap = new HashMap<>(1);
-        }
-        List<AttrVO> attrList = attrService.getAttrsByCategoryIdAndAttrType(spuVO.getCategoryId());
-        List<SpuAttrValueVO> spuAttrValues = new ArrayList<>();
-        for (AttrVO attrVO : attrList) {
-            SpuAttrValueVO spuAttrValueVO = attrMap.get(attrVO.getAttrId());
-            SpuAttrValueVO newSpuAttrValue = new SpuAttrValueVO();
-            if (Objects.nonNull(spuAttrValueVO)) {
-                Boolean hasValue = false;
-                for (AttrValueVO attrValue : attrVO.getAttrValues()) {
-                    if (Objects.equals(attrValue.getAttrValueId(), spuAttrValueVO.getAttrValueId())) {
-                        hasValue = true;
-                    }
-                }
-                if (hasValue || CollUtil.isEmpty(attrVO.getAttrValues())) {
-                    spuAttrValues.add(spuAttrValueVO);
-                    continue;
-                }
-                newSpuAttrValue.setSpuAttrValueId(spuAttrValueVO.getSpuAttrValueId());
-            }
-            newSpuAttrValue.setAttrId(attrVO.getAttrId());
-            newSpuAttrValue.setAttrName(attrVO.getName());
-            newSpuAttrValue.setSearchType(attrVO.getSearchType());
-            spuAttrValues.add(newSpuAttrValue);
-        }
-        spuVO.setSpuAttrValues(spuAttrValues);
-    }
+
 
     /**
      * 校验spu新增或更新信息

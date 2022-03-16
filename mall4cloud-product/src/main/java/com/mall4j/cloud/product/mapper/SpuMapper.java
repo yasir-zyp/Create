@@ -7,6 +7,7 @@ import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
 import com.mall4j.cloud.product.model.Spu;
 import com.mall4j.cloud.api.product.vo.SpuVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:24
  */
+@Repository
 public interface SpuMapper {
 
 	/**
@@ -73,14 +75,12 @@ public interface SpuMapper {
 	/**
 	 * 获取 spuId列表
 	 *
-	 * @param shopCategoryIds 店铺分类id列表
 	 * @param categoryIds 平台分类Id列表
-	 * @param brandId 品牌id
 	 * @param shopId 店铺id
 	 * @return spuId列表
 	 */
-	List<Long> getSpuIdsBySpuUpdateDTO(@Param("shopCategoryIds") List<Long> shopCategoryIds, @Param("categoryIds") List<Long> categoryIds
-			, @Param("brandId") Long brandId, @Param("shopId") Long shopId);
+	List<Long> getSpuIdsBySpuUpdateDTO(@Param("categoryIds") List<Long> categoryIds
+			,  @Param("shopId") Long shopId);
 
 	/**
 	 * 改变商品状态（上下架）

@@ -84,7 +84,7 @@ public class ShopCartAdapter {
         shopCartItem.setSpuId(shopCartItemParam.getSpuId());
         shopCartItem.setSkuName(sku.getSkuName());
         shopCartItem.setSpuName(spu.getName());
-        shopCartItem.setImgUrl(BooleanUtil.isTrue(spu.getHasSkuImg()) ? sku.getImgUrl() : spu.getMainImgUrl());
+        shopCartItem.setImgUrl(spu.getMainImgUrl());
         shopCartItem.setSkuPriceFee(sku.getPriceFee());
         shopCartItem.setTotalAmount(shopCartItem.getCount() * shopCartItem.getSkuPriceFee());
         shopCartItem.setCreateTime(new Date());

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuAttrMapper">
+  <resultMap id="skuAttrMap" type="com.mall4j.cloud.product.model.SkuAttr">
+    <id column="sku_attr_id" property="skuAttrId" />
+    <result column="attr_desc" property="attrDesc"/>
+    <result column="price_fee" property="priceFee"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="attr_id" property="attrId"/>
+    <result column="attr_name" property="attrName"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `sku_attr_id`,`attr_desc`,`price_fee`,`create_time`,`update_time`,`sku_id`,`attr_id`,`attr_name`,`status`
+  </sql>
+  <insert id="save">
+    insert into sku_attr(`attr_desc`,`price_fee`,`sku_id`,`attr_id`,`attr_name`)
+    values (#{skuAttr.attrDesc},#{skuAttr.priceFee},#{skuAttr.skuId},#{skuAttr.attrId},#{spuSkuAttrValue.attrName});
+  </insert>
+
+  <insert id="saveBatch">
+    insert into sku_attr (`attr_desc`,`price_fee`,`sku_id`,`attr_id`,`attr_name`) values
+    <foreach collection="spuSkuAttrValues" item="spuSkuAttrValue" separator=",">
+      (#{skuAttr.attrDesc},#{skuAttr.priceFee},#{skuAttr.skuId},#{skuAttr.attrId},#{skuAttr.attrName})
+    </foreach>
+  </insert>
+
+  <update id="updateBySkuId">
+    update sku_attr set status = -1 where sku_id = #{skuId}
+  </update>
+
+  <update id="updateBatch">
+    <foreach collection="skuAttrs" item="skuAttr">
+        update sku_attr
+        <set>
+          <if test="skuAttr.attrName != null">
+            `attr_name` = #{skuAttr.attrName},
+          </if>
+          <if test="skuAttr.priceFee != null">
+            `price_fee` = #{skuAttr.priceFee},
+          </if>
+          <if test="skuAttr.attr_desc != null">
+            `attr_desc` = #{skuAttr.attrDesc},
+          </if>
+          <if test="skuAttr.skuId != null">
+            `sku_id` = #{skuAttr.skuId},
+          </if>
+          <if test="skuAttr.attr_id != null">
+          `attr_id` = #{skuAttr.attr_id},
+        </if>
+
+        </set>
+        where sku_attr_id = #{skuAttr.skuAttrId};
+    </foreach>
+  </update>
+
+  <update id="update">
+    update sku_attr
+    <set>
+
+      <if test="skuAttr.skuId != null">
+        `sku_id` = #{skuAttr.skuId},
+      </if>
+      <if test="skuAttr.attrId != null">
+        `attr_id` = #{skuAttr.attrId},
+      </if>
+      <if test="skuAttr.attrName != null">
+        `attr_name` = #{skuAttr.attrName},
+      </if>
+      <if test="skuAttr.priceFee != null">
+        `price_fee` = #{skuAttr.priceFee},
+      </if>
+      <if test="skuAttr.attr_desc != null">
+        `attr_desc` = #{skuAttr.attrDesc},
+      </if>
+      <if test="skuAttr.status != null">
+        `status` = #{skuAttr.status},
+      </if>
+    </set>
+    where sku_attr_id = #{skuAttr.skuAttrId}
+  </update>
+  <delete id="deleteById">
+    delete from sku_attr where sku_attr_id = #{skuAttrId}
+  </delete>
+
+  <update id="changeStatusBySkuId">
+    update sku_attr set `status` = #{status} where sku_id in
+      <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+        #{skuId}
+      </foreach>
+  </update>
+</mapper>
