@@ -69,6 +69,7 @@ public interface AreaService {
 	 * @return 省市区三级结构完整的集合
 	 */
 	List<AreaVO> getAreaListInfo();
+	void updateArea();
 
 	/**
 	 * 获取可用的省市区列表

@@ -80,4 +80,6 @@ public interface AreaMapper {
 	 * @return
 	 */
     List<AreaVO> listAreaOfEnable();
+
+	AreaVO getByPcode(@Param("pcode")String pcode);
 }

@@ -18,7 +18,6 @@ public class test {
     private AreaService areaService;
     @Test
     public  void contextLoads() {
-        List<AreaVO> list = areaService.getAreaListInfo();
-        System.out.println(list.get(0).toString());
+      areaService.updateArea();
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 省市区地区信息
@@ -49,6 +50,26 @@ public class AreaServiceImpl implements AreaService {
             province.setAreaIds(cityAll);
         }
         return areaList;
+    }
+
+    @Override
+    public void updateArea() {
+        List<AreaVO> areaList = areaMapper.list();
+        for (AreaVO a:areaList
+             ) {
+            Area area=new Area();
+            String pcode=a.getPcode();
+            if(Objects.isNull(pcode)||pcode ==""){
+                area.setParentId(0l);
+            }else {
+                AreaVO areaVO=areaMapper.getByPcode(pcode);
+                if(!Objects.isNull(areaVO)){
+                    area.setParentId(areaVO.getAreaId());
+                }
+            }
+            area.setAreaId(a.getAreaId());
+            areaMapper.update(area);
+        }
     }
 
     @Override
