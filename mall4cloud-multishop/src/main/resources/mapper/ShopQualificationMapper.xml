@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.multishop.mapper.ShopQualificationMapper" >
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.multishop.model.ShopQualification" >
+    <id column="shop_qualification_id" property="shopQualificationId" jdbcType="BIGINT" />
+    <result column="name_qualification" property="nameQualification" jdbcType="VARCHAR" />
+    <result column="qualification_url" property="qualificationUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="upadte_time" property="upadteTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    shop_qualification_id, name_qualification, qualification_url, create_time, upadte_time, 
+    `status`, shop_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_qualification
+    where shop_qualification_id = #{shopQualificationId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from shop_qualification
+    where shop_qualification_id = #{shopQualificationId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mall4j.cloud.multishop.model.ShopQualification" >
+    <selectKey resultType="java.lang.Long" keyProperty="shopQualificationId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_qualification (name_qualification, qualification_url, 
+      create_time, upadte_time, `status`, 
+      shop_id)
+    values (#{nameQualification,jdbcType=VARCHAR}, #{qualificationUrl,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{upadteTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{shopId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.multishop.model.ShopQualification" >
+    <selectKey resultType="java.lang.Long" keyProperty="shopQualificationId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_qualification
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="nameQualification != null" >
+        name_qualification,
+      </if>
+      <if test="qualificationUrl != null" >
+        qualification_url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="upadteTime != null" >
+        upadte_time,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="nameQualification != null" >
+        #{nameQualification,jdbcType=VARCHAR},
+      </if>
+      <if test="qualificationUrl != null" >
+        #{qualificationUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="upadteTime != null" >
+        #{upadteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall4j.cloud.multishop.model.ShopQualification" >
+    update shop_qualification
+    <set >
+      <if test="nameQualification != null" >
+        name_qualification = #{nameQualification,jdbcType=VARCHAR},
+      </if>
+      <if test="qualificationUrl != null" >
+        qualification_url = #{qualificationUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="upadteTime != null" >
+        upadte_time = #{upadteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where shop_qualification_id = #{shopQualificationId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall4j.cloud.multishop.model.ShopQualification" >
+    update shop_qualification
+    set name_qualification = #{nameQualification,jdbcType=VARCHAR},
+      qualification_url = #{qualificationUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      upadte_time = #{upadteTime,jdbcType=TIMESTAMP},
+      `status` = #{status,jdbcType=TINYINT},
+      shop_id = #{shopId,jdbcType=BIGINT}
+    where shop_qualification_id = #{shopQualificationId,jdbcType=BIGINT}
+  </update>
+  <select id="findAptitudeByToken" parameterType="com.mall4j.cloud.multishop.vo.ShopQualificationVO" >
+    select
+    shop_qualification_id, name_qualification, qualification_url, create_time, upadte_time,
+    `status`, shop_id
+    from shop_qualification
+    where shop_id = #{tenantId,jdbcType=BIGINT}
+  </select>
+</mapper>

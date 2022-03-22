@@ -27,6 +27,7 @@ import com.mall4j.cloud.common.util.IpHelper;
 import com.mall4j.cloud.common.util.PrincipalUtil;
 import com.mall4j.cloud.multishop.constant.ShopStatus;
 import com.mall4j.cloud.multishop.constant.ShopType;
+import com.mall4j.cloud.multishop.constant.UniversalStatus;
 import com.mall4j.cloud.multishop.dto.AuthDTO;
 import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
 import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
@@ -41,9 +42,10 @@ import com.mall4j.cloud.multishop.service.ShopDetailService;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.service.ShopUserService;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
+import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
+import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import ma.glasnost.orika.MapperFacade;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -108,6 +110,13 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     @CacheEvict(cacheNames = CacheNames.SHOP_DETAIL_ID_KEY, key = "#shopDetail.shopId")
     public void update(ShopDetail shopDetail,UserInfoInTokenBO userInfoInTokenBO) {
         shopDetail.setShopId(userInfoInTokenBO.getTenantId());
+        if (shopDetail.getShopName()!=null){
+           ShopUser shopUser=new ShopUser();
+           shopUser.setShopUserId(userInfoInTokenBO.getUserId());
+           shopUser.setNickName(shopDetail.getShopName());
+           shopUser.setShopId(userInfoInTokenBO.getTenantId());
+           shopUserMapper.update(shopUser);
+        }
         shopDetailMapper.update(shopDetail);
     }
 
@@ -312,18 +321,18 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         ShopDetailDTO shopDetailDTO=new ShopDetailDTO();
         shopDetailDTO.setUsername(authDTO.getUsername());
         shopDetailDTO.setPassword(authDTO.getPassword());
-        shopDetailDTO.setCode(authDTO.getCode());
         shopDetailDTO.setAccountPhone(authDTO.getAccountPhone());
+        shopDetailDTO.setCode(authDTO.getCode());
         //判断用户名账号密码是否为空
-     /*   if (StrUtil.isBlank(shopDetailDTO.getUsername())) {
+        if (StrUtil.isBlank(shopDetailDTO.getUsername())) {
             return ServerResponseEntity.showFailMsg("用户名不能为空");
         }
         if (StrUtil.isBlank(shopDetailDTO.getPassword())) {
             return ServerResponseEntity.showFailMsg("密码不能为空");
         }
-        ServerResponseEntity<AuthAccountVO> serverResponseEntity=accountFeignClient.getByUsernameByName(authDTO.getUsername());
+        ServerResponseEntity<AuthAccountVO> serverResponseEntity=accountFeignClient.getByUsernameByName(shopDetailDTO.getUsername());
         // 用户名
-        if (!PrincipalUtil.isUserName(authDTO.getUsername())) {
+        if (!PrincipalUtil.isUserName(shopDetailDTO.getUsername())) {
             return ServerResponseEntity.showFailMsg("用户名格式不正确");
         }
         if (serverResponseEntity.getData()!=null){
@@ -336,7 +345,7 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         }
         if (!codes.equals(shopDetailDTO.getCode())){
             return ServerResponseEntity.showFailMsg("验证码不正确");
-        }*/
+        }
 
         //加密密码
         String password=passwordEncoder.encode(shopDetailDTO.getPassword());
@@ -344,7 +353,6 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         ShopDetail shopDetail = mapperFacade.map(shopDetailDTO, ShopDetail.class);
         shopDetail.setShopStatus(ShopStatus.OPEN.value());
         shopDetailMapper.save(shopDetail);
-        UserInfoInTokenBO userInfoInTokenBO;
 
         // 保存商家账号
         // 保存到shopUser
@@ -367,6 +375,7 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         authAccountDTO.setAccountPhone(shopDetailDTO.getAccountPhone());
         accountFeignClient.save(authAccountDTO);
         //获取封装token需要的信息
+        UserInfoInTokenBO userInfoInTokenBO;
         userInfoInTokenBO=mapperFacade.map(authAccountDTO, UserInfoInTokenBO.class);
        /* userInfoInTokenBO.setTenantId(shopDetail.getShopId());
         ServerResponseEntity<Void> updateTenantIdRes = accountFeignClient.updateUserInfoByUserIdAndSysType(userInfoInTokenBO, AuthUserContext.get().getUserId(), SysTypeEnum.ORDINARY.value());
@@ -380,10 +389,17 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     public void creatBasicInformation(UserInfoInTokenBO userInfoInTokenBO, BasicInformationDTO basicInformationDTO) {
         ShopDetail shopDetail = mapperFacade.map(basicInformationDTO, ShopDetail.class);
         shopDetail.setShopId(userInfoInTokenBO.getTenantId());
+        if (basicInformationDTO.getAreaId()!=null){
+        int array[]=basicInformationDTO.getAreaId();
+        shopDetail.setProvinceId(array[0]);
+        shopDetail.setCityId(array[1]);
+        shopDetail.setAreaIds(array[2]);
+        }
         shopDetailMapper.update(shopDetail);
         if (shopDetail.getShopName()!=null){
             ShopUser shopUser=new ShopUser();
             shopUser.setShopUserId(userInfoInTokenBO.getUserId());
+            shopUser.setShopId(userInfoInTokenBO.getTenantId());
             shopUser.setNickName(shopDetail.getShopName());
             shopUserMapper.update(shopUser);
         }
@@ -394,7 +410,8 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         for (int i = 0; i <shopQualificationDTOList.size() ; i++) {
             ShopQualification shopQualification=mapperFacade.map(shopQualificationDTOList.get(i), ShopQualification.class);
             shopQualification.setShopId(userInfoInTokenBO.getTenantId());
-            shopQualificationMapper.save(shopQualification);
+            shopQualification.setStatus(UniversalStatus.USE.value());
+            shopQualificationMapper.insertSelective(shopQualification);
         }
     }
 
@@ -426,13 +443,33 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         }
         authAccountDTO.setSysType(SysTypeEnum.MULTISHOP.value());
         authAccountDTO.setUserId(userInfoInTokenBO.getUserId());
+        /*
+        * 将电话号码存进user表
+        * */
+        if (authDTO.getAccountPhone()!=null){
+        ShopUser shopUser=new ShopUser();
+        shopUser.setPhoneNum(authDTO.getAccountPhone());
+        shopUser.setShopUserId(userInfoInTokenBO.getUserId());
+        shopUser.setShopId(userInfoInTokenBO.getTenantId());
+        shopUserMapper.update(shopUser);
+        }
         accountFeignClient.update(authAccountDTO);
         return ServerResponseEntity.success(userInfoInTokenBO);
     }
 
     @Override
     public void deleteAptitude(Long shopQualificationId) {
-        shopQualificationMapper.deleteById(shopQualificationId);
+        shopQualificationMapper.deleteByPrimaryKey(shopQualificationId);
+    }
+
+    @Override
+    public ShopDetaislVO findShopByToken(Long tenantId) {
+        return shopDetailMapper.findShopByToken(tenantId);
+    }
+
+    @Override
+    public ShopQualificationVO findAptitudeByToken(Long tenantId) {
+        return shopQualificationMapper.findAptitudeByToken(tenantId);
     }
 
 }

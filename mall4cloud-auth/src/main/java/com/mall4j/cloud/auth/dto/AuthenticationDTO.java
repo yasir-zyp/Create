@@ -17,7 +17,7 @@ public class AuthenticationDTO {
 	 * 用户名
 	 */
 	@NotBlank(message = "principal不能为空")
-	@ApiModelProperty(value = "用户名", required = true)
+	@ApiModelProperty(value = "用户名",required = true)
 	protected String principal;
 
 	/**

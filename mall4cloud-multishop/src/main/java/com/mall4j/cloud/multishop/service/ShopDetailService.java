@@ -12,6 +12,8 @@ import com.mall4j.cloud.multishop.dto.ShopQualificationDTO;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
+import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
+import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
 
 import java.util.List;
 
@@ -126,16 +128,30 @@ public interface ShopDetailService {
 	 * @return
 	 */
     Boolean checkShopName(String shopName);
-
+	/*
+	 * 创建店铺信息-用户信息
+	 * */
 	ServerResponseEntity<UserInfoInTokenBO> createShops(AuthDTO authDTO);
 
-
+    /*
+    * 创建店铺信息-基本信息
+    * */
 	void creatBasicInformation(UserInfoInTokenBO userInfoInTokenBO, BasicInformationDTO basicInformationDTO);
 
-
+    /*
+    * 添加资质信息
+    * */
 	void creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO);
-
+     /*
+     * 更改店铺信息-用户信息
+     * */
 	ServerResponseEntity<UserInfoInTokenBO> updateShops(AuthDTO authDTO);
-
+    /*
+    *删除资质信息根据id
+    * */
 	void deleteAptitude(Long shopQualificationId);
+
+    ShopDetaislVO findShopByToken(Long tenantId);
+
+	ShopQualificationVO findAptitudeByToken(Long tenantId);
 }

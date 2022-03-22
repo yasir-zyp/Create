@@ -5,6 +5,7 @@ import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
+import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -111,4 +112,5 @@ public interface ShopDetailMapper {
 	 */
 	ShopDetailVO getShoExtensionsByShopId(Long shopId);
 
+    ShopDetaislVO findShopByToken(@Param("tenantId")Long tenantId);
 }

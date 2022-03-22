@@ -15,12 +15,4 @@ public class ShopQualificationVO {
 
     @ApiModelProperty("资质证书图片地址")
     private String qualificationUrl;
-
-
-    @ApiModelProperty("资质状态")
-    private Integer status;
-
-
-    @ApiModelProperty("资质外键")
-    private Integer shopId;
 }

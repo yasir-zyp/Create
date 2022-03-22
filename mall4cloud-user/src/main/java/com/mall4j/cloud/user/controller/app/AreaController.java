@@ -33,7 +33,7 @@ public class AreaController {
         return ServerResponseEntity.success(list);
     }
 
-    @GetMapping("/list_by_pid")
+    @GetMapping("/ua/list_by_pid")
     @ApiOperation(value = "通过父级id获取区域列表", notes = "通过父级id获取区域列表")
     public ServerResponseEntity<List<AreaVO>> listByPid(Long pid) {
         List<AreaVO> list = areaService.listByPid(pid);

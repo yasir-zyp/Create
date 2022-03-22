@@ -2,6 +2,8 @@ package com.mall4j.cloud.auth.service;
 
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
+import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
+import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 
@@ -55,6 +57,14 @@ public interface AuthAccountService {
 	 */
 	AuthAccount getAccountByInputUserName(String username, Integer systemType);
 
-
+    /*
+    * 根据用户手机号查询用户是否存在
+    * @param accountPhone
+    * */
 	AuthAccount findPhone(String accountPhone);
+	/**
+	 * 通过输入的用户手机号及验证码，校验并获取部分用户信息
+	 * @return 用户在token中信息
+	 */
+	ServerResponseEntity<UserInfoInTokenBO> getUserTokenByPhone(PhoneMessageDTO phoneMessageDTO);
 }

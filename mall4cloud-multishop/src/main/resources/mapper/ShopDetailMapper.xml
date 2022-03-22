@@ -22,13 +22,13 @@
     <result column="area" property="area"/>
     <result column="city" property="city"/>
     <result column="province" property="province"/>
-    <result column="area_id" property="areaId"/>
+    <result column="area_ids" property="areaIds"/>
     <result column="city_id" property="cityId"/>
     <result column="province_id" property="provinceId"/>
   </resultMap>
   <sql id="Vo_Column_List">
     `shop_id`,`create_time`,`update_time`,`type`,`shop_name`,`intro`,`shop_logo`,`mobile_background_pic`,`shop_status`,`business_license`,`identity_card_front`,`identity_card_later`,
-     `legal_representative`,`credit_code`,`business_scope`,`landline_phone`,`area`,`city`,`province`,`area_id`,`city_id`,`province_id`
+     `legal_representative`,`credit_code`,`business_scope`,`landline_phone`,`area`,`city`,`province`,`area_ids`,`city_id`,`province_id`
   </sql>
   <select id="list" resultType="com.mall4j.cloud.api.multishop.vo.ShopDetailVO">
     select <include refid="Vo_Column_List"/>
@@ -54,8 +54,8 @@
     where s.shop_id = #{shopId}
   </select>
   <insert id="save" useGeneratedKeys="true" keyProperty="shopDetail.shopId">
-    insert into shop_detail (`type`,`shop_name`,`intro`,`shop_logo`,`mobile_background_pic`,`shop_status`,`business_license`,`identity_card_front`,`identity_card_later`,`legal_representative`,`credit_code`,`business_scope`,`landline_phone`,`area`,`city`,`province`,`area_id`,`city_id`,`province_id`)
-    values (#{shopDetail.type},#{shopDetail.shopName},#{shopDetail.intro},#{shopDetail.shopLogo},#{shopDetail.mobileBackgroundPic},#{shopDetail.shopStatus},#{shopDetail.businessLicense},#{shopDetail.identityCardFront},#{shopDetail.identityCardLater},#{shopDetail.legalRepresentative},#{shopDetail.creditCode},#{shopDetail.businessScope},#{shopDetail.landlinePhone},#{shopDetail.area},#{shopDetail.city},#{shopDetail.province},#{shopDetail.areaId},#{shopDetail.cityId},#{shopDetail.provinceId});
+    insert into shop_detail (`type`,`shop_name`,`intro`,`shop_logo`,`mobile_background_pic`,`shop_status`,`business_license`,`identity_card_front`,`identity_card_later`,`legal_representative`,`credit_code`,`business_scope`,`landline_phone`,`area`,`city`,`province`,`area_ids`,`city_id`,`province_id`)
+    values (#{shopDetail.type},#{shopDetail.shopName},#{shopDetail.intro},#{shopDetail.shopLogo},#{shopDetail.mobileBackgroundPic},#{shopDetail.shopStatus},#{shopDetail.businessLicense},#{shopDetail.identityCardFront},#{shopDetail.identityCardLater},#{shopDetail.legalRepresentative},#{shopDetail.creditCode},#{shopDetail.businessScope},#{shopDetail.landlinePhone},#{shopDetail.area},#{shopDetail.city},#{shopDetail.province},#{shopDetail.areaIds},#{shopDetail.cityId},#{shopDetail.provinceId});
   </insert>
   <update id="update">
     update shop_detail
@@ -108,8 +108,8 @@
       <if test="shopDetail.province != null">
         `province` = #{shopDetail.province},
       </if>
-      <if test="shopDetail.areaId != null">
-        `area_id` = #{shopDetail.areaId},
+      <if test="shopDetail.areaIds != null">
+        `area_ids` = #{shopDetail.areaIds},
       </if>
       <if test="shopDetail.cityId != null">
         `city_id` = #{shopDetail.cityId},
@@ -167,5 +167,11 @@
   <select id="getByShopIds" resultType="com.mall4j.cloud.multishop.model.ShopDetail">
     select  <include refid="Vo_Column_List"/>
     where  shop_id = #{shopId}
+  </select>
+
+  <select id="findShopByToken" resultType="com.mall4j.cloud.multishop.vo.ShopDetaislVO">
+    select shop_id,create_time,update_time,`type`,shop_name,intro,shop_logo,mobile_background_pic,shop_status,business_license,identity_card_front,identity_card_later,
+     legal_representative,credit_code,business_scope,landline_phone,area,city,province,area_ids,city_id,province_id
+    from shop_detail where shop_id = #{tenantId}
   </select>
 </mapper>

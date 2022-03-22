@@ -26,10 +26,12 @@
   <select id="getAuthAccountInVerifyByInputUserName" resultType="com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO">
     select user_id, sys_type,uid,password,is_admin,tenant_id, status from auth_account
     where sys_type = #{sysType} and status != -1
-    <if test="inputUserNameType == 1">
-        and username = #{inputUserName}
+    <if test="inputUserNameType == 1 ">
+        and username = #{inputUserAll}
     </if>
-
+    <if test="inputUserNameType == 2">
+        and account_phone = #{inputUserAll}
+    </if>
   </select>
   <select id="getByUserIdAndType" resultMap="BaseResultMap">
     select uid, username, `password`, create_ip,

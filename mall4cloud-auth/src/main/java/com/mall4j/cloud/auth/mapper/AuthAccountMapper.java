@@ -18,12 +18,12 @@ public interface AuthAccountMapper {
 	 * 根据输入的用户名及用户名类型获取用户信息
 	 *
 	 * @param inputUserNameType 输入的用户名类型 1.username 2.mobile 3.email
-	 * @param inputUserName     输入的用户名
+	 * @param inputUserAll     输入的用户登录类型
 	 * @param sysType           系统类型
 	 * @return 用户在token中信息 + 数据库中的密码
 	 */
 	AuthAccountInVerifyBO getAuthAccountInVerifyByInputUserName(@Param("inputUserNameType") Integer inputUserNameType,
-																@Param("inputUserName") String inputUserName, @Param("sysType") Integer sysType);
+																@Param("inputUserAll") String inputUserAll, @Param("sysType") Integer sysType);
 
 	/**
 	 * 根据用户id 和系统类型获取平台唯一用户
@@ -105,7 +105,9 @@ public interface AuthAccountMapper {
 	 */
 	AuthAccountVO getMerchantInfoByTenantId(@Param("tenantId") Long tenantId);
 
-
+     /*
+     * 根据用户手机号查询是否存在账户
+     * */
 	AuthAccount findPhone(@Param("accountPhone") String accountPhone);
 
 

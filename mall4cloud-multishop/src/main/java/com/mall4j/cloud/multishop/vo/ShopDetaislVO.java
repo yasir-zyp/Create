@@ -1,14 +1,15 @@
-package com.mall4j.cloud.multishop.dto;
+package com.mall4j.cloud.multishop.vo;
 
+import com.mall4j.cloud.common.vo.BaseVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-/*
-* 添加基本信息
-* */
 @Data
-public class BasicInformationDTO {
+public class ShopDetaislVO extends BaseVO {
+
+    @ApiModelProperty("主键")
+    private Long shopId;
 
     @ApiModelProperty("店铺名称")
     private String shopName;
@@ -50,7 +51,17 @@ public class BasicInformationDTO {
     @ApiModelProperty("店铺类型1自营店 2普通店")
     private Integer type;
 
+    /*区ID*/
+    private Integer areaIds;
+
+    /*城市ID*/
+    private Integer cityId;
+
+    /*省ID*/
+    private Integer provinceId;
+
     @ApiModelProperty("省市区id")
     private int areaId[];
 
+    private static final long serialVersionUID = 1L;
 }

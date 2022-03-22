@@ -13,7 +13,4 @@ public class ShopQualificationDTO {
 
     @ApiModelProperty("资质证书图片地址")
     private String qualificationUrl;
-
-    @ApiModelProperty("资质状态1.有效0.无效")
-    private Integer status;
 }

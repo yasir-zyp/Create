@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 //获取注册页面信息
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+
 @Data
 public class AuthDTO {
 

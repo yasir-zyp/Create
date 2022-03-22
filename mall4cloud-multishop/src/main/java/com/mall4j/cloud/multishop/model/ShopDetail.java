@@ -93,7 +93,7 @@ public class ShopDetail extends BaseModel implements Serializable{
 	private String province;
 
 	/*区ID*/
-	private Integer areaId;
+	private Integer areaIds;
 
 	/*城市ID*/
 	private Integer cityId;
@@ -101,4 +101,6 @@ public class ShopDetail extends BaseModel implements Serializable{
 	/*省ID*/
 	private Integer provinceId;
 
+	/*省市区id*/
+    private int areaId[];
 }

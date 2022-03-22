@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 店铺详情DTO
@@ -71,27 +72,12 @@ public class ShopDetailDTO{
 	@ApiModelProperty("联系方式（座机）")
 	private String landlinePhone;
 
-	@ApiModelProperty("区")
-	private String area;
-
-	@ApiModelProperty("城市")
-	private String city;
-
-	@ApiModelProperty("省")
-	private String province;
-
-	@ApiModelProperty("区ID,页面不显示")
-	private Integer areaId;
-
-	@ApiModelProperty("城市ID，页面不显示")
-	private Integer cityId;
-
-	@ApiModelProperty("省ID，页面不显示")
-	private Integer provinceId;
-
     @ApiModelProperty("电话")
     private String accountPhone;
 
     @ApiModelProperty("验证码")
     private String code;
+
+     @ApiModelProperty("资质信息，可添加多个")
+    private List<ShopQualificationDTO> shopQualificationDTOS;
 }

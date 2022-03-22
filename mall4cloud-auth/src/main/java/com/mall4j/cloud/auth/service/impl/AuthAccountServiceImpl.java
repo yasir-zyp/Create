@@ -3,7 +3,10 @@ package com.mall4j.cloud.auth.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.auth.constant.AuthAccountStatusEnum;
+import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
+import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.model.AuthAccount;
+import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.common.security.constant.InputUserNameEnum;
@@ -76,7 +79,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 		if (Objects.equals(authAccountInVerifyBO.getStatus(), AuthAccountStatusEnum.DISABLE.value())) {
 			return ServerResponseEntity.showFailMsg("用户已禁用，请联系客服");
 		}
-
+		String password1=passwordEncoder.encode(password);
 		if (!passwordEncoder.matches(password, authAccountInVerifyBO.getPassword())) {
 			return ServerResponseEntity.showFailMsg("用户名或密码不正确");
 		}
@@ -107,6 +110,39 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 	@Override
 	public AuthAccount findPhone(String accountPhone) {
 		return authAccountMapper.findPhone(accountPhone);
+	}
+
+	@Override
+	public ServerResponseEntity<UserInfoInTokenBO> getUserTokenByPhone(PhoneMessageDTO phoneMessageDTO) {
+		if (StrUtil.isBlank(phoneMessageDTO.getAccountPhone())) {
+			return ServerResponseEntity.showFailMsg("电话号码不能为空");
+		}
+		if (StrUtil.isBlank(phoneMessageDTO.getCode())) {
+			return ServerResponseEntity.showFailMsg("验证码不能为空");
+		}
+		//判断验证码是否输入正确
+		String codes= RedisUtil.getLongValues(phoneMessageDTO.getAccountPhone());
+		if (codes==null){
+			return ServerResponseEntity.showFailMsg("未发送验证码");
+		}
+		if (!codes.equals(phoneMessageDTO.getCode())){
+			return ServerResponseEntity.showFailMsg("验证码不正确");
+		}
+		/*
+		*根据输入的电话号码及用户名类型获取用户信息
+		* */
+		InputUserNameEnum inputUserNameEnum = null;
+		inputUserNameEnum = InputUserNameEnum.PHONE;
+		Integer sysType=1;
+		AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper
+				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(),phoneMessageDTO.getAccountPhone(),sysType);
+		if (authAccountInVerifyBO == null) {
+			return ServerResponseEntity.showFailMsg("该用户不存在");
+		}
+		if (Objects.equals(authAccountInVerifyBO.getStatus(), AuthAccountStatusEnum.DISABLE.value())) {
+			return ServerResponseEntity.showFailMsg("用户已禁用，请联系客服");
+		}
+		return ServerResponseEntity.success(mapperFacade.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
 	}
 
 

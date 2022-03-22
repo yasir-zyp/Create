@@ -7,6 +7,7 @@ import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.rbac.dto.ClearUserPermissionsCacheDTO;
 import com.mall4j.cloud.api.rbac.feign.PermissionFeignClient;
 import com.mall4j.cloud.auth.dto.AuthenticationDTO;
+import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
 import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.manager.TokenStore;
 import com.mall4j.cloud.auth.model.AuthAccount;
@@ -87,6 +88,30 @@ public class LoginController {
 		// 保存token，返回token数据给前端，这里是最重要的
 		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
 	}
+	@PostMapping("/ua/login_phone")
+	@ApiOperation(value = "手机号登录", notes = "通过手机号验证码的形式直接登录")
+	public ServerResponseEntity<TokenInfoVO> loginPhone(@Valid @RequestBody PhoneMessageDTO phoneMessageDTO) {
+		ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse = authAccountService.getUserTokenByPhone(phoneMessageDTO);
+		if (!userInfoInTokenResponse.isSuccess()) {
+			return ServerResponseEntity.transform(userInfoInTokenResponse);
+		}
+
+		UserInfoInTokenBO data = userInfoInTokenResponse.getData();
+
+		ClearUserPermissionsCacheDTO clearUserPermissionsCacheDTO = new ClearUserPermissionsCacheDTO();
+		clearUserPermissionsCacheDTO.setSysType(data.getSysType());
+		clearUserPermissionsCacheDTO.setUserId(data.getUserId());
+		// 将以前的权限清理了,以免权限有缓存
+		ServerResponseEntity<Void> clearResponseEntity = permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
+
+		if (!clearResponseEntity.isSuccess()) {
+			return ServerResponseEntity.fail(ResponseEnum.UNAUTHORIZED);
+		}
+
+		// 保存token，返回token数据给前端，这里是最重要的
+		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
+	}
+
 	@PostMapping("/login_out")
 	@ApiOperation(value = "退出登陆", notes = "点击退出登陆，清除token，清除菜单缓存")
 	public ServerResponseEntity<TokenInfoVO> loginOut() {
@@ -115,6 +140,21 @@ public class LoginController {
 		if (authAccount!=null){
 			return ServerResponseEntity.showFailMsg("手机号已存在");
 		}
+		RedisUtil.set(smsMessageDTO.getAccountPhone(),a,1200);
+		sendMessageService.login(smsMessageDTO.getAccountPhone(), code);
+		Map<String,Object> map=new HashMap<>();
+		map.put("msg","验证码已发送");
+		return ServerResponseEntity.success(map);
+	}
+	@PostMapping("/ua/Code_phone_login")
+	@ApiOperation(value = "用户手机登录发送短信", notes = "发送短信")
+	public ServerResponseEntity<Object> CodePhoneLogin(@RequestBody SmsMessageDTO smsMessageDTO) throws Exception {
+		//生成四位码
+		int a;
+		// a=(int)(Math.random()*899999+100000);//六位验证码
+		a = (int) ((Math.random() * 9 + 1) * 1000);// 4位验证码
+
+		String code = String.valueOf(a);
 		RedisUtil.set(smsMessageDTO.getAccountPhone(),a,1200);
 		sendMessageService.login(smsMessageDTO.getAccountPhone(), code);
 		Map<String,Object> map=new HashMap<>();
