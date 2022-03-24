@@ -51,5 +51,10 @@
             <property name="useActualColumnNames" value="false" />
             <generatedKey column="shop_qualification_id" sqlStatement="Mysql" identity="true" />
         </table>-->
+   <!--     <table tableName="shop_addr" domainObjectName="ShopAddr" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="shop_addr_id" sqlStatement="Mysql" identity="true" />
+        </table>-->
         </context>
         </generatorConfiguration>

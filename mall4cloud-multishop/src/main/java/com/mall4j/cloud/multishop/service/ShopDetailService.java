@@ -5,12 +5,10 @@ import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
-import com.mall4j.cloud.multishop.dto.AuthDTO;
-import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
-import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
-import com.mall4j.cloud.multishop.dto.ShopQualificationDTO;
+import com.mall4j.cloud.multishop.dto.*;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
+import com.mall4j.cloud.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
 import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
 import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
@@ -141,7 +139,7 @@ public interface ShopDetailService {
     /*
     * 添加资质信息
     * */
-	void creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO);
+	List<ShopQualificationVO> creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO);
      /*
      * 更改店铺信息-用户信息
      * */
@@ -150,8 +148,24 @@ public interface ShopDetailService {
     *删除资质信息根据id
     * */
 	void deleteAptitude(Long shopQualificationId);
-
+	/*
+	 * 根据用户token查询基本信息
+	 * */
     ShopDetaislVO findShopByToken(Long tenantId);
+	/*
+	 * 根据用户token查询基本信息
+	 * */
+	List<ShopQualificationVO> findAptitudeByToken(Long tenantId);
+    /*
+    * 根据用户token添加机构地址信息
+    * */
+    void creatBusinessAddress(ShopAddrDTO shopAddrDTO);
 
-	ShopQualificationVO findAptitudeByToken(Long tenantId);
+	List<ShopAddrVO> findBusinessAddress();
+
+	void delBusinessAddress(Long shopAddrId);
+
+	void upBusinessAddress(ShopAddrDTO shopAddrDTO);
+
+	ShopAddrVO echoBusinessAddress(Long shopAddrId);
 }

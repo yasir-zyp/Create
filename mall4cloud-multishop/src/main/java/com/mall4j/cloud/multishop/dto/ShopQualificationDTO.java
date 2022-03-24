@@ -7,6 +7,8 @@ import lombok.Data;
 * */
 @Data
 public class ShopQualificationDTO {
+    @ApiModelProperty("主键")
+    private  Long shopQualificationId;
 
     @ApiModelProperty("资质证书名称")
     private String nameQualification;

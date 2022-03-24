@@ -2,11 +2,11 @@ package com.mall4j.cloud.multishop.constant;
 
 public enum UniversalStatus {
     /**
-     * 使用
+     * 使用,设为默认地址
      */
     USE(1),
     /**
-     * 未使用
+     * 未使用,不设为默认地址
      */
     UNUSED(0)
     ;

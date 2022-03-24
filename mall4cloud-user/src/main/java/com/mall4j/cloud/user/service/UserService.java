@@ -57,4 +57,6 @@ public interface UserService {
 	 * @return uid
 	 */
     Long save(UserRegisterDTO param);
+
+    String findNameById(Long id);
 }

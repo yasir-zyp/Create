@@ -82,4 +82,6 @@ public interface AreaMapper {
     List<AreaVO> listAreaOfEnable();
 
 	AreaVO getByPcode(@Param("pcode")String pcode);
+
+    String findNameById(@Param("id")Long id);
 }

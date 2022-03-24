@@ -70,6 +70,11 @@
         </dependency>
         <dependency>
             <groupId>com.mall4j.cloud</groupId>
+            <artifactId>mall4cloud-api-user</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mall4j.cloud</groupId>
             <artifactId>mall4cloud-api-product</artifactId>
             <version>${project.version}</version>
         </dependency>

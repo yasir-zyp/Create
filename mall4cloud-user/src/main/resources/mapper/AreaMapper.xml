@@ -100,4 +100,7 @@
         ) tal
        JOIN `area` a  ON tal.cid = a.parent_id
   </select>
+  <select id="findNameById" resultType="java.lang.String">
+    SELECT `area_name` FROM `area` WHERE area_id = #{id}
+  </select>
 </mapper>

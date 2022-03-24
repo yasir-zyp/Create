@@ -4,6 +4,7 @@ import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.auth.vo.TokenInfoVO;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
+import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.Constant;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
@@ -85,6 +86,8 @@ public class ShopDetailController {
         }
         UserInfoInTokenBO userInfoInTokenBO = userInfoInTokenResponse.getData();
         ServerResponseEntity<TokenInfoVO> TokenInfoVO=accountFeignClient.storeTokenAndGetVo(userInfoInTokenBO);
+        /*清除缓存*/
+        RedisUtil.del(authDTO.getAccountPhone());
         Map<String,Object> map=new HashMap<>();
         map.put("msg","注册成功");
         map.put("token",TokenInfoVO.getData());
@@ -111,10 +114,10 @@ public class ShopDetailController {
     @ApiOperation(value = "添加资质信息", notes = "添加资质信息")
     public ServerResponseEntity<Object> createShopAptitude(@RequestBody List<ShopQualificationDTO> shopQualificationDTOList) {
         UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
-        shopDetailService.creatShopQualification(shopQualificationDTOList,userInfoInTokenBO);
+        List<ShopQualificationVO> shopQualificationVOList=shopDetailService.creatShopQualification(shopQualificationDTOList,userInfoInTokenBO);
         Map<String,Object> map=new HashMap<>();
         map.put("msg","添加成功");
-        map.put("shopQualificationDTOList",shopQualificationDTOList);
+        map.put("shopQualificationVO",shopQualificationVOList);
         return ServerResponseEntity.success(map);
     }
     /*
@@ -141,7 +144,7 @@ public class ShopDetailController {
     @ApiOperation(value = "查询资质信息", notes = "查询资质信息")
     public ServerResponseEntity<Object> findAptitude() {
         UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
-        ShopQualificationVO shopQualificationVO=shopDetailService.findAptitudeByToken(userInfoInTokenBO.getTenantId());
+        List<ShopQualificationVO> shopQualificationVO=shopDetailService.findAptitudeByToken(userInfoInTokenBO.getTenantId());
         Map<String,Object> map=new HashMap<>();
         map.put("msg","查询成功");
         map.put("shopQualificationVO",shopQualificationVO);
@@ -152,7 +155,7 @@ public class ShopDetailController {
      * */
     @DeleteMapping("/delete_aptitude")
     @ApiOperation(value = "删除资质信息", notes = "根据资质id删除资质信息")
-    public ServerResponseEntity<Object> DeleteAptitude(@RequestBody Long shopQualificationId) {
+    public ServerResponseEntity<Object> DeleteAptitude(@RequestParam Long shopQualificationId) {
         shopDetailService.deleteAptitude(shopQualificationId);
         Map<String,Object> map=new HashMap<>();
         map.put("msg","删除成功");
@@ -169,13 +172,10 @@ public class ShopDetailController {
         map.put("basicInformationDTO",basicInformationDTO);
         return ServerResponseEntity.success(map);
     }*/
-
-
-
-  /*
-   * 修改注册店铺第一阶段的信息
-   * */
-   /*@PostMapping("/create_shops_repeat")
+    /*
+     * 修改注册店铺第一阶段的信息
+     * */
+    /*@PostMapping("/create_shops_repeat")
    @ApiOperation(value = "更新店铺,一、用户信息", notes = "修改注册信息第一阶段")
    public ServerResponseEntity<Object> updateShops(@RequestBody AuthDTO authDTO) {
        ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse=shopDetailService.updateShops(authDTO);

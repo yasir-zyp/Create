@@ -2,6 +2,7 @@ package com.mall4j.cloud.user.service;
 
 import com.mall4j.cloud.api.user.vo.AreaVO;
 import com.mall4j.cloud.user.model.Area;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -76,4 +77,5 @@ public interface AreaService {
 	 * @return
 	 */
     List<AreaVO> listAreaOfEnable();
+
 }

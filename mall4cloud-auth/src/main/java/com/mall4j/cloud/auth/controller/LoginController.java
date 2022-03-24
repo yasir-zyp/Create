@@ -103,11 +103,11 @@ public class LoginController {
 		clearUserPermissionsCacheDTO.setUserId(data.getUserId());
 		// 将以前的权限清理了,以免权限有缓存
 		ServerResponseEntity<Void> clearResponseEntity = permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
-
 		if (!clearResponseEntity.isSuccess()) {
 			return ServerResponseEntity.fail(ResponseEnum.UNAUTHORIZED);
 		}
-
+		/*清除缓存*/
+		RedisUtil.del(phoneMessageDTO.getAccountPhone());
 		// 保存token，返回token数据给前端，这里是最重要的
 		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
 	}

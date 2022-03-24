@@ -16,6 +16,7 @@ import com.mall4j.cloud.common.response.ResponseEnum;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.util.IpHelper;
 import com.mall4j.cloud.user.dto.UserRegisterDTO;
+import com.mall4j.cloud.user.mapper.AreaMapper;
 import com.mall4j.cloud.user.model.User;
 import com.mall4j.cloud.user.mapper.UserMapper;
 import com.mall4j.cloud.user.service.UserService;
@@ -49,7 +50,8 @@ public class UserServiceImpl implements UserService {
     private MapperFacade mapperFacade;
     @Autowired
     private SegmentFeignClient segmentFeignClient;
-
+    @Autowired
+    private AreaMapper areaMapper;
     @Override
     public PageVO<UserApiVO> page(PageDTO pageDTO) {
         return PageUtil.doPage(pageDTO, () -> userMapper.list());
@@ -119,6 +121,11 @@ public class UserServiceImpl implements UserService {
         userMapper.save(user);
 
         return serverResponse.getData();
+    }
+
+    @Override
+    public String findNameById(Long id) {
+        return areaMapper.findNameById(id);
     }
 
     private void checkRegisterInfo(UserRegisterDTO userRegisterDTO) {

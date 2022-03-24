@@ -1,5 +1,6 @@
 package com.mall4j.cloud.user.controller.multishop;
 
+import com.mall4j.cloud.api.user.feign.UserFeignClient;
 import com.mall4j.cloud.api.user.vo.UserApiVO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.user.model.User;

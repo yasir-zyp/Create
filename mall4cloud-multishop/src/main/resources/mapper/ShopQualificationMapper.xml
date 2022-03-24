@@ -115,7 +115,7 @@
       shop_id = #{shopId,jdbcType=BIGINT}
     where shop_qualification_id = #{shopQualificationId,jdbcType=BIGINT}
   </update>
-  <select id="findAptitudeByToken" parameterType="com.mall4j.cloud.multishop.vo.ShopQualificationVO" >
+  <select id="findAptitudeByToken"  resultType="com.mall4j.cloud.multishop.vo.ShopQualificationVO" >
     select
     shop_qualification_id, name_qualification, qualification_url, create_time, upadte_time,
     `status`, shop_id

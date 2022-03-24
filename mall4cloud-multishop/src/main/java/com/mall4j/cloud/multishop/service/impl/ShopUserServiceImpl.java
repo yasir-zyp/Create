@@ -11,6 +11,7 @@ import com.mall4j.cloud.common.database.util.PageUtil;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
+import com.mall4j.cloud.multishop.dto.ShopAddrDTO;
 import com.mall4j.cloud.multishop.mapper.ShopUserMapper;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.multishop.model.ShopUser;
@@ -91,7 +92,4 @@ public class ShopUserServiceImpl implements ShopUserService {
     public Long getUserIdByShopId(Long shopId) {
         return shopUserMapper.getUserIdByShopId(shopId);
     }
-
-
-
 }

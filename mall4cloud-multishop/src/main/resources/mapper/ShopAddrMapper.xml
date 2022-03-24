@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.multishop.mapper.ShopAddrMapper" >
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.multishop.model.ShopAddr" >
+    <id column="shop_addr_id" property="shopAddrId" jdbcType="BIGINT" />
+    <result column="the_addr" property="theAddr" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="area_ids" property="areaIds" jdbcType="BIGINT" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="BIGINT" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="province_id" property="provinceId" jdbcType="BIGINT" />
+    <result column="consignee" property="consignee" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_default" property="isDefault" jdbcType="TINYINT" />
+    <result column="the_lat" property="theLat" jdbcType="DECIMAL" />
+    <result column="the_lng" property="theLng" jdbcType="DECIMAL" />
+    <result column="mobile_phone" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="post_code" property="postCode" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    shop_addr_id, the_addr, area_name, area_ids, city_name, city_id, province_name, province_id, 
+    consignee, create_time, is_default, the_lat, the_lng, mobile_phone, post_code, update_time, 
+    shop_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_addr
+    where shop_addr_id = #{shopAddrId,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPrimaryKeys" resultType="com.mall4j.cloud.multishop.vo.ShopAddrVO">
+    select  shop_addr_id, the_addr, area_name, area_ids, city_name, city_id, province_name, province_id,
+    consignee, create_time, is_default, the_lat, the_lng, mobile_phone, post_code, update_time,
+    shop_id
+    from shop_addr
+    where shop_addr_id = #{shopAddrId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from shop_addr
+    where shop_addr_id = #{shopAddrId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mall4j.cloud.multishop.model.ShopAddr" >
+    <selectKey resultType="java.lang.Long" keyProperty="shopAddrId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_addr (the_addr, area_name, area_ids, 
+      city_name, city_id, province_name, 
+      province_id, consignee, create_time, 
+      is_default, the_lat, the_lng, 
+      mobile_phone, post_code, update_time, 
+      shop_id)
+    values (#{theAddr,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{areaIds,jdbcType=BIGINT}, 
+      #{cityName,jdbcType=VARCHAR}, #{cityId,jdbcType=BIGINT}, #{provinceName,jdbcType=VARCHAR}, 
+      #{provinceId,jdbcType=BIGINT}, #{consignee,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{isDefault,jdbcType=TINYINT}, #{theLat,jdbcType=DECIMAL}, #{theLng,jdbcType=DECIMAL}, 
+      #{mobilePhone,jdbcType=VARCHAR}, #{postCode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{shopId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.multishop.model.ShopAddr" >
+    <selectKey resultType="java.lang.Long" keyProperty="shopAddrId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_addr
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="theAddr != null" >
+        the_addr,
+      </if>
+      <if test="areaName != null" >
+        area_name,
+      </if>
+      <if test="areaIds != null" >
+        area_ids,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="provinceName != null" >
+        province_name,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="consignee != null" >
+        consignee,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="isDefault != null" >
+        is_default,
+      </if>
+      <if test="theLat != null" >
+        the_lat,
+      </if>
+      <if test="theLng != null" >
+        the_lng,
+      </if>
+      <if test="mobilePhone != null" >
+        mobile_phone,
+      </if>
+      <if test="postCode != null" >
+        post_code,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="theAddr != null" >
+        #{theAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaIds != null" >
+        #{areaIds,jdbcType=BIGINT},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=BIGINT},
+      </if>
+      <if test="provinceName != null" >
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=BIGINT},
+      </if>
+      <if test="consignee != null" >
+        #{consignee,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDefault != null" >
+        #{isDefault,jdbcType=TINYINT},
+      </if>
+      <if test="theLat != null" >
+        #{theLat,jdbcType=DECIMAL},
+      </if>
+      <if test="theLng != null" >
+        #{theLng,jdbcType=DECIMAL},
+      </if>
+      <if test="mobilePhone != null" >
+        #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="postCode != null" >
+        #{postCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall4j.cloud.multishop.model.ShopAddr" >
+    update shop_addr
+    <set >
+      <if test="theAddr != null" >
+        the_addr = #{theAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        area_name = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaIds != null" >
+        area_ids = #{areaIds,jdbcType=BIGINT},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=BIGINT},
+      </if>
+      <if test="provinceName != null" >
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=BIGINT},
+      </if>
+      <if test="consignee != null" >
+        consignee = #{consignee,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDefault != null" >
+        is_default = #{isDefault,jdbcType=TINYINT},
+      </if>
+      <if test="theLat != null" >
+        the_lat = #{theLat,jdbcType=DECIMAL},
+      </if>
+      <if test="theLng != null" >
+        the_lng = #{theLng,jdbcType=DECIMAL},
+      </if>
+      <if test="mobilePhone != null" >
+        mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="postCode != null" >
+        post_code = #{postCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where shop_addr_id = #{shopAddrId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall4j.cloud.multishop.model.ShopAddr" >
+    update shop_addr
+    set the_addr = #{theAddr,jdbcType=VARCHAR},
+      area_name = #{areaName,jdbcType=VARCHAR},
+      area_ids = #{areaIds,jdbcType=BIGINT},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      city_id = #{cityId,jdbcType=BIGINT},
+      province_name = #{provinceName,jdbcType=VARCHAR},
+      province_id = #{provinceId,jdbcType=BIGINT},
+      consignee = #{consignee,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_default = #{isDefault,jdbcType=TINYINT},
+      the_lat = #{theLat,jdbcType=DECIMAL},
+      the_lng = #{theLng,jdbcType=DECIMAL},
+      mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+      post_code = #{postCode,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      shop_id = #{shopId,jdbcType=BIGINT}
+    where shop_addr_id = #{shopAddrId,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateIsDefault">
+        update shop_addr
+        set is_default = 0
+        where shop_id = #{shopId} and is_default = 1
+  </update>
+
+  <select id="findBusinessAddress" resultType="com.mall4j.cloud.multishop.vo.ShopAddrVO">
+    select  shop_addr_id, the_addr, area_name, area_ids, city_name, city_id, province_name, province_id,
+    consignee, create_time, is_default, the_lat, the_lng, mobile_phone, post_code, update_time,
+    shop_id
+    from shop_addr where shop_id = #{tenantId}
+  </select>
+</mapper>

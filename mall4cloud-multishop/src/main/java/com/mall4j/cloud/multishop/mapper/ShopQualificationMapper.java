@@ -1,9 +1,12 @@
 package com.mall4j.cloud.multishop.mapper;
 
+import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.multishop.model.ShopQualification;
 import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ShopQualificationMapper {
@@ -24,5 +27,5 @@ public interface ShopQualificationMapper {
 
     int updateByPrimaryKey(ShopQualification record);
 
-    ShopQualificationVO findAptitudeByToken(@Param("tenantId") Long tenantId);
+    List<ShopQualificationVO> findAptitudeByToken(@Param("tenantId") Long tenantId);
 }

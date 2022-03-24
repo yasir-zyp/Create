@@ -3,6 +3,7 @@ package com.mall4j.cloud.multishop.service;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
+import com.mall4j.cloud.multishop.dto.ShopAddrDTO;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.multishop.model.ShopUser;
 import com.mall4j.cloud.multishop.vo.ShopUserVO;

@@ -10,6 +10,8 @@ import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.auth.vo.AuthAccountVO;
 import com.mall4j.cloud.api.feign.SearchSpuFeignClient;
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
+import com.mall4j.cloud.api.rbac.feign.UserRoleFeignClient;
+import com.mall4j.cloud.api.user.feign.UserFeignClient;
 import com.mall4j.cloud.api.vo.search.SpuSearchVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
@@ -28,19 +30,19 @@ import com.mall4j.cloud.common.util.PrincipalUtil;
 import com.mall4j.cloud.multishop.constant.ShopStatus;
 import com.mall4j.cloud.multishop.constant.ShopType;
 import com.mall4j.cloud.multishop.constant.UniversalStatus;
-import com.mall4j.cloud.multishop.dto.AuthDTO;
-import com.mall4j.cloud.multishop.dto.BasicInformationDTO;
-import com.mall4j.cloud.multishop.dto.ShopDetailDTO;
-import com.mall4j.cloud.multishop.dto.ShopQualificationDTO;
+import com.mall4j.cloud.multishop.dto.*;
+import com.mall4j.cloud.multishop.mapper.ShopAddrMapper;
 import com.mall4j.cloud.multishop.mapper.ShopDetailMapper;
 import com.mall4j.cloud.multishop.mapper.ShopQualificationMapper;
 import com.mall4j.cloud.multishop.mapper.ShopUserMapper;
+import com.mall4j.cloud.multishop.model.ShopAddr;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.multishop.model.ShopQualification;
 import com.mall4j.cloud.multishop.model.ShopUser;
 import com.mall4j.cloud.multishop.service.ShopDetailService;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.service.ShopUserService;
+import com.mall4j.cloud.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
 import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
 import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
@@ -81,6 +83,10 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     private ShopUserMapper shopUserMapper;
     @Autowired
     private ShopQualificationMapper shopQualificationMapper;
+    @Autowired
+    private ShopAddrMapper shopAddrMapper;
+    @Autowired
+    private UserFeignClient userFeignClient;
     @Override
     public PageVO<ShopDetailVO> page(PageDTO pageDTO, ShopDetailDTO shopDetailDTO) {
         return PageUtil.doPage(pageDTO, () -> shopDetailMapper.list(shopDetailDTO));
@@ -406,13 +412,20 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     }
 
     @Override
-    public void creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO) {
+    public List<ShopQualificationVO> creatShopQualification(List<ShopQualificationDTO> shopQualificationDTOList, UserInfoInTokenBO userInfoInTokenBO) {
         for (int i = 0; i <shopQualificationDTOList.size() ; i++) {
+            if (shopQualificationDTOList.get(i).getShopQualificationId()==null){
             ShopQualification shopQualification=mapperFacade.map(shopQualificationDTOList.get(i), ShopQualification.class);
             shopQualification.setShopId(userInfoInTokenBO.getTenantId());
             shopQualification.setStatus(UniversalStatus.USE.value());
             shopQualificationMapper.insertSelective(shopQualification);
+            }
+           else {
+                ShopQualification shopQualification = mapperFacade.map(shopQualificationDTOList.get(i), ShopQualification.class);
+                shopQualificationMapper.updateByPrimaryKeySelective(shopQualification);
+            }
         }
+        return shopQualificationMapper.findAptitudeByToken(userInfoInTokenBO.getTenantId());
     }
 
     @Override
@@ -468,8 +481,83 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     }
 
     @Override
-    public ShopQualificationVO findAptitudeByToken(Long tenantId) {
+    public List<ShopQualificationVO> findAptitudeByToken(Long tenantId) {
         return shopQualificationMapper.findAptitudeByToken(tenantId);
+    }
+
+    @Override
+    public void creatBusinessAddress(ShopAddrDTO shopAddrDTO) {
+        Long id=null;
+        //获取token
+        UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
+        ShopAddr shopAddr=mapperFacade.map(shopAddrDTO, ShopAddr.class);
+        //拆分省市区
+        int array[]=shopAddrDTO.getAreaId();
+        if (shopAddrDTO.getAreaId()!=null){
+            shopAddr.setProvinceId((long) array[0]);
+            shopAddr.setCityId((long) array[1]);
+            shopAddr.setAreaIds((long) array[2]);
+        }
+        shopAddr.setShopId(userInfoInTokenBO.getTenantId());
+        //通过id查询省市区名称
+        id=shopAddr.getProvinceId();
+        String provinceName=userFeignClient.findNameById(id);
+        shopAddr.setProvinceName(provinceName);
+        id=shopAddr.getCityId();
+        String cityName=userFeignClient.findNameById(id);
+        shopAddr.setCityName(cityName);
+        id=shopAddr.getAreaIds();
+        String areaName=userFeignClient.findNameById(id);
+        shopAddr.setAreaName(areaName);
+        /*清除默认地址*/
+        if (shopAddr.getIsDefault().equals(UniversalStatus.USE.value())) {
+            shopAddrMapper.updateIsDefault(shopAddr.getShopId());
+        }
+        shopAddrMapper.insertSelective(shopAddr);
+    }
+
+    @Override
+    public List<ShopAddrVO> findBusinessAddress() {
+        UserInfoInTokenBO userInfoInTokenBO=AuthUserContext.get();
+        List<ShopAddrVO> shopAddrVOList=shopAddrMapper.findBusinessAddress(userInfoInTokenBO.getTenantId());
+        for (int i = 0; i <shopAddrVOList.size() ; i++) {
+            Integer provinceId= Math.toIntExact(shopAddrVOList.get(i).getProvinceId());
+            Integer cityId= Math.toIntExact(shopAddrVOList.get(i).getCityId());
+            Integer areaId= Math.toIntExact(shopAddrVOList.get(i).getAreaIds());
+            int array[] ={provinceId,cityId,areaId};
+            shopAddrVOList.get(i).setAreaId(array);
+        }
+        return shopAddrVOList;
+    }
+
+    @Override
+    public void delBusinessAddress(Long shopAddrId) {
+        shopAddrMapper.deleteByPrimaryKey(shopAddrId);
+    }
+
+    @Override
+    public void upBusinessAddress(ShopAddrDTO shopAddrDTO) {
+        ShopAddr shopAddr=mapperFacade.map(shopAddrDTO, ShopAddr.class);
+        int array[]=shopAddrDTO.getAreaId();
+        shopAddr.setProvinceId((long) array[0]);
+        shopAddr.setCityId((long) array[1]);
+        shopAddr.setAreaIds((long) array[2]);
+        /*清除默认地址*/
+        if (shopAddr.getIsDefault().equals(UniversalStatus.USE.value())) {
+            shopAddrMapper.updateIsDefault(shopAddr.getShopId());
+        }
+        shopAddrMapper.updateByPrimaryKeySelective(shopAddr);
+    }
+
+    @Override
+    public ShopAddrVO echoBusinessAddress(Long shopAddrId) {
+        ShopAddrVO shopAddrVO=shopAddrMapper.selectByPrimaryKeys(shopAddrId);
+        Integer provinceId= Math.toIntExact(shopAddrVO.getProvinceId());
+        Integer cityId= Math.toIntExact(shopAddrVO.getCityId());
+        Integer areaId= Math.toIntExact(shopAddrVO.getAreaIds());
+        int array[] ={provinceId,cityId,areaId};
+        shopAddrVO.setAreaId(array);
+        return shopAddrVO;
     }
 
 }

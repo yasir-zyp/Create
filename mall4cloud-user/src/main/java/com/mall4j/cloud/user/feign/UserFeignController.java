@@ -2,9 +2,11 @@ package com.mall4j.cloud.user.feign;
 
 import com.mall4j.cloud.api.user.feign.UserFeignClient;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.user.service.AreaService;
 import com.mall4j.cloud.user.service.UserService;
 import com.mall4j.cloud.api.user.vo.UserApiVO;
 import ma.glasnost.orika.MapperFacade;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +36,12 @@ public class UserFeignController implements UserFeignClient {
         UserApiVO user = userService.getByUserId(userId);
         return ServerResponseEntity.success(user);
     }
+
+    @Override
+    public String findNameById(Long id) {
+        return userService.findNameById(id);
+    }
+
 
     @Override
     public ServerResponseEntity<UserApiVO> getUserAndOpenIdsByUserId(Long userId) {
