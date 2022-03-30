@@ -31,8 +31,8 @@ public class SwaggerConfiguration {
 
 	@Bean
 	public ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("mall4cloud商城接口文档").description("mall4cloud商城接口文档Swagger版").termsOfServiceUrl("")
-				.contact(new Contact("广州市蓝海创新科技有限公司", "", "")).version("1.0").build();
+		return new ApiInfoBuilder().title("质量基础设施一站式服务平台接口文档").description("质量基础设施一站式服务平台接口文档Swagger版").termsOfServiceUrl("")
+				.contact(new Contact("安徽质量云科技有限公司", "", "")).version("1.0").build();
 	}
 
 }
