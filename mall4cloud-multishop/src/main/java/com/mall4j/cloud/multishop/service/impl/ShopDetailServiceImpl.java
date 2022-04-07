@@ -3,6 +3,7 @@ package com.mall4j.cloud.multishop.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.ISelect;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.constant.SysTypeEnum;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
@@ -10,6 +11,7 @@ import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.auth.vo.AuthAccountVO;
 import com.mall4j.cloud.api.feign.SearchSpuFeignClient;
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
+import com.mall4j.cloud.api.product.vo.SpuVO;
 import com.mall4j.cloud.api.rbac.feign.UserRoleFeignClient;
 import com.mall4j.cloud.api.user.feign.UserFeignClient;
 import com.mall4j.cloud.api.vo.search.SpuSearchVO;
@@ -31,21 +33,13 @@ import com.mall4j.cloud.multishop.constant.ShopStatus;
 import com.mall4j.cloud.multishop.constant.ShopType;
 import com.mall4j.cloud.multishop.constant.UniversalStatus;
 import com.mall4j.cloud.multishop.dto.*;
-import com.mall4j.cloud.multishop.mapper.ShopAddrMapper;
-import com.mall4j.cloud.multishop.mapper.ShopDetailMapper;
-import com.mall4j.cloud.multishop.mapper.ShopQualificationMapper;
-import com.mall4j.cloud.multishop.mapper.ShopUserMapper;
-import com.mall4j.cloud.multishop.model.ShopAddr;
-import com.mall4j.cloud.multishop.model.ShopDetail;
-import com.mall4j.cloud.multishop.model.ShopQualification;
-import com.mall4j.cloud.multishop.model.ShopUser;
+import com.mall4j.cloud.multishop.mapper.*;
+import com.mall4j.cloud.multishop.model.*;
+import com.mall4j.cloud.multishop.service.ShopAddrService;
 import com.mall4j.cloud.multishop.service.ShopDetailService;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.multishop.service.ShopUserService;
-import com.mall4j.cloud.multishop.vo.ShopAddrVO;
-import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
-import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
-import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
+import com.mall4j.cloud.multishop.vo.*;
 import io.seata.spring.annotation.GlobalTransactional;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.cache.annotation.CacheEvict;
@@ -84,9 +78,13 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     @Autowired
     private ShopQualificationMapper shopQualificationMapper;
     @Autowired
+    private ShopAddrService shopAddrService;
+    @Autowired
     private ShopAddrMapper shopAddrMapper;
     @Autowired
     private UserFeignClient userFeignClient;
+    @Autowired
+    private GatheringInfoMapper gatheringInfoMapper;
     @Override
     public PageVO<ShopDetailVO> page(PageDTO pageDTO, ShopDetailDTO shopDetailDTO) {
         return PageUtil.doPage(pageDTO, () -> shopDetailMapper.list(shopDetailDTO));
@@ -353,8 +351,7 @@ public class ShopDetailServiceImpl implements ShopDetailService {
             return ServerResponseEntity.showFailMsg("验证码不正确");
         }
 
-        //加密密码
-        String password=passwordEncoder.encode(shopDetailDTO.getPassword());
+
         // 保存店铺
         ShopDetail shopDetail = mapperFacade.map(shopDetailDTO, ShopDetail.class);
         shopDetail.setShopStatus(ShopStatus.OPEN.value());
@@ -372,7 +369,7 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         AuthAccountDTO authAccountDTO = new AuthAccountDTO();
         authAccountDTO.setTenantId(shopDetail.getShopId());
         authAccountDTO.setUsername(shopDetailDTO.getUsername());
-        authAccountDTO.setPassword(password);
+        authAccountDTO.setPassword(shopDetailDTO.getPassword());
         authAccountDTO.setCreateIp(IpHelper.getIpAddr());
         authAccountDTO.setStatus(StatusEnum.ENABLE.value());
         authAccountDTO.setSysType(SysTypeEnum.MULTISHOP.value());
@@ -517,17 +514,10 @@ public class ShopDetailServiceImpl implements ShopDetailService {
     }
 
     @Override
-    public List<ShopAddrVO> findBusinessAddress() {
+    public PageVO<ShopAddrVO> findBusinessAddress(PageDTO pageDTO) {
         UserInfoInTokenBO userInfoInTokenBO=AuthUserContext.get();
-        List<ShopAddrVO> shopAddrVOList=shopAddrMapper.findBusinessAddress(userInfoInTokenBO.getTenantId());
-        for (int i = 0; i <shopAddrVOList.size() ; i++) {
-            Integer provinceId= Math.toIntExact(shopAddrVOList.get(i).getProvinceId());
-            Integer cityId= Math.toIntExact(shopAddrVOList.get(i).getCityId());
-            Integer areaId= Math.toIntExact(shopAddrVOList.get(i).getAreaIds());
-            int array[] ={provinceId,cityId,areaId};
-            shopAddrVOList.get(i).setAreaId(array);
-        }
-        return shopAddrVOList;
+        List<ShopAddrVO> shopAddrVOList=shopAddrService.findBusinessAddress(userInfoInTokenBO.getTenantId());
+        return PageUtil.doPage(pageDTO, ()->shopAddrService.findBusinessAddress(userInfoInTokenBO.getTenantId()));
     }
 
     @Override
@@ -558,6 +548,37 @@ public class ShopDetailServiceImpl implements ShopDetailService {
         int array[] ={provinceId,cityId,areaId};
         shopAddrVO.setAreaId(array);
         return shopAddrVO;
+    }
+
+    @Override
+    public void creatAccountInfor(GatheringInfoDTO gatheringInfoDTO) {
+        UserInfoInTokenBO userInfoInTokenBO=AuthUserContext.get();
+        GatheringInfo gatheringInfo=mapperFacade.map(gatheringInfoDTO, GatheringInfo.class);
+        gatheringInfo.setShopId(userInfoInTokenBO.getTenantId());
+        gatheringInfoMapper.insertSelective(gatheringInfo);
+    }
+
+    @Override
+    public PageVO<GatheringInfoVO> findAccountInfor(PageDTO pageDTO) {
+        UserInfoInTokenBO userInfoInTokenBO=AuthUserContext.get();
+        return PageUtil.doPage(pageDTO, ()->gatheringInfoMapper.findAccountInfor(userInfoInTokenBO.getTenantId()));
+    }
+
+    @Override
+    public void delAccountInfor(Long gatheringInfoId) {
+        gatheringInfoMapper.deleteByPrimaryKey(gatheringInfoId);
+    }
+
+    @Override
+    public void upAccountInfor(GatheringInfoDTO gatheringInfoDTO) {
+        GatheringInfo gatheringInfo=mapperFacade.map(gatheringInfoDTO, GatheringInfo.class);
+        gatheringInfoMapper.updateByPrimaryKeySelective(gatheringInfo);
+    }
+
+    @Override
+    public GatheringInfoVO echoAccountInfor(Long gatheringInfoId) {
+        GatheringInfoVO gatheringInfoVO=gatheringInfoMapper.selectByPrimaryKeys(gatheringInfoId);
+        return gatheringInfoVO;
     }
 
 }

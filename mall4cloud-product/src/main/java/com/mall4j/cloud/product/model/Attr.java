@@ -1,9 +1,9 @@
 package com.mall4j.cloud.product.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.mall4j.cloud.common.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -54,7 +54,7 @@ public class Attr extends BaseModel implements Serializable{
 	/**
 	 * 分类名称
 	 */
-	private Long categoryName;
+	private String categoryName;
 
 	/**
 	 * 属性英文名称
@@ -80,4 +80,10 @@ public class Attr extends BaseModel implements Serializable{
 	 * 检测价格
 	 */
 	private Long price;
+
+	private Long categoryIdTwo;
+
+	private Long categoryIdOne;
+
+	private Integer categoryNames[];
 }

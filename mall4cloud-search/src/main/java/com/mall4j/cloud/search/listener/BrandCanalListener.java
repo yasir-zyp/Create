@@ -51,12 +51,12 @@ public class BrandCanalListener extends BaseCanalBinlogEventProcessor<BrandBO> {
         BrandBO afterData = result.getAfterData();
         EsProductBO esProductBO = new EsProductBO();
         if (StrUtil.isNotBlank(beforeData.getName())) {
-            esProductBO.setBrandName(afterData.getName());
+            esProductBO.setSpuName(afterData.getName());
         }
         if (Objects.nonNull(beforeData.getImgUrl())) {
-            esProductBO.setBrandImg(afterData.getImgUrl());
+            esProductBO.setShopImg(afterData.getImgUrl());
         }
-        ServerResponseEntity<List<Long>> responseData = productFeignClient.getSpuIdsByBrandId(afterData.getBrandId());
-        productUpdateManager.esUpdateSpuBySpuIds(responseData.getData(), esProductBO);
+        //ServerResponseEntity<List<Long>> responseData = productFeignClient.getSpuIdsByBrandId(afterData.getBrandId());
+        //productUpdateManager.esUpdateSpuBySpuIds(responseData.getData(), esProductBO);
     }
 }

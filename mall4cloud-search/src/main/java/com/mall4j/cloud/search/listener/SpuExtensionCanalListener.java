@@ -61,8 +61,8 @@ public class SpuExtensionCanalListener extends BaseCanalBinlogEventProcessor<Spu
         EsProductBO esProductBO = new EsProductBO();
         // 可售库存
         esProductBO.setSpuId(afterData.getSpuId());
-        esProductBO.setStock(afterData.getStock());
-        esProductBO.setHasStock(afterData.getStock() != 0);
+    /*    esProductBO.setStock(afterData.getStock());
+        esProductBO.setHasStock(afterData.getStock() != 0);*/
         esProductBO.setSaleNum(afterData.getSaleNum());
 
         request.doc(Json.toJsonString(esProductBO), XContentType.JSON);

@@ -41,6 +41,7 @@ public class MenuController {
 	@GetMapping(value = "/route")
 	@ApiOperation(value = "路由菜单", notes = "获取当前登陆用户可用的路由菜单列表")
 	public ServerResponseEntity<List<RouteVO>> route(Integer sysType) {
+
 		sysType = Objects.isNull(sysType) ? AuthUserContext.get().getSysType(): sysType;
 		List<Menu> menus = menuService.listBySysType(sysType);
 

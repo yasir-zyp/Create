@@ -3,6 +3,7 @@ package com.mall4j.cloud.product.mapper;
 import com.mall4j.cloud.product.model.Category;
 import com.mall4j.cloud.api.product.vo.CategoryVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:24
  */
+@Repository
 public interface CategoryMapper {
 
 	/**
@@ -126,5 +128,9 @@ public interface CategoryMapper {
 	 * @param categoryName
 	 * @return
 	 */
-    CategoryVO getByName(@Param("categoryName")Long categoryName);
+    CategoryVO getByName(@Param("categoryName")String categoryName);
+
+    CategoryVO getNameById(@Param("id")long id);
+
+    CategoryVO findIdByName(@Param("categoryName")String categoryName);
 }

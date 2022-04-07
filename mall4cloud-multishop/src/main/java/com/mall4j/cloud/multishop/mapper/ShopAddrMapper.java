@@ -1,5 +1,6 @@
 package com.mall4j.cloud.multishop.mapper;
 
+import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.multishop.model.ShopAddr;
 import com.mall4j.cloud.multishop.vo.ShopAddrVO;
 import org.apache.ibatis.annotations.Param;

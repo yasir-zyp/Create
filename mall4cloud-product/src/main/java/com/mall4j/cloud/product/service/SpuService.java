@@ -1,6 +1,7 @@
 package com.mall4j.cloud.product.service;
 
 import com.mall4j.cloud.api.product.bo.EsProductBO;
+import com.mall4j.cloud.api.product.vo.SpuCategoryVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.api.product.vo.SpuVO;
@@ -140,4 +141,6 @@ public interface SpuService {
 	 * @param status
 	 */
     void batchChangeSpuStatusByCids(List<Long> cidList, Long shopId, Integer status);
+
+	List<String> SpuCategoryById(Long spuId);
 }

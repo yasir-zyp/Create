@@ -1,12 +1,14 @@
 package com.mall4j.cloud.product.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.multishop.feign.IndexImgFeignClient;
 import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.api.product.bo.EsAttrBO;
 import com.mall4j.cloud.api.product.bo.EsProductBO;
 import com.mall4j.cloud.api.product.vo.CategoryVO;
+import com.mall4j.cloud.api.product.vo.SpuCategoryVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.Constant;
@@ -19,7 +21,9 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
+import com.mall4j.cloud.product.mapper.SpuCategoryMapper;
 import com.mall4j.cloud.product.mapper.SpuMapper;
+import com.mall4j.cloud.product.model.SpuCategory;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.SpuVO;
 import com.mall4j.cloud.product.model.Spu;
@@ -70,8 +74,12 @@ public class SpuServiceImpl implements SpuService {
     @Autowired
     private IndexImgFeignClient indexImgFeignClient;
 
+    @Autowired
+    private SpuCategoryMapper spuCategoryMapper;
+
     @Override
     public PageVO<SpuVO> page(PageDTO pageDTO, SpuPageSearchDTO spuDTO) {
+        spuDTO.setShopId(AuthUserContext.get().getTenantId());
         PageVO<SpuVO> spuPage = PageUtil.doPage(pageDTO, () -> spuMapper.list(spuDTO));
         return spuPage;
     }
@@ -123,7 +131,15 @@ public class SpuServiceImpl implements SpuService {
         spuDetail.setSpuId(spu.getSpuId());
         spuDetail.setDetail(spuDTO.getDetail());
         spuDetailService.save(spuDetail);
-
+        if (spuDTO.getCategoryIds()!=null){
+            for (int i = 0; i <spuDTO.getCategoryIds().size() ; i++) {
+                SpuCategory spuCategory=new SpuCategory();
+                spuCategory.setCategoryId(spuDTO.getCategoryIds().get(i));
+                spuCategory.setShopId(AuthUserContext.get().getTenantId());
+                spuCategory.setSpuId(spu.getSpuId());
+                spuCategoryMapper.insertSelective(spuCategory);
+            }
+        }
         // 3.保存sku信息
         skuService.save(spu.getSpuId(),spuDTO.getSkuList());
 
@@ -262,5 +278,10 @@ public class SpuServiceImpl implements SpuService {
         }
         spuMapper.batchChangeSpuStatusBySpuIdsAndStatus(spuIdList, status);
         this.batchRemoveSpuCacheBySpuId(spuIdList);
+    }
+
+    @Override
+    public List<String> SpuCategoryById(Long spuId) {
+        return spuCategoryMapper.SpuCategoryById(spuId);
     }
 }

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.user.mapper.ConsultInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.ConsultInfo" >
+    <id column="consult_id" property="consultId" jdbcType="BIGINT" />
+    <result column="consult_desc" property="consultDesc" jdbcType="VARCHAR" />
+    <result column="consult_img" property="consultImg" jdbcType="VARCHAR" />
+    <result column="contact_name" property="contactName" jdbcType="VARCHAR" />
+    <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="spuIds" property="spuids" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    consult_id, consult_desc, consult_img, contact_name, contact_phone, create_time, 
+    update_time, user_id, `status`, spuIds, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from consult_info
+    where consult_id = #{consultId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from consult_info
+    where consult_id = #{consultId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mall4j.cloud.user.model.ConsultInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="consultId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into consult_info (consult_desc, consult_img, contact_name, 
+      contact_phone, create_time, update_time, 
+      user_id, `status`, spuIds, 
+      del_flag)
+    values (#{consultDesc,jdbcType=VARCHAR}, #{consultImg,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, 
+      #{contactPhone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{userId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{spuids,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.user.model.ConsultInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="consultId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into consult_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="consultDesc != null" >
+        consult_desc,
+      </if>
+      <if test="consultImg != null" >
+        consult_img,
+      </if>
+      <if test="contactName != null" >
+        contact_name,
+      </if>
+      <if test="contactPhone != null" >
+        contact_phone,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="spuids != null" >
+        spuIds,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="consultDesc != null" >
+        #{consultDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="consultImg != null" >
+        #{consultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null" >
+        #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="spuids != null" >
+        #{spuids,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall4j.cloud.user.model.ConsultInfo" >
+    update consult_info
+    <set >
+      <if test="consultDesc != null" >
+        consult_desc = #{consultDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="consultImg != null" >
+        consult_img = #{consultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        contact_name = #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null" >
+        contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="spuids != null" >
+        spuIds = #{spuids,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where consult_id = #{consultId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall4j.cloud.user.model.ConsultInfo" >
+    update consult_info
+    set consult_desc = #{consultDesc,jdbcType=VARCHAR},
+      consult_img = #{consultImg,jdbcType=VARCHAR},
+      contact_name = #{contactName,jdbcType=VARCHAR},
+      contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=BIGINT},
+      `status` = #{status,jdbcType=TINYINT},
+      spuIds = #{spuids,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where consult_id = #{consultId,jdbcType=BIGINT}
+  </update>
+  <select id="findConsultInfo" resultType="com.mall4j.cloud.user.vo.ConsultInfoVO">
+    select consult_id, consult_desc, consult_img, contact_name, contact_phone, create_time,
+    update_time, user_id, `status`, spuIds, del_flag
+    from consult_info where user_id = #{userId}
+  </select>
+
+  <select id="selectByPrimaryKeys" resultType="com.mall4j.cloud.user.vo.ConsultInfoVO">
+    select consult_id, consult_desc, consult_img, contact_name, contact_phone, create_time,
+    update_time, user_id, `status`, spuIds, del_flag
+    from consult_info
+    where  consult_id= #{consultId,jdbcType=BIGINT}
+  </select>
+</mapper>

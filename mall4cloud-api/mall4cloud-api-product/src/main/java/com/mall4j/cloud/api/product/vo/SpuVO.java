@@ -18,7 +18,7 @@ import java.util.List;
 public class SpuVO extends BaseVO {
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty("spu id")
+	@ApiModelProperty("spu id,商品id")
 	private Long spuId;
 
 	@ApiModelProperty("品牌ID")
@@ -55,9 +55,8 @@ public class SpuVO extends BaseVO {
 	@ApiModelProperty("商品详情")
 	private String detail;
 
-
 	@ApiModelProperty("sku列表")
-	private List<SkuVO> skus;
+	private List<SkuVO> skuList;
 
 	@ApiModelProperty("序号")
 	private Integer seq;
@@ -70,4 +69,10 @@ public class SpuVO extends BaseVO {
 
 	@ApiModelProperty("分类信息")
 	private CategoryVO category;
+
+	@ApiModelProperty("服务方案编码")
+	private String partyCode;
+
+	@ApiModelProperty("分类标签")
+	private List<String> spuCategoryName;
 }

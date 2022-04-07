@@ -14,30 +14,38 @@ import java.util.List;
 @Data
 public class SpuPageSearchDTO {
 
-	@ApiModelProperty("spuId")
+	@ApiModelProperty("spuId,id不显示,商品id")
 	private Long spuId;
+
+	@ApiModelProperty("商品的上下架使用,spuId列表(商品上下架：批量操作时，用此参数)(批量处理参数)")
+	private List<Long> spuIds;
+
+	@ApiModelProperty("不需要")
+	private Long shopId;
 
 	@ApiModelProperty("分类IDs")
 	private List<Long> categoryIds;
 
 	@ApiModelProperty("服务方案名称")
 	private String name;
+
 	@ApiModelProperty("服务方案类型0:样品检测，1:现场检测")
 	private String serviceType;
+
 	@ApiModelProperty("商品介绍主图")
 	private String mainImgUrl;
+
 	@ApiModelProperty("检测产品名")
 	private String sellingPoint;
+
 	@ApiModelProperty("样品要求")
 	private String  sampleReques;
+
 	@ApiModelProperty("检测周期(工作日) ")
 	private Integer cycle;
 
 	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
 	private Integer status;
-
-	@ApiModelProperty("spuId列表(商品上下架：批量操作时，用此参数)(批量处理参数)")
-	private List<Long> spuIds;
 
 	@ApiModelProperty("商品状态： 0.全部  1.销售中   2.已下架 ")
 	private Integer spuStatus;
@@ -48,29 +56,32 @@ public class SpuPageSearchDTO {
 	@ApiModelProperty("最高价")
 	private Long maxPrice;
 
-	@ApiModelProperty("最低销量")
+	@ApiModelProperty("送样地址id,不显示,查询地址信息们，将选择的地址id塞进来,")
+	private Long deliverAddressId;
+
+	@ApiModelProperty("不需要,最低销量")
 	private Long minSaleNum;
 
-	@ApiModelProperty("最高销量")
+	@ApiModelProperty("不需要,最高销量")
 	private Long maxSaleNum;
 
-	@ApiModelProperty("服务方案编码")
+	@ApiModelProperty("不需要,服务方案编码")
 	private String partyCode;
 
-	@ApiModelProperty("当前价排序 0：倒序 1：顺序")
+	@ApiModelProperty("不需要,当前价排序 0：倒序 1：顺序")
 	private Integer priceFeeSort;
 
-	@ApiModelProperty("市场价排序 0：倒序 1：顺序")
+	@ApiModelProperty("不需要，市场价排序 0：倒序 1：顺序")
 	private Integer marketPriceFeeSort;
 
-	@ApiModelProperty("销量排序 0：倒序 1：顺序")
+	@ApiModelProperty("不需要，销量排序 0：倒序 1：顺序")
 	private Integer saleNumSort;
 
-	@ApiModelProperty("序号排序 0：倒序 1：顺序")
+	@ApiModelProperty("不需要，序号排序 0：倒序 1：顺序")
 	private Integer seqSort;
 
-	@ApiModelProperty("创建时间排序 0：倒序 1：顺序")
+	@ApiModelProperty("不需要，创建时间排序 0：倒序 1：顺序")
 	private Integer createTimeSort;
-	@ApiModelProperty("送样地址id")
-	private Long deliverAddressId;
+
+
 }

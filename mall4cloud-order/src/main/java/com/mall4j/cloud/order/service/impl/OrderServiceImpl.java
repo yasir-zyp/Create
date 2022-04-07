@@ -11,7 +11,6 @@ import com.mall4j.cloud.api.order.dto.DeliveryOrderDTO;
 import com.mall4j.cloud.api.order.vo.OrderAmountVO;
 import com.mall4j.cloud.api.product.dto.SkuStockLockDTO;
 import com.mall4j.cloud.api.product.feign.ShopCartFeignClient;
-import com.mall4j.cloud.api.product.feign.SkuStockLockFeignClient;
 import com.mall4j.cloud.common.exception.Mall4cloudException;
 import com.mall4j.cloud.common.order.vo.ShopCartItemVO;
 import com.mall4j.cloud.common.order.vo.ShopCartOrderMergerVO;
@@ -63,8 +62,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemService orderItemService;
     @Autowired
     private SegmentFeignClient segmentFeignClient;
-    @Autowired
-    private SkuStockLockFeignClient skuStockLockFeignClient;
+/*    @Autowired
+    private SkuStockLockFeignClient skuStockLockFeignClient;*/
     @Autowired
     private MapperFacade mapperFacade;
     @Autowired
@@ -100,11 +99,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         // 锁定库存
-        ServerResponseEntity<Void> lockStockResponse = skuStockLockFeignClient.lock(skuStockLocks);
+      /*  ServerResponseEntity<Void> lockStockResponse = skuStockLockFeignClient.lock(skuStockLocks);
         // 锁定不成，抛异常，让回滚订单
         if (!lockStockResponse.isSuccess()) {
             throw new Mall4cloudException(lockStockResponse.getMsg());
-        }
+        }*/
         // 发送消息，如果三十分钟后没有支付，则取消订单
         SendStatus sendStatus = orderCancelTemplate.syncSend(RocketMqConstant.ORDER_CANCEL_TOPIC, new GenericMessage<>(orderIds), RocketMqConstant.TIMEOUT, RocketMqConstant.CANCEL_ORDER_DELAY_LEVEL).getSendStatus();
         if (!Objects.equals(sendStatus,SendStatus.SEND_OK)) {

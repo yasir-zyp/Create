@@ -1,5 +1,6 @@
 package com.mall4j.cloud.product.dto;
 
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,17 +17,20 @@ import java.util.List;
 public class AttrDTO{
     private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty("attr id")
+	@ApiModelProperty("attr id，主键不需要显示")
 	private Long attrId;
-	@NotNull(message = "请选择店铺信息")
-	@ApiModelProperty("店铺id")
+
+	@ApiModelProperty("店铺id,不显示")
 	private Long shopId;
 
-	@ApiModelProperty("分类id")
+	@ApiModelProperty("分类id。不显示")
 	private Long categoryId;
 
-	@ApiModelProperty("分类名称")
-	private Long categoryName;
+	@ApiModelProperty("分类名称,通过查询分类接口，将name塞进来")
+	private String categoryName;
+
+	@ApiModelProperty("分类id")
+	private Integer categoryNames[];
 
 	@ApiModelProperty("属性名称")
 	private String name;
@@ -58,5 +62,7 @@ public class AttrDTO{
 	@ApiModelProperty("检测资质0:cma，1:cnas，2：cma，cnas")
 	private Integer attrType;
 
+	private Long categoryIdTwo;
 
+	private Long categoryIdOne;
 }

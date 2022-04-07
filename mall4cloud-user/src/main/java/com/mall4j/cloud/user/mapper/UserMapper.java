@@ -4,6 +4,7 @@ import com.mall4j.cloud.api.user.vo.UserApiVO;
 import com.mall4j.cloud.user.model.User;
 import com.mall4j.cloud.user.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author YXF
  * @date 2020-12-08 11:18:04
  */
+@Repository
 public interface UserMapper {
 
 	/**

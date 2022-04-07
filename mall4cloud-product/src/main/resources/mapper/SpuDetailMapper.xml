@@ -16,7 +16,7 @@
     insert into spu_detail (`spu_id`,`detail`)
     values (#{spuDetail.spuId},#{spuDetail.detail});
   </insert>
-  <update id="update">
+<!--  <update id="update">
     update spu_detail
     <set>
       <if test="spuDetail.detail != null">
@@ -24,7 +24,20 @@
       </if>
     </set>
     where spu_id = #{spuDetail.spuId}
+  </update>-->
+  <update id="update">
+    update spu_detail
+    set
+    <if test="spuDetail.spuId != null">
+      `spu_id` = #{spuDetail.spuId},
+    </if>
+    <if test="spuDetail.detail != null">
+      `detail` = #{spuDetail.detail},
+    </if>
+    update_time = NOW()
+    where spu_id = #{spuDetail.spuId}
   </update>
+
   <delete id="deleteById">
     delete from spu_detail where spu_id = #{spuId}
   </delete>

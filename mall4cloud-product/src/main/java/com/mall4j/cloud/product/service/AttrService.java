@@ -3,9 +3,12 @@ package com.mall4j.cloud.product.service;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.product.dto.AttrDTO;
+import com.mall4j.cloud.product.dto.SpuIdDTO;
 import com.mall4j.cloud.product.model.Attr;
 import com.mall4j.cloud.api.product.vo.AttrVO;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -49,4 +52,6 @@ public interface AttrService {
 	 * @param attrId
 	 */
 	void deleteById(Long attrId);
+
+	String batchImport(String fileName, MultipartFile file);
 }

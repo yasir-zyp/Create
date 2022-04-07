@@ -33,10 +33,10 @@ public class PageDTO implements IPage {
     @ApiModelProperty(value = "每页大小", required = true)
     private Integer pageSize;
 
-    @ApiModelProperty(value = "排序字段数组，用逗号分割")
+    @ApiModelProperty(value = "不需要,排序字段数组，用逗号分割")
     private String[] columns;
 
-    @ApiModelProperty(value = "排序字段方式，用逗号分割，ASC正序，DESC倒序")
+    @ApiModelProperty(value = "不需要,排序字段方式，用逗号分割，ASC正序，DESC倒序")
     private String[] orders;
 
     @Override

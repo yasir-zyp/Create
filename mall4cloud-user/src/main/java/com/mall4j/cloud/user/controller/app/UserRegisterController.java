@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.constant.SysTypeEnum;
 import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
+import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.api.auth.vo.TokenInfoVO;
 import com.mall4j.cloud.user.dto.UserRegisterDTO;
@@ -42,6 +43,8 @@ public class UserRegisterController {
         }
         // 1. 保存账户信息
         Long uid = userService.save(param);
+        /*清除缓存*/
+        RedisUtil.del(param.getAccountPhone());
         // 2. 登录
         UserInfoInTokenBO userInfoInTokenBO = new UserInfoInTokenBO();
         userInfoInTokenBO.setUid(uid);

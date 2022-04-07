@@ -5,6 +5,7 @@ import com.mall4j.cloud.product.dto.AttrDTO;
 import com.mall4j.cloud.product.model.Attr;
 import com.mall4j.cloud.api.product.vo.AttrVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-10-28 15:27:23
  */
+@Repository
 public interface AttrMapper {
 
 	/**
@@ -60,4 +62,8 @@ public interface AttrMapper {
 	 * @param attrId
 	 */
 	void deleteById(@Param("attrId") Long attrId);
+
+    void addKHexcel(Attr attr);
+
+	void insertSelective(Attr attr);
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.multishop.mapper.GatheringInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.multishop.model.GatheringInfo" >
+    <id column="gathering_info_id" property="gatheringInfoId" jdbcType="BIGINT" />
+    <result column="payment_type" property="paymentType" jdbcType="BIGINT" />
+    <result column="the_account" property="theAccount" jdbcType="VARCHAR" />
+    <result column="account_name" property="accountName" jdbcType="VARCHAR" />
+    <result column="opening_bank" property="openingBank" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    gathering_info_id, payment_type, the_account, account_name, opening_bank, shop_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from gathering_info
+    where gathering_info_id = #{gatheringInfoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from gathering_info
+    where gathering_info_id = #{gatheringInfoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mall4j.cloud.multishop.model.GatheringInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="gatheringInfoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into gathering_info (payment_type, the_account, account_name, 
+      opening_bank, shop_id)
+    values (#{paymentType,jdbcType=BIGINT}, #{theAccount,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR}, 
+      #{openingBank,jdbcType=VARCHAR}, #{shopId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.multishop.model.GatheringInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="gatheringInfoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into gathering_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="paymentType != null" >
+        payment_type,
+      </if>
+      <if test="theAccount != null" >
+        the_account,
+      </if>
+      <if test="accountName != null" >
+        account_name,
+      </if>
+      <if test="openingBank != null" >
+        opening_bank,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="paymentType != null" >
+        #{paymentType,jdbcType=BIGINT},
+      </if>
+      <if test="theAccount != null" >
+        #{theAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="openingBank != null" >
+        #{openingBank,jdbcType=VARCHAR},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall4j.cloud.multishop.model.GatheringInfo" >
+    update gathering_info
+    <set >
+      <if test="paymentType != null" >
+        payment_type = #{paymentType,jdbcType=BIGINT},
+      </if>
+      <if test="theAccount != null" >
+        the_account = #{theAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="openingBank != null" >
+        opening_bank = #{openingBank,jdbcType=VARCHAR},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where gathering_info_id = #{gatheringInfoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall4j.cloud.multishop.model.GatheringInfo" >
+    update gathering_info
+    set payment_type = #{paymentType,jdbcType=BIGINT},
+      the_account = #{theAccount,jdbcType=VARCHAR},
+      account_name = #{accountName,jdbcType=VARCHAR},
+      opening_bank = #{openingBank,jdbcType=VARCHAR},
+      shop_id = #{shopId,jdbcType=BIGINT}
+    where gathering_info_id = #{gatheringInfoId,jdbcType=BIGINT}
+  </update>
+  <select id="findAccountInfor" resultType="com.mall4j.cloud.multishop.vo.GatheringInfoVO">
+    select   gathering_info_id, payment_type, the_account, account_name, opening_bank, shop_id
+    from gathering_info where shop_id = #{tenantId}
+  </select>
+
+  <select id="selectByPrimaryKeys" resultType="com.mall4j.cloud.multishop.vo.GatheringInfoVO">
+    select  gathering_info_id, payment_type, the_account, account_name, opening_bank, shop_id
+    from gathering_info
+    where gathering_info_id = #{gatheringInfoId,jdbcType=BIGINT}
+  </select>
+</mapper>

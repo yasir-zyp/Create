@@ -8,6 +8,7 @@ import com.mall4j.cloud.api.auth.vo.AuthAccountVO;
 import com.mall4j.cloud.api.leaf.feign.SegmentFeignClient;
 import com.mall4j.cloud.api.user.vo.UserApiVO;
 import com.mall4j.cloud.common.cache.constant.UserCacheNames;
+import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.util.PageUtil;
 import com.mall4j.cloud.common.database.vo.PageVO;
@@ -88,6 +89,14 @@ public class UserServiceImpl implements UserService {
     public Long save(UserRegisterDTO param) {
         this.checkRegisterInfo(param);
 
+        //判断验证码是否输入正确
+        String codes= RedisUtil.getLongValues(param.getAccountPhone());
+        if (codes==null){
+            throw new Mall4cloudException("未发送验证码");
+        }
+        if (!codes.equals(param.getCode())){
+            throw new Mall4cloudException("验证码不正确");
+        }
         ServerResponseEntity<Long> segmentIdResponse = segmentFeignClient.getSegmentId(User.DISTRIBUTED_ID_KEY);
         if (!segmentIdResponse.isSuccess()) {
             throw new Mall4cloudException(ResponseEnum.EXCEPTION);
@@ -98,6 +107,7 @@ public class UserServiceImpl implements UserService {
 
         AuthAccountDTO authAccountDTO = new AuthAccountDTO();
         authAccountDTO.setCreateIp(IpHelper.getIpAddr());
+        authAccountDTO.setAccountPhone(param.getAccountPhone());
         authAccountDTO.setPassword(param.getPassword());
         authAccountDTO.setIsAdmin(0);
         authAccountDTO.setSysType(SysTypeEnum.ORDINARY.value());
@@ -114,7 +124,6 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setUserId(userId);
-        user.setPic(param.getImg());
         user.setNickName(param.getNickName());
         user.setStatus(1);
         // 这里保存之后才有用户id

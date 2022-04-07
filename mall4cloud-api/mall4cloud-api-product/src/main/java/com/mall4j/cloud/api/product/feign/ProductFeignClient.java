@@ -41,4 +41,5 @@ public interface ProductFeignClient {
     @GetMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/product/getSpuIdsByShopId")
     ServerResponseEntity<List<Long>> getSpuIdsByShopId(@RequestParam("shopId")Long shopId);
 
+
 }

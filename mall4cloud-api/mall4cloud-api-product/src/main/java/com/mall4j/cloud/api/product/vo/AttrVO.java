@@ -27,7 +27,7 @@ public class AttrVO extends BaseVO{
 	private Long categoryId;
 
 	@ApiModelProperty("分类名称")
-	private Long categoryName;
+	private String categoryName;
 
 	@ApiModelProperty("属性名称")
 	private String name;
@@ -59,67 +59,10 @@ public class AttrVO extends BaseVO{
 	@ApiModelProperty("检测资质0:cma，1:cnas，2：cma，cnas")
 	private Integer attrType;
 
+	private Long categoryIdTwo;
 
-	public Long getAttrId() {
-		return attrId;
-	}
+	private Long categoryIdOne;
 
-	public void setAttrId(Long attrId) {
-		this.attrId = attrId;
-	}
-
-	public Long getShopId() {
-		return shopId;
-	}
-
-	public void setShopId(Long shopId) {
-		this.shopId = shopId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-
-	public Integer getAttrType() {
-		return attrType;
-	}
-
-	public void setAttrType(Integer attrType) {
-		this.attrType = attrType;
-	}
-
-	public Integer getSearchType() {
-		return searchType;
-	}
-
-	public void setSearchType(Integer searchType) {
-		this.searchType = searchType;
-	}
-
-
-	@Override
-	public String toString() {
-		return "AttrVO{" +
-				"attrId=" + attrId +
-				", shopId=" + shopId +
-				", name='" + name + '\'' +
-				", desc='" + desc + '\'' +
-				", attrType=" + attrType +
-				", searchType=" + searchType +
-				", createTime=" + createTime +
-				", updateTime=" + updateTime +
-				'}';
-	}
+	@ApiModelProperty("分类id")
+	private Integer categoryNames[];
 }

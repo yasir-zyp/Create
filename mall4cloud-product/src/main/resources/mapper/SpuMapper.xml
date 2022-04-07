@@ -27,7 +27,7 @@
     <result column="detail" property="detail"/>
   </resultMap>
   <sql id="Vo_Column_List">
-    s.`spu_id`,s.`shop_id`,s.`create_time`,s.`update_time`,s.`shop_category_id`,s.`category_id`,s.`name`,s.`selling_point`,s.`main_img_url`,s.`price_fee`
+    s.`spu_id`,s.`shop_id`,s.`create_time`,s.`update_time`,s.`category_id`,s.`name`,s.`selling_point`,s.`main_img_url`,s.`price_fee`
     ,s.`market_price_fee`,s.`status`,s.`seq`,s.party_code
   </sql>
   <select id="list" resultType="com.mall4j.cloud.api.product.vo.SpuVO">
@@ -39,13 +39,9 @@
     <if test="spu.spuId != null">
       and s.spu_id = #{spu.spuId}
     </if>
-    <if test="spu.categoryId != null">
-      and s.category_id = #{spu.categoryId}
-    </if>
     <if test="spu.name != null and spu.name != ''">
       and s.name = #{spu.name}
     </if>
-
     <if test="spu.sellingPoint != null and spu.sellingPoint != ''">
       and s.sellingPoint = #{spu.sellingPoint}
     </if>
@@ -70,6 +66,9 @@
     <if test="spu.minSaleNum != null">
       and s.sale_num &gt;= #{spu.minSaleNum}
     </if>
+    <if test="spu.shopId != null">
+      and s.shop_id= #{spu.shopId}
+    </if>
     order by
     <trim prefixOverrides=",">
         <if test="spu.priceFeeSort == 0">s.price_fee desc</if>
@@ -83,7 +82,7 @@
         <if test="spu.createTimeSort == 0">,s.create_time desc</if>
         <if test="spu.createTimeSort == 1">,s.create_time</if>
         <if test="spu.priceFeeSort == null and spu.marketPriceFeeSort == null and spu.saleNumSort == null
-            and spu.stockSort == null and spu.seqSort == null and spu.createTimeSort == null">
+           and spu.seqSort == null and spu.createTimeSort == null">
           s.update_time desc, s.spu_id
         </if>
     </trim>
@@ -107,23 +106,14 @@
   <update id="update">
     update spu
     <set>
-      <if test="spu.brandId != null">
-        `brand_id` = #{spu.brandId},
-      </if>
       <if test="spu.categoryId != null">
         `category_id` = #{spu.categoryId},
-      </if>
-      <if test="spu.shopCategoryId != null">
-        `shop_category_id` = #{spu.shopCategoryId},
       </if>
       <if test="spu.name != null">
         `name` = #{spu.name},
       </if>
       <if test="spu.sellingPoint != null">
         `selling_point` = #{spu.sellingPoint},
-      </if>
-      <if test="spu.imgUrls != null">
-        `img_urls` = #{spu.imgUrls},
       </if>
       <if test="spu.mainImgUrl != null">
         `main_img_url` = #{spu.mainImgUrl},
@@ -136,9 +126,6 @@
       </if>
       <if test="spu.status != null">
         `status` = #{spu.status},
-      </if>
-      <if test="spu.hasSkuImg != null">
-        `has_sku_img` = #{spu.hasSkuImg},
       </if>
       <if test="spu.seq != null">
         `seq` = #{spu.seq},

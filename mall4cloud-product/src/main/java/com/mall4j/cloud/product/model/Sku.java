@@ -51,9 +51,6 @@ public class Sku extends BaseModel implements Serializable{
      */
     private Long marketPriceFee;
 
-
-
-
     /**
      * 商品重量
      */

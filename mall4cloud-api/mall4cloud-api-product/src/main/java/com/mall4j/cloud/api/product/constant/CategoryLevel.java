@@ -20,7 +20,12 @@ public enum CategoryLevel {
 	/**
 	 * 第三级
 	 */
-	THIRD(2)
+	THIRD(2),
+
+	/*
+	* 第四级
+	* */
+	THREE(3)
 	;
 
 	private final Integer value;

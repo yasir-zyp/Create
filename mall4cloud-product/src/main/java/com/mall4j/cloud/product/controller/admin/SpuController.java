@@ -11,6 +11,7 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.dto.SpuDTO;
+import com.mall4j.cloud.product.dto.SpuIdDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.*;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @RestController("platformSpuController")
 @RequestMapping("/admin/spu")
-@Api(tags = "admin-spu信息")
+@Api(tags = "admin-spu信息,商品的增删改查")
 public class SpuController {
 
     @Autowired
@@ -52,37 +53,39 @@ public class SpuController {
     }
 
     @GetMapping("/page")
-    @ApiOperation(value = "获取spu信息列表", notes = "分页获取spu信息列表")
+    @ApiOperation(value = "获取商品信息列表", notes = "分页获取spu信息列表")
     public ServerResponseEntity<PageVO<SpuVO>> page(PageDTO pageDTO, SpuPageSearchDTO spuDTO) {
         PageVO<SpuVO> spuPage = spuService.page(pageDTO, spuDTO);
         return ServerResponseEntity.success(spuPage);
     }
 
-    @GetMapping
-    @ApiOperation(value = "获取spu信息", notes = "根据spuId获取spu信息")
-    public ServerResponseEntity<SpuVO> getBySpuId(@RequestParam Long spuId) {
+    @GetMapping("/echo_spu")
+    @ApiOperation(value = "回显商品信息", notes = "根据spuId获取spu信息")
+    public ServerResponseEntity<SpuVO> getBySpuId(@RequestParam("spuId") Long spuId) {
         // 获取spu信息
         SpuVO spuVO = spuService.getBySpuId(spuId);
         // sku信息
-        spuVO.setSkus(skuService.listBySpuIdAndExtendInfo(spuId));
+        spuVO.setSkuList(skuService.listBySpuIdAndExtendInfo(spuId));
+        //查询分类标签信息
+        spuVO.setSpuCategoryName(spuService.SpuCategoryById(spuId));
         // 平台分类信息
         spuVO.setCategory(categoryService.getPathNameByCategoryId(spuVO.getCategoryId()));
         return ServerResponseEntity.success(spuVO);
     }
 
 
-    @PostMapping
-    @ApiOperation(value = "保存spu信息", notes = "保存spu信息")
+    @PostMapping("/add_spu")
+    @ApiOperation(value = "保存商品信息", notes = "保存spu信息")
     public ServerResponseEntity<Void> save(@Valid @RequestBody SpuDTO spuDTO) {
-        checkSaveOrUpdateInfo(spuDTO);
+        //checkSaveOrUpdateInfo(spuDTO);
         spuService.save(spuDTO);
         return ServerResponseEntity.success();
     }
 
-    @PutMapping
-    @ApiOperation(value = "更新spu信息", notes = "更新spu信息")
+    @PutMapping("/up_spu")
+    @ApiOperation(value = "更新商品信息", notes = "更新spu信息")
     public ServerResponseEntity<Void> update(@Valid @RequestBody SpuDTO spuDTO) {
-        checkSaveOrUpdateInfo(spuDTO);
+        //checkSaveOrUpdateInfo(spuDTO);
         List<Long> skuIds = spuDTO.getSkuList().stream().filter(sku -> Objects.nonNull(sku.getSkuId())).map(SkuDTO::getSkuId).collect(Collectors.toList());
         spuService.update(spuDTO);
         // 清除缓存
@@ -92,8 +95,8 @@ public class SpuController {
     }
 
 
-    @DeleteMapping
-    @ApiOperation(value = "删除spu信息", notes = "根据spu信息id删除spu信息")
+    @DeleteMapping("/del_spu")
+    @ApiOperation(value = "删除商品信息", notes = "根据spu信息id删除spu信息")
     public ServerResponseEntity<Void> delete(@RequestParam Long spuId) {
         spuService.deleteById(spuId);
         // 清除缓存
@@ -103,7 +106,7 @@ public class SpuController {
     }
 
     @PutMapping("/update_spu_data")
-    @ApiOperation(value = "修改spu（名称、价格、库存、序号）信息", notes = "更新spu信息")
+    @ApiOperation(value = "修改商品信息", notes = "更新spu信息")
     public ServerResponseEntity<Void> updateSpuData(@RequestBody SpuDTO spuDTO) {
         spuService.updateSpuOrSku(spuDTO);
         // 清除缓存
@@ -118,11 +121,11 @@ public class SpuController {
      */
     @PutMapping("/prod_status")
     @ApiOperation(value = "商品上下架", notes = "商品上下架")
-    public ServerResponseEntity<Void> spuChangeStatus(@RequestBody SpuDTO spuDTO) {
-        if (Objects.nonNull(spuDTO.getSpuId())) {
-            spuUpdateStatus(spuDTO);
-        } else if (CollUtil.isNotEmpty(spuDTO.getSpuIds())) {
-            spuBatchUpdateStatus(spuDTO);
+    public ServerResponseEntity<Void> spuChangeStatus(@RequestBody SpuPageSearchDTO spuPageSearchDTO) {
+        if (Objects.nonNull(spuPageSearchDTO.getSpuId())) {
+            spuUpdateStatus(spuPageSearchDTO);
+        } else if (CollUtil.isNotEmpty(spuPageSearchDTO.getSpuIds())) {
+            spuBatchUpdateStatus(spuPageSearchDTO);
         }
         return ServerResponseEntity.success();
     }
@@ -131,7 +134,7 @@ public class SpuController {
      * spu上下架
      * @param spu
      */
-    private void spuUpdateStatus(SpuDTO spu) {
+    private void spuUpdateStatus(SpuPageSearchDTO spu) {
         SpuVO dbSpu = spuService.getBySpuId(spu.getSpuId());
         String error = checkUpdateStatusData(dbSpu);
         if (StrUtil.isNotBlank(error)) {
@@ -145,7 +148,7 @@ public class SpuController {
      * spu批量上下架
      * @param spu
      */
-    private void spuBatchUpdateStatus(SpuDTO spu) {
+    private void spuBatchUpdateStatus(SpuPageSearchDTO spu) {
         List<Long> spuIds = new ArrayList<>(spu.getSpuIds());
         List<Long> errorList = new ArrayList<>(spu.getSpuIds());
         List<SpuVO> spuList = spuService.listBySpuIds(spu.getSpuIds(), null, null);
@@ -177,7 +180,7 @@ public class SpuController {
      * 校验spu新增或更新信息
      * @param spuDTO
      */
-    private void checkSaveOrUpdateInfo(SpuDTO spuDTO) {
+    /*private void checkSaveOrUpdateInfo(SpuDTO spuDTO) {
         if (!Objects.equals(Constant.PLATFORM_SHOP_ID, AuthUserContext.get().getTenantId()) && Objects.isNull(spuDTO.getShopCategoryId())) {
             throw new Mall4cloudException("店铺分类不能为空");
         }
@@ -187,7 +190,7 @@ public class SpuController {
         if (Objects.isNull(spuDTO.getBrandId())) {
             spuDTO.setBrandId(0L);
         }
-    }
+    }*/
 
     /**
      * 校验spu上下架信息

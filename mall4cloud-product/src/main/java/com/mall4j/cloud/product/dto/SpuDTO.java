@@ -17,19 +17,12 @@ import java.util.List;
 public class SpuDTO{
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty("spuId")
+	@ApiModelProperty("spuId,id不显示")
 	private Long spuId;
 
-	@ApiModelProperty("品牌ID")
-	private Long brandId;
+	@ApiModelProperty("分类IDs，查询分类信息,不需要点到第三级，将点到的最后一级的categoryId放进来")
+	private List<Long> categoryIds;
 
-	@NotNull(message = "分类不能为空")
-	@ApiModelProperty("分类ID")
-	private Long categoryId;
-
-	@NotNull(message = "店铺分类不能为空")
-	@ApiModelProperty("店铺分类ID")
-	private Long shopCategoryId;
 
 	@NotNull(message = "服务方案名称不能为空")
 	@ApiModelProperty("spu名称")
@@ -63,10 +56,10 @@ public class SpuDTO{
 	@ApiModelProperty("序号")
 	private Integer seq;
 
-	@ApiModelProperty("spuId列表(商品上下架：批量操作时，用此参数)(批量处理参数)")
+	@ApiModelProperty("商品的上下架使用,spuId列表(商品上下架：批量操作时，用此参数)(批量处理参数)")
 	private List<Long> spuIds;
 
-	@ApiModelProperty("店铺id")
+	@ApiModelProperty("不需要,店铺id")
 	private Long shopId;
 
 

@@ -3,6 +3,7 @@ package com.mall4j.cloud.user.mapper;
 import com.mall4j.cloud.common.order.vo.UserAddrVO;
 import com.mall4j.cloud.user.model.UserAddr;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * @Author lth
  * @Date 2021/7/1 17:42
  */
+@Repository
 public interface UserAddrMapper {
 
     /**

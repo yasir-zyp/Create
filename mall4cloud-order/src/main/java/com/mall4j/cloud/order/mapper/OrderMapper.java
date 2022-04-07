@@ -8,6 +8,7 @@ import com.mall4j.cloud.order.bo.SubmitOrderPayAmountInfoBO;
 import com.mall4j.cloud.order.model.Order;
 import com.mall4j.cloud.order.vo.OrderCountVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-12-05 14:13:50
  */
+@Repository
 public interface OrderMapper {
 
 	/**

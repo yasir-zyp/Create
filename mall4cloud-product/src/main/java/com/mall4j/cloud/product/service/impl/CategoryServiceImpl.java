@@ -252,22 +252,32 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryVO> list = categoryMapper.listByShopIdAndParenId(shopId, null);
         Map<Integer, List<CategoryVO>> categoryMap = list.stream().collect(Collectors.groupingBy(CategoryVO::getLevel));
 
-        List<CategoryVO> secondCategories = categoryMap.get(CategoryLevel.SECOND.value());
+        List<CategoryVO> secondCategories = categoryMap.get(CategoryLevel.THIRD.value());
         if (Objects.equals(shopId, Constant.PLATFORM_SHOP_ID)) {
             // 三级分类
-            List<CategoryVO> thirdCategories = categoryMap.get(CategoryLevel.THIRD.value());
+            List<CategoryVO> thirdCategories = categoryMap.get(CategoryLevel.THREE.value());
             //二级分类
             setChildCategory(secondCategories, thirdCategories);
         }
         //一级分类
-        List<CategoryVO> firstCategories = categoryMap.get(CategoryLevel.First.value());
+        List<CategoryVO> firstCategories = categoryMap.get(CategoryLevel.SECOND.value());
         setChildCategory(firstCategories, secondCategories);
         return firstCategories;
     }
 
     @Override
-    public CategoryVO getByName(Long categoryName) {
+    public CategoryVO getByName(String categoryName) {
         return categoryMapper.getByName(categoryName);
+    }
+
+    @Override
+    public CategoryVO getNameById(long id) {
+        return categoryMapper.getNameById(id);
+    }
+
+    @Override
+    public CategoryVO findIdByName(String categoryName) {
+        return categoryMapper.findIdByName(categoryName);
     }
 
     private void setChildCategory(List<CategoryVO> categories, List<CategoryVO> childCategories) {

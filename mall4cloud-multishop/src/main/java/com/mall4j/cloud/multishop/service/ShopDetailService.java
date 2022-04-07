@@ -8,10 +8,7 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.multishop.dto.*;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
-import com.mall4j.cloud.multishop.vo.ShopAddrVO;
-import com.mall4j.cloud.multishop.vo.ShopDetailAppVO;
-import com.mall4j.cloud.multishop.vo.ShopDetaislVO;
-import com.mall4j.cloud.multishop.vo.ShopQualificationVO;
+import com.mall4j.cloud.multishop.vo.*;
 
 import java.util.List;
 
@@ -161,11 +158,23 @@ public interface ShopDetailService {
     * */
     void creatBusinessAddress(ShopAddrDTO shopAddrDTO);
 
-	List<ShopAddrVO> findBusinessAddress();
+
 
 	void delBusinessAddress(Long shopAddrId);
 
 	void upBusinessAddress(ShopAddrDTO shopAddrDTO);
 
 	ShopAddrVO echoBusinessAddress(Long shopAddrId);
+
+    void creatAccountInfor(GatheringInfoDTO gatheringInfoDTO);
+
+	PageVO<GatheringInfoVO> findAccountInfor(PageDTO pageDTO);
+
+	void delAccountInfor(Long gatheringInfoId);
+
+	void upAccountInfor(GatheringInfoDTO gatheringInfoDTO);
+
+	GatheringInfoVO echoAccountInfor(Long gatheringInfoId);
+
+	PageVO<ShopAddrVO> findBusinessAddress(PageDTO pageDTO);
 }

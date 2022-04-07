@@ -41,7 +41,8 @@
   </select>
 
   <select id="listBySpuId" resultMap="skuAndAttrMap">
-    SELECT <include refid="Vo_Column_List"/>,sav.sku_attr_id,sav.`attr_id`,sav.`attr_name`,sav.`attr_desc`
+    SELECT  sku.`sku_id`,sku.`create_time`,sku.`update_time`,sku.sku_name,sku.`spu_id`,sku.`attrs`,
+    sku.`price_fee`,sku.`market_price_fee`,sku.`status`,sa.sku_attr_id,sa.`attr_id`,sa.`attr_name`,sa.`attr_desc`
     FROM sku sku
     LEFT JOIN `sku_attr` sa ON sa.`sku_id` = sku.`sku_id`
     WHERE sku.`spu_id` = #{spuId} and sku.status <![CDATA[<>]]> -1
@@ -61,14 +62,13 @@
 
   <update id="update">
     update sku
-    <set>
+    set
       <if test="sku.spuId != null">
         `spu_id` = #{sku.spuId},
       </if>
       <if test="sku.attrs != null">
         `attrs` = #{sku.attrs},
       </if>
-
       <if test="sku.priceFee != null">
         `price_fee` = #{sku.priceFee},
       </if>
@@ -78,7 +78,6 @@
       <if test="sku.status != null">
         `status` = #{sku.status},
       </if>
-    </set>
     where sku_id = #{sku.skuId}
   </update>
   <delete id="deleteById">
