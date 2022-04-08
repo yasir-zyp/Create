@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author lhd
@@ -36,4 +37,8 @@ public class UserRegisterDTO {
 
 	@ApiModelProperty("验证码")
 	private String code;
+
+	@NotNull
+	@ApiModelProperty("注册端类型，pc端：0,公众号1，小程序：2")
+	private Integer registerType;
 }

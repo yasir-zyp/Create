@@ -30,7 +30,7 @@ public interface AccountFeignClient {
 	 * @return Long uid
 	 */
 	@PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/accountUser")
-	ServerResponseEntity<Long> userSave(AuthAccountDTO authAccountDTO);
+	ServerResponseEntity<Long> userSave(@RequestBody AuthAccountDTO authAccountDTO);
 
 	/**
 	 * 更新统一账户
