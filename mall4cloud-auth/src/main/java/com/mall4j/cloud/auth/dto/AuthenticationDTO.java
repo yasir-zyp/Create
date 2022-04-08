@@ -1,6 +1,7 @@
 package com.mall4j.cloud.auth.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
  * @author FrozenWatermelon
  * @date 2020/7/1
  */
+@Data
 public class AuthenticationDTO {
 
 	/**
@@ -34,36 +36,9 @@ public class AuthenticationDTO {
 	@ApiModelProperty(value = "系统类型 0.普通用户系统 1.商家端", required = true)
 	protected Integer sysType;
 
-	public String getPrincipal() {
-		return principal;
-	}
+	@ApiModelProperty(value = "微信绑定唯一id", required = false)
+	protected String unionId;
+	@ApiModelProperty(value = "JSCode", required = false)
+	protected String JSCode;
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
-	}
-
-	public String getCredentials() {
-		return credentials;
-	}
-
-	public void setCredentials(String credentials) {
-		this.credentials = credentials;
-	}
-
-	public Integer getSysType() {
-		return sysType;
-	}
-
-	public void setSysType(Integer sysType) {
-		this.sysType = sysType;
-	}
-
-	@Override
-	public String toString() {
-		return "AuthenticationDTO{" +
-				"principal='" + principal + '\'' +
-				", credentials='" + credentials + '\'' +
-				", sysType=" + sysType +
-				'}';
-	}
 }

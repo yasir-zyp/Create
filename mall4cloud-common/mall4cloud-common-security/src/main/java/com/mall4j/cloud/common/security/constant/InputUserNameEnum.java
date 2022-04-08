@@ -20,7 +20,12 @@ public enum InputUserNameEnum {
 	/**
 	 * 邮箱
 	 */
-	EMAIL(3),;
+	EMAIL(3),
+	/**
+	 * 微信unionId
+	 */
+	unionId(4),
+	;
 
 	private final Integer value;
 

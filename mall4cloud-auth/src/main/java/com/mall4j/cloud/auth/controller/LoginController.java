@@ -1,31 +1,37 @@
 package com.mall4j.cloud.auth.controller;
+import cn.binarywang.wx.miniapp.api.WxMaUserService;
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.api.auth.feign.AccountFeignClient;
 import com.mall4j.cloud.api.rbac.dto.ClearUserPermissionsCacheDTO;
 import com.mall4j.cloud.api.rbac.feign.PermissionFeignClient;
+import com.mall4j.cloud.auth.dto.AuthGetPhoneDTO;
 import com.mall4j.cloud.auth.dto.AuthenticationDTO;
 import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
 import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.manager.TokenStore;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.auth.service.AuthAccountService;
+import com.mall4j.cloud.auth.service.WechatService;
 import com.mall4j.cloud.auth.service.impl.SendMessageService;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
+import com.mall4j.cloud.common.exception.Mall4cloudException;
 import com.mall4j.cloud.common.response.ResponseEnum;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.api.auth.vo.TokenInfoVO;
+import com.mall4j.cloud.common.util.PrincipalUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -56,6 +62,10 @@ public class LoginController {
 	private AccountFeignClient accountFeignClient;
 
 	@Autowired
+	WechatService wechatService;
+
+
+	@Autowired
 	SendMessageService sendMessageService;
 	@PostMapping("/ua/login")
 	@ApiOperation(value = "账号密码", notes = "通过账号登录，还要携带用户的类型，也就是用户所在的系统")
@@ -64,9 +74,14 @@ public class LoginController {
 
 		// 这边获取了用户的用户信息，那么根据sessionid对应一个user的原则，我应该要把这个东西存起来，然后校验，那么存到哪里呢？
 		// redis，redis有天然的自动过期的机制，有key value的形式
-		ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse = authAccountService
-				.getUserInfoInTokenByInputUserNameAndPassword(authenticationDTO.getPrincipal(),
-						authenticationDTO.getCredentials(), authenticationDTO.getSysType());
+		ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse=null;
+		if(PrincipalUtil.isUserName(authenticationDTO.getPrincipal())){
+			userInfoInTokenResponse = authAccountService
+					.getUserInfoInTokenByInputUserNameAndPassword(authenticationDTO.getPrincipal(),
+							authenticationDTO.getCredentials(), authenticationDTO.getSysType());
+		}else if(PrincipalUtil.isMobile(authenticationDTO.getPrincipal())){
+
+		}
 
 
 		if (!userInfoInTokenResponse.isSuccess()) {
@@ -88,6 +103,75 @@ public class LoginController {
 		// 保存token，返回token数据给前端，这里是最重要的
 		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
 	}
+	@PostMapping("/ua/loginBind")
+	@ApiOperation(value = "微信绑定账号密码", notes = "通过账号登录，还要携带用户的类型，也就是用户所在的系统")
+	public ServerResponseEntity<TokenInfoVO> loginBind(
+			@Valid @RequestBody AuthGetPhoneDTO authGetPhoneDTO) {
+        String accountPhone="";
+        try {
+             accountPhone=wechatService.getPhone(authGetPhoneDTO);
+        }catch (Mall4cloudException e){
+            return  ServerResponseEntity.fail(e.getResponseEnum());
+        }
+
+		AuthenticationDTO authenticationDTO=new AuthenticationDTO();
+		authenticationDTO.setPrincipal(accountPhone);
+		ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse = authAccountService.bindUnionId(authenticationDTO);
+
+		if (!userInfoInTokenResponse.isSuccess()) {
+			return ServerResponseEntity.transform(userInfoInTokenResponse);
+		}
+
+		UserInfoInTokenBO data = userInfoInTokenResponse.getData();
+		AuthAccountDTO authAccountDTO=new AuthAccountDTO();
+		authAccountDTO.setUserId(data.getUserId());
+		authAccountDTO.setUnionId(authGetPhoneDTO.getUnionId());
+		authAccountDTO.setSysType(data.getSysType());
+		authAccountDTO.setUsername(data.getUsername());
+		accountFeignClient.update(authAccountDTO);
+		ClearUserPermissionsCacheDTO clearUserPermissionsCacheDTO = new ClearUserPermissionsCacheDTO();
+		clearUserPermissionsCacheDTO.setSysType(data.getSysType());
+		clearUserPermissionsCacheDTO.setUserId(data.getUserId());
+		// 将以前的权限清理了,以免权限有缓存
+		ServerResponseEntity<Void> clearResponseEntity = permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
+
+		if (!clearResponseEntity.isSuccess()) {
+			return ServerResponseEntity.fail(ResponseEnum.UNAUTHORIZED);
+		}
+
+		// 保存token，返回token数据给前端，这里是最重要的
+		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
+	}
+
+	@PostMapping("/ua/social/ma")
+	@ApiOperation(value = "小程序登录", notes = "小程序登录")
+	public ServerResponseEntity<TokenInfoVO> loginMa(
+			 @RequestBody String JSCODE) {
+        String openid=wechatService.getOpenId(JSCODE);
+
+		// 这边获取了用户的用户信息，那么根据sessionid对应一个user的原则，我应该要把这个东西存起来，然后校验，那么存到哪里呢？
+		// redis，redis有天然的自动过期的机制，有key value的形式
+		ServerResponseEntity<UserInfoInTokenBO> userInfoInTokenResponse = authAccountService
+				.getUserInfoInTokenByUnionId(openid);
+		if (!userInfoInTokenResponse.isSuccess()) {
+			return ServerResponseEntity.transform(userInfoInTokenResponse);
+		}
+
+		UserInfoInTokenBO data = userInfoInTokenResponse.getData();
+
+		ClearUserPermissionsCacheDTO clearUserPermissionsCacheDTO = new ClearUserPermissionsCacheDTO();
+		clearUserPermissionsCacheDTO.setSysType(data.getSysType());
+		clearUserPermissionsCacheDTO.setUserId(data.getUserId());
+		// 将以前的权限清理了,以免权限有缓存
+		ServerResponseEntity<Void> clearResponseEntity = permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
+
+		if (!clearResponseEntity.isSuccess()) {
+			return ServerResponseEntity.fail(ResponseEnum.UNAUTHORIZED);
+		}
+		// 保存token，返回token数据给前端，这里是最重要的
+		return ServerResponseEntity.success(tokenStore.storeAndGetVo(data));
+	}
+
 	@PostMapping("/ua/login_phone")
 	@ApiOperation(value = "手机号登录", notes = "通过手机号验证码的形式直接登录")
 	public ServerResponseEntity<TokenInfoVO> loginPhone(@Valid @RequestBody PhoneMessageDTO phoneMessageDTO) {
@@ -136,7 +220,7 @@ public class LoginController {
 		String code = String.valueOf(a);
 
 		//查询是否存在手机号
-		AuthAccount authAccount=authAccountService.findPhone(smsMessageDTO.getAccountPhone());
+		AuthAccount authAccount=authAccountService.findPhone(smsMessageDTO.getAccountPhone(),smsMessageDTO.getSystemType());
 		if (authAccount!=null){
 			return ServerResponseEntity.showFailMsg("手机号已存在");
 		}

@@ -34,7 +34,14 @@ public class UserInfoInTokenBO {
 	 * @see SysTypeEnum
 	 */
 	private Integer sysType;
-
+	/**
+	 * 微信平台唯一id
+	 */
+	private String unionId;
+	/**
+	 * 用户名
+	 */
+	private String username;
 	/**
 	 * 是否是管理员
 	 */

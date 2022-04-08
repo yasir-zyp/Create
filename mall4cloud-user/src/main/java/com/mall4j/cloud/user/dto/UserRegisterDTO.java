@@ -31,6 +31,9 @@ public class UserRegisterDTO {
 	@ApiModelProperty("手机号")
 	private String accountPhone;
 
+	@ApiModelProperty("uid")
+	private String tempUid;
+
 	@ApiModelProperty("验证码")
 	private String code;
 }

@@ -112,11 +112,13 @@ public class UserServiceImpl implements UserService {
         authAccountDTO.setIsAdmin(0);
         authAccountDTO.setSysType(SysTypeEnum.ORDINARY.value());
         authAccountDTO.setUsername(param.getUserName());
+        authAccountDTO.setAccountPhone(param.getAccountPhone());
+        authAccountDTO.setUnionId(param.getTempUid());
         authAccountDTO.setStatus(1);
         authAccountDTO.setUserId(userId);
 
         // 保存统一账户信息
-        ServerResponseEntity<Long> serverResponse = accountFeignClient.save(authAccountDTO);
+        ServerResponseEntity<Long> serverResponse = accountFeignClient.userSave(authAccountDTO);
         // 抛异常回滚
         if (!serverResponse.isSuccess()) {
             throw new Mall4cloudException(serverResponse.getMsg());

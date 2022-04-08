@@ -57,6 +57,12 @@ public class AuthAccountDTO {
      */
     @NotNull(message = "isAdmin not null")
     private Integer isAdmin;
-
+    /**
+     * 手机号
+     */
     private String accountPhone;
+    /**
+     * 微信平台唯一id
+     */
+    private String unionId;
 }

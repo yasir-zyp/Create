@@ -3,10 +3,12 @@ package com.mall4j.cloud.auth.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
 import com.mall4j.cloud.auth.constant.AuthAccountStatusEnum;
+import com.mall4j.cloud.auth.dto.AuthenticationDTO;
 import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
 import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.model.AuthAccount;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
+import com.mall4j.cloud.common.response.ResponseEnum;
 import com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.common.security.constant.InputUserNameEnum;
@@ -37,6 +39,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
 	@Autowired
 	private MapperFacade mapperFacade;
+
 
 	public static final String USER_NOT_FOUND_SECRET = "USER_NOT_FOUND_SECRET";
 
@@ -87,7 +90,32 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 		return ServerResponseEntity.success(mapperFacade.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
 	}
 
-    @Override
+	@Override
+	public ServerResponseEntity<UserInfoInTokenBO> getUserInfoInTokenByUnionId(String unionId) {
+		if (StrUtil.isBlank(unionId)) {
+			return ServerResponseEntity.showFailMsg("小程序登录失败");
+		}
+		InputUserNameEnum inputUserNameEnum = InputUserNameEnum.unionId;
+		AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper
+				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(), unionId, 0);
+		if (authAccountInVerifyBO == null) {
+			prepareTimingAttackProtection();
+			// 再次进行运算，防止计时攻击
+			// 计时攻击（Timing
+			// attack），通过设备运算的用时来推断出所使用的运算操作，或者通过对比运算的时间推定数据位于哪个存储设备，或者利用通信的时间差进行数据窃取。
+			mitigateAgainstTimingAttack(unionId);
+			UserInfoInTokenBO userInfoInTokenBO=new UserInfoInTokenBO();
+            ServerResponseEntity<UserInfoInTokenBO> serverResponseEntity=ServerResponseEntity.fail(ResponseEnum.SOCIAL_ACCOUNT_NOT_BIND,userInfoInTokenBO);
+            serverResponseEntity.setMsg(unionId);
+			return serverResponseEntity;
+		}
+		if (Objects.equals(authAccountInVerifyBO.getStatus(), AuthAccountStatusEnum.DISABLE.value())) {
+			return ServerResponseEntity.showFailMsg("用户已禁用，请联系客服");
+		}
+		return ServerResponseEntity.success(mapperFacade.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
+	}
+
+	@Override
     public AuthAccount getByUserIdAndType(Long userId, Integer sysType) {
         return authAccountMapper.getByUserIdAndType(userId, sysType);
     }
@@ -108,8 +136,8 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     }
 
 	@Override
-	public AuthAccount findPhone(String accountPhone) {
-		return authAccountMapper.findPhone(accountPhone);
+	public AuthAccount findPhone(String accountPhone,Integer sysType) {
+		return authAccountMapper.findPhone(accountPhone,sysType);
 	}
 
 	@Override
@@ -132,8 +160,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 		*根据输入的电话号码及用户名类型获取用户信息
 		* */
 		InputUserNameEnum inputUserNameEnum = null;
-		inputUserNameEnum = InputUserNameEnum.PHONE;
+
+		// 手机号
+		if (PrincipalUtil.isMobile(phoneMessageDTO.getAccountPhone())) {
+			inputUserNameEnum = InputUserNameEnum.PHONE;
+		}
 		Integer sysType=1;
+
 		AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper
 				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(),phoneMessageDTO.getAccountPhone(),sysType);
 		if (authAccountInVerifyBO == null) {
@@ -143,6 +176,37 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 			return ServerResponseEntity.showFailMsg("用户已禁用，请联系客服");
 		}
 		return ServerResponseEntity.success(mapperFacade.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
+	}
+
+	@Override
+	public ServerResponseEntity<UserInfoInTokenBO> bindUnionId(AuthenticationDTO authenticationDTO) {
+		if (StrUtil.isBlank(authenticationDTO.getPrincipal())) {
+			return ServerResponseEntity.showFailMsg("电话号码未获取成功");
+		}
+		/*
+		 *根据输入的电话号码及用户名类型获取用户信息
+		 * */
+		InputUserNameEnum inputUserNameEnum = InputUserNameEnum.PHONE;
+		Integer sysType=0;
+
+		AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper
+				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(),authenticationDTO.getPrincipal(),sysType);
+		if (authAccountInVerifyBO == null) {
+			prepareTimingAttackProtection();
+			// 再次进行运算，防止计时攻击
+			// 计时攻击（Timing
+			// attack），通过设备运算的用时来推断出所使用的运算操作，或者通过对比运算的时间推定数据位于哪个存储设备，或者利用通信的时间差进行数据窃取。
+			mitigateAgainstTimingAttack(authenticationDTO.getPrincipal());
+			UserInfoInTokenBO userInfoInTokenBO=new UserInfoInTokenBO();
+			ServerResponseEntity<UserInfoInTokenBO> serverResponseEntity=ServerResponseEntity.fail(ResponseEnum.ACCOUNT_NOT_REGISTER,userInfoInTokenBO);
+			serverResponseEntity.setMsg(authenticationDTO.getPrincipal());
+			return serverResponseEntity;
+		}
+		if (Objects.equals(authAccountInVerifyBO.getStatus(), AuthAccountStatusEnum.DISABLE.value())) {
+			return ServerResponseEntity.showFailMsg("用户已禁用，请联系客服");
+		}
+		return ServerResponseEntity.success(mapperFacade.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
+
 	}
 
 

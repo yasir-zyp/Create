@@ -24,6 +24,13 @@ public interface AccountFeignClient {
 	 */
 	@PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/account")
 	ServerResponseEntity<Long> save(@RequestBody AuthAccountDTO authAccountDTO);
+	/**
+	 * 保存统一账户
+	 * @param authAccountDTO 账户信息
+	 * @return Long uid
+	 */
+	@PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/accountUser")
+	ServerResponseEntity<Long> userSave(AuthAccountDTO authAccountDTO);
 
 	/**
 	 * 更新统一账户
@@ -95,4 +102,6 @@ public interface AccountFeignClient {
 
 	@PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/account/getByUsernameByName")
 	ServerResponseEntity<AuthAccountVO> getByUsernameByName(@RequestParam("username") String username);
+
+
 }

@@ -66,7 +66,24 @@ public class AccountFeignController implements AccountFeignClient {
 
         return ServerResponseEntity.success(data.getUid());
     }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ServerResponseEntity<Long> userSave(AuthAccountDTO authAccountDTO) {
+        ServerResponseEntity<Long> segmentIdResponse = segmentFeignClient.getSegmentId("mall4cloud-auth-account");
+        if (!segmentIdResponse.isSuccess()) {
+            throw new Mall4cloudException(ResponseEnum.EXCEPTION);
+        }
 
+        ServerResponseEntity<AuthAccount> verifyPhone = verifyPhone(authAccountDTO);
+        if (!verifyPhone.isSuccess()) {
+            return ServerResponseEntity.transform(verifyPhone);
+        }
+        AuthAccount data = verifyPhone.getData();
+        data.setUid(segmentIdResponse.getData());
+        authAccountMapper.save(data);
+
+        return ServerResponseEntity.success(data.getUid());
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServerResponseEntity<Void> update(AuthAccountDTO authAccountDTO) {
@@ -134,7 +151,29 @@ public class AccountFeignController implements AccountFeignClient {
 
         return ServerResponseEntity.success(authAccount);
     }
+    private ServerResponseEntity<AuthAccount> verifyPhone(AuthAccountDTO authAccountDTO) {
 
+        // 用户名
+        if (!PrincipalUtil.isUserName(authAccountDTO.getUsername())) {
+            return ServerResponseEntity.showFailMsg("用户名格式不正确");
+        }
+
+        AuthAccountInVerifyBO userNameBo = authAccountMapper.getAuthAccountInVerifyByInputUserName(InputUserNameEnum.USERNAME.value(), authAccountDTO.getUsername(), authAccountDTO.getSysType());
+        if (userNameBo != null && !Objects.equals(userNameBo.getUserId(), authAccountDTO.getUserId())) {
+            return ServerResponseEntity.showFailMsg("用户名已存在，请更换用户名再次尝试");
+        }
+        AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper.getAuthAccountInVerifyByInputUserName(InputUserNameEnum.PHONE.value(), authAccountDTO.getAccountPhone(), authAccountDTO.getSysType());
+        if (authAccountInVerifyBO != null && !Objects.equals(authAccountInVerifyBO.getUserId(), authAccountDTO.getUserId())) {
+            return ServerResponseEntity.showFailMsg("手机号已存在，请更换再次尝试");
+        }
+        AuthAccount authAccount = mapperFacade.map(authAccountDTO, AuthAccount.class);
+
+        if (StrUtil.isNotBlank(authAccount.getPassword())) {
+            authAccount.setPassword(passwordEncoder.encode(authAccount.getPassword()));
+        }
+
+        return ServerResponseEntity.success(authAccount);
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServerResponseEntity<Void> updateUserInfoByUserIdAndSysType(UserInfoInTokenBO userInfoInTokenBO, Long userId, Integer sysType) {

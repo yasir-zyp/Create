@@ -15,16 +15,17 @@
     <result column="sys_type" property="sysType" />
     <result column="user_id" property="userId"/>
     <result column="tenant_id" property="tenantId"/>
+    <result column="union_id" property="unionId"/>
     <result column="is_admin" property="isAdmin"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     `uid`, create_time, update_time, username, `password`, create_ip,
-     `status`, sys_type, user_id, tenant_id, is_admin,account_phone
+     `status`, sys_type, user_id, tenant_id, is_admin,account_phone,union_id
   </sql>
 
   <select id="getAuthAccountInVerifyByInputUserName" resultType="com.mall4j.cloud.common.security.bo.AuthAccountInVerifyBO">
-    select user_id, sys_type,uid,password,is_admin,tenant_id, status from auth_account
+    select user_id, sys_type,uid,password,is_admin,tenant_id, union_id,status from auth_account
     where sys_type = #{sysType} and status != -1
     <if test="inputUserNameType == 1 ">
         and username = #{inputUserAll}
@@ -32,22 +33,25 @@
     <if test="inputUserNameType == 2">
         and account_phone = #{inputUserAll}
     </if>
+    <if test="inputUserNameType == 4">
+      and union_id = #{inputUserAll}
+    </if>
   </select>
   <select id="getByUserIdAndType" resultMap="BaseResultMap">
     select uid, username, `password`, create_ip,
-     `status`, sys_type, user_id, tenant_id, is_admin from auth_account where sys_type = #{sysType} and user_id = #{userId}
+     `status`, sys_type, user_id, tenant_id,union_id, is_admin from auth_account where sys_type = #{sysType} and user_id = #{userId}
   </select>
   <select id="getByUid" resultMap="BaseResultMap">
     select username, `password`, create_ip,
-           `status`, sys_type, user_id, tenant_id, is_admin from auth_account where uid = #{uid}
+           `status`, sys_type, user_id, tenant_id,union_id, is_admin from auth_account where uid = #{uid}
   </select>
 
   <update id="updatePassword">
     update auth_account set password = #{newPassWord} where sys_type = #{sysType} and user_id = #{userId}
   </update>
   <insert id="save">
-    insert into auth_account (`uid`,`username`,`password`,`create_ip`,`status`,`sys_type`,`user_id`,`tenant_id`,`is_admin`,`account_phone`)
-    values (#{authAccount.uid},#{authAccount.username},#{authAccount.password},#{authAccount.createIp},#{authAccount.status},#{authAccount.sysType},#{authAccount.userId},#{authAccount.tenantId},#{authAccount.isAdmin},#{authAccount.accountPhone});
+    insert into auth_account (`uid`,`username`,`password`,`create_ip`,`status`,`sys_type`,`user_id`,`tenant_id`,`union_id`,`is_admin`,`account_phone`)
+    values (#{authAccount.uid},#{authAccount.username},#{authAccount.password},#{authAccount.createIp},#{authAccount.status},#{authAccount.sysType},#{authAccount.userId},#{authAccount.tenantId},#{authAccount.unionId},#{authAccount.isAdmin},#{authAccount.accountPhone});
   </insert>
   <update id="updateAccountInfo">
     update auth_account
@@ -62,7 +66,10 @@
         status = #{authAccount.status},
       </if>
       <if test="authAccount.accountPhone != null">
-        status = #{authAccount.accountPhone},
+        account_phone = #{authAccount.accountPhone},
+      </if>
+      <if test="authAccount.unionId != null">
+        union_id = #{authAccount.unionId},
       </if>
     </set>
     where user_id = #{authAccount.userId} and sys_type = #{authAccount.sysType}
@@ -98,9 +105,12 @@
   </select>
   <select id="findPhone" resultType="com.mall4j.cloud.auth.model.AuthAccount">
     select user_id, sys_type, uid, username, password, is_admin, tenant_id, status,account_phone from auth_account
-    where status='1'
+    where status !=1
     <if test="accountPhone != null">
       and account_phone = #{accountPhone}
+    </if>
+    <if test="sysType != null">
+      and sys_type = #{sysType}
     </if>
   </select>
   <select id="getByUsernameByName" resultType="com.mall4j.cloud.api.auth.vo.AuthAccountVO">

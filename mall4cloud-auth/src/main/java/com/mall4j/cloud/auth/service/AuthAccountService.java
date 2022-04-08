@@ -2,6 +2,7 @@ package com.mall4j.cloud.auth.service;
 
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.auth.dto.AuthAccountDTO;
+import com.mall4j.cloud.auth.dto.AuthenticationDTO;
 import com.mall4j.cloud.auth.dto.PhoneMessageDTO;
 import com.mall4j.cloud.auth.dto.SmsMessageDTO;
 import com.mall4j.cloud.auth.model.AuthAccount;
@@ -25,6 +26,12 @@ public interface AuthAccountService {
 	ServerResponseEntity<UserInfoInTokenBO> getUserInfoInTokenByInputUserNameAndPassword(String inputUserName,
 			String password, Integer sysType);
 
+	/**
+	 * 通过小程序登录
+	 * @param unionId
+	 * @return
+	 */
+	ServerResponseEntity<UserInfoInTokenBO> getUserInfoInTokenByUnionId(String unionId);
 	/**
 	 * 根据用户id 和系统类型获取平台唯一用户
 	 * @param userId 用户id
@@ -61,10 +68,17 @@ public interface AuthAccountService {
     * 根据用户手机号查询用户是否存在
     * @param accountPhone
     * */
-	AuthAccount findPhone(String accountPhone);
+	AuthAccount findPhone(String accountPhone,Integer systemType);
 	/**
 	 * 通过输入的用户手机号及验证码，校验并获取部分用户信息
 	 * @return 用户在token中信息
 	 */
 	ServerResponseEntity<UserInfoInTokenBO> getUserTokenByPhone(PhoneMessageDTO phoneMessageDTO);
+
+	/**
+	 * 手机号获取用户信息
+	 * @param authenticationDTO
+	 * @return
+	 */
+	ServerResponseEntity<UserInfoInTokenBO> bindUnionId(AuthenticationDTO authenticationDTO);
 }

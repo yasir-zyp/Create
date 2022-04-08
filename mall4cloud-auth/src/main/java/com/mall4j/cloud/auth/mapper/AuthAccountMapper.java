@@ -108,7 +108,7 @@ public interface AuthAccountMapper {
      /*
      * 根据用户手机号查询是否存在账户
      * */
-	AuthAccount findPhone(@Param("accountPhone") String accountPhone);
+	AuthAccount findPhone(@Param("accountPhone") String accountPhone, @Param("sysType") Integer sysType);
 
 
 	AuthAccountVO getByUsernameByName(@Param("username") String username);

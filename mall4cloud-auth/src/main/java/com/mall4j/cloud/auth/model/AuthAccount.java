@@ -60,6 +60,10 @@ public class AuthAccount extends BaseModel {
 	private Integer isAdmin;
 
 	private String accountPhone;
+	/**
+	 * 微信全平台唯一id
+	 */
+	private String unionId;
 
 
 }
