@@ -92,4 +92,7 @@
         #{skuId}
       </foreach>
   </update>
+  <select id="selListById" resultType="com.mall4j.cloud.product.model.SkuAttr">
+    select  sku_attr_id,attr_desc,price_fee,create_time,update_time,sku_id,attr_id,attr_name,status from sku_attr where sku_id = #{skuId}
+  </select>
 </mapper>

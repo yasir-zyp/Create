@@ -53,4 +53,6 @@ public interface SkuAttrService {
 	 * @param status
 	 */
     void changeStatusBySkuId(List<Long> skuIds, Integer status);
+
+    void delAll(Long skuId);
 }

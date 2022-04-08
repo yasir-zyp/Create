@@ -43,7 +43,8 @@ public class SpuController {
     private CategoryService categoryService;
     @Autowired
     private AttrService attrService;
-
+    @Autowired
+    private SkuAttrService skuAttrService;
 
     @GetMapping("/platform_page")
     @ApiOperation(value = "获取平台spu信息列表", notes = "分页获取平台spu信息列表")
@@ -53,14 +54,14 @@ public class SpuController {
     }
 
     @GetMapping("/page")
-    @ApiOperation(value = "获取商品信息列表", notes = "分页获取spu信息列表")
+    @ApiOperation(value = "获取服务方案列表", notes = "分页获取spu信息列表")
     public ServerResponseEntity<PageVO<SpuVO>> page(PageDTO pageDTO, SpuPageSearchDTO spuDTO) {
         PageVO<SpuVO> spuPage = spuService.page(pageDTO, spuDTO);
         return ServerResponseEntity.success(spuPage);
     }
 
     @GetMapping("/echo_spu")
-    @ApiOperation(value = "回显商品信息", notes = "根据spuId获取spu信息")
+    @ApiOperation(value = "回显服务方案", notes = "根据spuId获取spu信息")
     public ServerResponseEntity<SpuVO> getBySpuId(@RequestParam("spuId") Long spuId) {
         // 获取spu信息
         SpuVO spuVO = spuService.getBySpuId(spuId);
@@ -75,7 +76,7 @@ public class SpuController {
 
 
     @PostMapping("/add_spu")
-    @ApiOperation(value = "保存商品信息", notes = "保存spu信息")
+    @ApiOperation(value = "保存服务方案", notes = "保存spu信息")
     public ServerResponseEntity<Void> save(@Valid @RequestBody SpuDTO spuDTO) {
         //checkSaveOrUpdateInfo(spuDTO);
         spuService.save(spuDTO);
@@ -83,7 +84,7 @@ public class SpuController {
     }
 
     @PutMapping("/up_spu")
-    @ApiOperation(value = "更新商品信息", notes = "更新spu信息")
+    @ApiOperation(value = "更新服务方案", notes = "更新spu信息")
     public ServerResponseEntity<Void> update(@Valid @RequestBody SpuDTO spuDTO) {
         //checkSaveOrUpdateInfo(spuDTO);
         List<Long> skuIds = spuDTO.getSkuList().stream().filter(sku -> Objects.nonNull(sku.getSkuId())).map(SkuDTO::getSkuId).collect(Collectors.toList());
@@ -96,7 +97,7 @@ public class SpuController {
 
 
     @DeleteMapping("/del_spu")
-    @ApiOperation(value = "删除商品信息", notes = "根据spu信息id删除spu信息")
+    @ApiOperation(value = "删除服务方案", notes = "根据spu信息id删除spu信息")
     public ServerResponseEntity<Void> delete(@RequestParam Long spuId) {
         spuService.deleteById(spuId);
         // 清除缓存
@@ -105,22 +106,22 @@ public class SpuController {
         return ServerResponseEntity.success();
     }
 
-    @PutMapping("/update_spu_data")
-    @ApiOperation(value = "修改商品信息", notes = "更新spu信息")
+/*    @PutMapping("/update_spu_data")
+    @ApiOperation(value = "修改服务方案", notes = "更新spu信息")
     public ServerResponseEntity<Void> updateSpuData(@RequestBody SpuDTO spuDTO) {
         spuService.updateSpuOrSku(spuDTO);
         // 清除缓存
         spuService.removeSpuCacheBySpuId(spuDTO.getSpuId());
         skuService.removeSkuCacheBySpuIdOrSkuIds(spuDTO.getSpuId(), null);
         return ServerResponseEntity.success();
-    }
+    }*/
 
 
     /**
      * 更新商品状态
      */
     @PutMapping("/prod_status")
-    @ApiOperation(value = "商品上下架", notes = "商品上下架")
+    @ApiOperation(value = "服务方案上下架", notes = "商品上下架")
     public ServerResponseEntity<Void> spuChangeStatus(@RequestBody SpuPageSearchDTO spuPageSearchDTO) {
         if (Objects.nonNull(spuPageSearchDTO.getSpuId())) {
             spuUpdateStatus(spuPageSearchDTO);
@@ -223,6 +224,19 @@ public class SpuController {
         }
         return null;
     }
-
-
+    /*单个删除skulist信息*/
+    @DeleteMapping("/del_sku_some")
+    @ApiOperation(value = "删除sku信息", notes = "根据sku信息")
+    public ServerResponseEntity<Void> delSku(@RequestParam Long skuId) {
+        skuService.deleteById(skuId);
+        skuAttrService.delAll(skuId);
+        return ServerResponseEntity.success();
+    }
+    /*单个删除skuAttrs信息*/
+    @DeleteMapping("/del_sku_attr")
+    @ApiOperation(value = "删除skuAttrList信息", notes = "根据sku信息")
+    public ServerResponseEntity<Void> delSkuAttr(@RequestParam Long skuAttrId) {
+        skuAttrService.deleteById(skuAttrId);
+        return ServerResponseEntity.success();
+    }
 }

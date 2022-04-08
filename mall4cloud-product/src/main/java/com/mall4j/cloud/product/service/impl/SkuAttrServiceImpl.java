@@ -1,6 +1,7 @@
 package com.mall4j.cloud.product.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.mall4j.cloud.api.product.vo.SkuAttrVO;
 import com.mall4j.cloud.product.mapper.SkuAttrMapper;
 import com.mall4j.cloud.product.model.SkuAttr;
 import com.mall4j.cloud.product.service.SkuAttrService;
@@ -54,5 +55,13 @@ public class SkuAttrServiceImpl implements SkuAttrService {
     @Override
     public void changeStatusBySkuId(List<Long> skuIds, Integer status) {
         skuAttrMapper.changeStatusBySkuId(skuIds, status);
+    }
+
+    @Override
+    public void delAll(Long skuId) {
+        List<SkuAttr> skuAttrList=skuAttrMapper.selListById(skuId);
+        for (int i = 0; i <skuAttrList.size() ; i++) {
+            skuAttrMapper.deleteById(skuAttrList.get(i).getSkuAttrId());
+        }
     }
 }

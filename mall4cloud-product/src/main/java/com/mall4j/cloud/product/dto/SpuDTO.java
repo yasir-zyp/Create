@@ -25,7 +25,7 @@ public class SpuDTO{
 
 
 	@NotNull(message = "服务方案名称不能为空")
-	@ApiModelProperty("spu名称")
+	@ApiModelProperty("服务方案名称名称")
 	private String name;
 
 	@ApiModelProperty("检测产品名称")
@@ -47,10 +47,10 @@ public class SpuDTO{
 	private Integer status;
 
 	@NotEmpty(message = "sku信息不能为空")
-	@ApiModelProperty("商品规格列表")
+	@ApiModelProperty("服务方案规格列表")
 	private List<SkuDTO> skuList;
 
-	@ApiModelProperty("商品详情")
+	@ApiModelProperty("服务方案详情")
 	private String detail;
 
 	@ApiModelProperty("序号")

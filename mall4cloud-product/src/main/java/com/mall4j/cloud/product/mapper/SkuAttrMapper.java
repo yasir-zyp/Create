@@ -61,4 +61,6 @@ public interface SkuAttrMapper {
 	 * @param status
 	 */
     void changeStatusBySkuId(@Param("skuIds") List<Long> skuIds, @Param("status") Integer status);
+
+	List<SkuAttr> selListById(@Param("skuId")Long skuId);
 }
