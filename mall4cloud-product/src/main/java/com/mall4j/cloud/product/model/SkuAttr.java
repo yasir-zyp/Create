@@ -40,6 +40,10 @@ public class SkuAttr extends BaseModel implements Serializable{
      */
     private String attrName;
 
+    private Long priceFee;
+
+
+    private String attrDesc;
     /**
      * 状态 1:enable, 0:disable, -1:deleted
      */

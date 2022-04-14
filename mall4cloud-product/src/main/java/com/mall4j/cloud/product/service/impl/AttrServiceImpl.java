@@ -92,7 +92,7 @@ public class AttrServiceImpl implements AttrService {
            attr.setCategoryIdOne((long)array[0]);
            attr.setCategoryIdTwo((long)array[1]);
        }
-        attrMapper.update(attr);
+        attrMapper.updateByPrimaryKeySelective(attr);
     }
 
     @Override

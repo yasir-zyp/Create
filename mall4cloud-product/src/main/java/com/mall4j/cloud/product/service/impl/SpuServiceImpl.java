@@ -8,6 +8,7 @@ import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.api.product.bo.EsAttrBO;
 import com.mall4j.cloud.api.product.bo.EsProductBO;
 import com.mall4j.cloud.api.product.vo.CategoryVO;
+import com.mall4j.cloud.api.product.vo.SkuVO;
 import com.mall4j.cloud.api.product.vo.SpuCategoryVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
@@ -21,8 +22,10 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
+import com.mall4j.cloud.product.mapper.SkuMapper;
 import com.mall4j.cloud.product.mapper.SpuCategoryMapper;
 import com.mall4j.cloud.product.mapper.SpuMapper;
+import com.mall4j.cloud.product.model.Sku;
 import com.mall4j.cloud.product.model.SpuCategory;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.SpuVO;
@@ -76,7 +79,8 @@ public class SpuServiceImpl implements SpuService {
 
     @Autowired
     private SpuCategoryMapper spuCategoryMapper;
-
+   @Autowired
+    SkuMapper skuMapper;
     @Override
     public PageVO<SpuVO> page(PageDTO pageDTO, SpuPageSearchDTO spuDTO) {
         spuDTO.setShopId(AuthUserContext.get().getTenantId());
@@ -108,13 +112,13 @@ public class SpuServiceImpl implements SpuService {
     @GlobalTransactional(rollbackFor = Exception.class)
     public void changeSpuStatus(Long spuId, Integer status) {
         spuMapper.changeSpuStatus(spuId, status);
-        if (!Objects.equals(status, StatusEnum.ENABLE)) {
+       /* if (!Objects.equals(status, StatusEnum.ENABLE)) {
             SpuVO spuVO = spuMapper.getBySpuId(spuId);
             ServerResponseEntity<Void> imgRes = indexImgFeignClient.deleteBySpuId(spuVO.getSpuId(), spuVO.getShopId());
             if (!imgRes.isSuccess()) {
                 throw new Mall4cloudException("服务异常");
             }
-        }
+        }*/
     }
 
     @Override
@@ -122,8 +126,7 @@ public class SpuServiceImpl implements SpuService {
     public void save(SpuDTO spuDTO) {
         Spu spu = mapperFacade.map(spuDTO, Spu.class);
         spu.setShopId(AuthUserContext.get().getTenantId());
-        spu.setStatus(StatusEnum.ENABLE.value());
-        spu.setShopId(AuthUserContext.get().getTenantId());
+        spu.setStatus(StatusEnum.DISABLE.value());
         // 1.保存商品信息
         spuMapper.save(spu);
         // 2.保存商品其他信息、详细、扩展信息
@@ -142,7 +145,6 @@ public class SpuServiceImpl implements SpuService {
         }
         // 3.保存sku信息
         skuService.save(spu.getSpuId(),spuDTO.getSkuList());
-
     }
 
     @Override
@@ -245,6 +247,7 @@ public class SpuServiceImpl implements SpuService {
         Set<Long> shopIdSet = page.getList().stream().map(SpuVO::getShopId).collect(Collectors.toSet());
         ServerResponseEntity<List<ShopDetailVO>> shopResponse = shopDetailFeignClient.listByShopIds(new ArrayList<>(shopIdSet));
         Map<Long, ShopDetailVO> shopMap = shopResponse.getData().stream().collect(Collectors.toMap(ShopDetailVO::getShopId, s -> s));
+
         for (SpuVO spuVO : page.getList()) {
             ShopDetailVO shopDetailVO = shopMap.get(spuVO.getShopId());
             if (Objects.isNull(shopDetailVO)) {
@@ -283,5 +286,10 @@ public class SpuServiceImpl implements SpuService {
     @Override
     public List<String> SpuCategoryById(Long spuId) {
         return spuCategoryMapper.SpuCategoryById(spuId);
+    }
+
+    @Override
+    public void changeSpuIdListStatus(List<Long> spuIds, Integer status) {
+     spuMapper.batchChangeSpuStatusBySpuIdsAndStatus(spuIds,status);
     }
 }

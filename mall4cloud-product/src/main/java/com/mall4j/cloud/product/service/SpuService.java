@@ -143,4 +143,11 @@ public interface SpuService {
     void batchChangeSpuStatusByCids(List<Long> cidList, Long shopId, Integer status);
 
 	List<String> SpuCategoryById(Long spuId);
+
+	/**
+	 * 批量改变商品状态（上下架）
+	 * @param spuIds
+	 * @param status
+	 */
+	void changeSpuIdListStatus(List<Long> spuIds, Integer status);
 }

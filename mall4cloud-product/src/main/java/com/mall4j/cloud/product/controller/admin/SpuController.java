@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @RestController("platformSpuController")
 @RequestMapping("/admin/spu")
-@Api(tags = "admin-spu信息,商品的增删改查")
+@Api(tags = "服务方案信息")
 public class SpuController {
 
     @Autowired
@@ -77,9 +77,9 @@ public class SpuController {
 
     @PostMapping("/add_spu")
     @ApiOperation(value = "保存服务方案", notes = "保存spu信息")
-    public ServerResponseEntity<Void> save(@Valid @RequestBody SpuDTO spuDTO) {
+    public ServerResponseEntity<Object> save(@Valid @RequestBody SpuDTO spuDTO) {
         //checkSaveOrUpdateInfo(spuDTO);
-        spuService.save(spuDTO);
+       spuService.save(spuDTO);
         return ServerResponseEntity.success();
     }
 
@@ -121,14 +121,16 @@ public class SpuController {
      * 更新商品状态
      */
     @PutMapping("/prod_status")
-    @ApiOperation(value = "服务方案上下架", notes = "商品上下架")
-    public ServerResponseEntity<Void> spuChangeStatus(@RequestBody SpuPageSearchDTO spuPageSearchDTO) {
+    @ApiOperation(value = "发布(撤回)服务方案", notes = "发布(撤回)服务方案")
+    public ServerResponseEntity<Object> spuChangeStatus(@RequestBody SpuPageSearchDTO spuPageSearchDTO) {
         if (Objects.nonNull(spuPageSearchDTO.getSpuId())) {
             spuUpdateStatus(spuPageSearchDTO);
         } else if (CollUtil.isNotEmpty(spuPageSearchDTO.getSpuIds())) {
             spuBatchUpdateStatus(spuPageSearchDTO);
         }
-        return ServerResponseEntity.success();
+        Map<String,Object> map=new HashMap<>();
+        map.put("msg","发布成功");
+        return ServerResponseEntity.success(map);
     }
 
     /**
@@ -151,7 +153,7 @@ public class SpuController {
      */
     private void spuBatchUpdateStatus(SpuPageSearchDTO spu) {
         List<Long> spuIds = new ArrayList<>(spu.getSpuIds());
-        List<Long> errorList = new ArrayList<>(spu.getSpuIds());
+        List<Long> errorList = new ArrayList<>();
         List<SpuVO> spuList = spuService.listBySpuIds(spu.getSpuIds(), null, null);
         if (CollUtil.isEmpty(spuList)) {
             throw new Mall4cloudException("您选择的商品信息有误，请刷新后重试");
@@ -171,8 +173,7 @@ public class SpuController {
         if (errorList.size() > 0) {
             throw new Mall4cloudException("商品id为：" + errorList.toString() + "的" + errorList.size() + "件商品不符合操作条件");
         }
-        spuService.changeSpuStatus(spu.getSpuId(), spu.getStatus());
-        spuService.removeSpuCacheBySpuId(spu.getSpuId());
+        spuService.changeSpuIdListStatus(spu.getSpuIds(), spu.getStatus());
     }
 
 
@@ -199,18 +200,18 @@ public class SpuController {
      * @return
      */
     private String checkUpdateStatusData(SpuVO spu) {
-        Long shopId = AuthUserContext.get().getTenantId();
+        //Long shopId = AuthUserContext.get().getTenantId();
         if (Objects.isNull(spu)) {
             return "查找不到该商品信息";
         }
-        if (!Objects.equals(spu.getShopId(), shopId)) {
+        if (!Objects.equals(spu.getShopId(), AuthUserContext.get().getTenantId())){
             return "查找不到该商品信息";
         }
         if (!(Objects.equals(spu.getStatus(), StatusEnum.ENABLE.value())
                 || Objects.equals(spu.getStatus(), StatusEnum.DISABLE.value()))) {
             return "商品状态异常，清刷新后重试";
         }
-        if(Objects.equals(spu.getStatus(),StatusEnum.ENABLE.value())){
+       /* if(Objects.equals(spu.getStatus(),StatusEnum.ENABLE.value())){
             CategoryVO category = categoryService.getById(spu.getCategoryId());
             if (Objects.equals(category.getStatus(), StatusEnum.DISABLE.value())){
                 return "该商品所属的平台分类处于下线中，商品不能上架，请联系管理员后再进行操作";            }
@@ -221,7 +222,7 @@ public class SpuController {
                     return "该商品所属的店铺分类禁用中，商品不能进行上架操作";
                 }
             }
-        }
+        }*/
         return null;
     }
     /*单个删除skulist信息*/

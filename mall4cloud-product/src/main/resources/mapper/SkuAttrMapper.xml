@@ -18,7 +18,7 @@
   </sql>
   <insert id="save">
     insert into sku_attr(`attr_desc`,`price_fee`,`sku_id`,`attr_id`,`attr_name`)
-    values (#{skuAttr.attrDesc},#{skuAttr.priceFee},#{skuAttr.skuId},#{skuAttr.attrId},#{spuSkuAttrValue.attrName});
+    values (#{skuAttr.attrDesc},#{skuAttr.priceFee},#{skuAttr.skuId},#{skuAttr.attrId},#{skuAttr.attrName});
   </insert>
 
   <insert id="saveBatch">
@@ -27,7 +27,64 @@
       (#{skuAttr.attrDesc},#{skuAttr.priceFee},#{skuAttr.skuId},#{skuAttr.attrId},#{skuAttr.attrName})
     </foreach>
   </insert>
-
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.product.model.SkuAttr" >
+    <selectKey resultType="java.lang.Long" keyProperty="skuAttrId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sku_attr
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="attrDesc != null" >
+        attr_desc,
+      </if>
+      <if test="priceFee != null" >
+        price_fee,
+      </if>
+      <if test="attrId != null" >
+        attr_id,
+      </if>
+      <if test="attrName != null" >
+        attr_name,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="attrDesc != null" >
+        #{attrDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="priceFee != null" >
+        #{priceFee,jdbcType=BIGINT},
+      </if>
+      <if test="attrId != null" >
+        #{attrId,jdbcType=BIGINT},
+      </if>
+      <if test="attrName != null" >
+        #{attrName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
   <update id="updateBySkuId">
     update sku_attr set status = -1 where sku_id = #{skuId}
   </update>

@@ -20,10 +20,12 @@
       <id column="sku_attr_id" property="skuAttrId" />
       <result column="create_time" property="createTime"/>
       <result column="update_time" property="updateTime"/>
+      <result column="price_fee" property="priceFee"/>
       <result column="spu_id" property="spuId"/>
       <result column="sku_id" property="skuId"/>
       <result column="attr_id" property="attrId"/>
       <result column="status" property="status"/>
+      <result column="attr_name" property="attrName"/>
     </collection>
   </resultMap>
   <sql id="Vo_Column_List">
@@ -33,8 +35,9 @@
   </sql>
 
   <select id="listBySpuIdAndExtendInfo" resultMap="skuAndAttrMap">
-    select <include refid="Vo_Column_List"/>,ss.sku_attr_id,ss.`attr_id`,ss.`attr_name`,
-    ss.`attr_desc`
+    select   sku.`sku_id`,sku.`create_time`,sku.`update_time`,sku.sku_name,sku.`spu_id`,sku.`attrs`,
+    sku.`price_fee`,sku.`market_price_fee`,sku.`status`,ss.sku_attr_id,ss.`attr_id`,ss.`attr_name`,
+    ss.`attr_desc`,ss.price_fee
     from sku
     LEFT JOIN `sku_attr` ss ON ss.`sku_id` = sku.`sku_id`
     WHERE sku.`spu_id` = #{spuId} and sku.status <![CDATA[<>]]> -1

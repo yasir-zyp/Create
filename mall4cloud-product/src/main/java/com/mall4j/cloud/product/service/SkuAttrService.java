@@ -55,4 +55,6 @@ public interface SkuAttrService {
     void changeStatusBySkuId(List<Long> skuIds, Integer status);
 
     void delAll(Long skuId);
+
+	void insertSelective(SkuAttr skuAttr);
 }

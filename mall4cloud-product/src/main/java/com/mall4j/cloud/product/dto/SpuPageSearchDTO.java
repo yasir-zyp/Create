@@ -1,5 +1,6 @@
 package com.mall4j.cloud.product.dto;
 
+import com.mall4j.cloud.api.product.vo.SkuVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,10 +15,10 @@ import java.util.List;
 @Data
 public class SpuPageSearchDTO {
 
-	@ApiModelProperty("spuId,id不显示,商品id")
+	@ApiModelProperty("spuId,id不显示,商品id 备注：服务方案批量发布（撤回）时使用")
 	private Long spuId;
 
-	@ApiModelProperty("商品的上下架使用,spuId列表(商品上下架：批量操作时，用此参数)(批量处理参数)")
+	@ApiModelProperty("spuId列表 备注：服务方案批量发布（撤回）时使用")
 	private List<Long> spuIds;
 
 	@ApiModelProperty("不需要")
@@ -44,10 +45,10 @@ public class SpuPageSearchDTO {
 	@ApiModelProperty("检测周期(工作日) ")
 	private Integer cycle;
 
-	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
+	@ApiModelProperty("服务方案状态： 0.全部  1.销售中   2.已下架 备注：服务方案批量发布（撤回）时使用 ")
 	private Integer status;
 
-	@ApiModelProperty("商品状态： 0.全部  1.销售中   2.已下架 ")
+	@ApiModelProperty("状态")
 	private Integer spuStatus;
 
 	@ApiModelProperty("最低价")
@@ -83,5 +84,8 @@ public class SpuPageSearchDTO {
 	@ApiModelProperty("不需要，创建时间排序 0：倒序 1：顺序")
 	private Integer createTimeSort;
 
+	@ApiModelProperty("sku列表")
+	private List<SkuVO> skuList;
 
+	private static final long serialVersionUID = 1L;
 }

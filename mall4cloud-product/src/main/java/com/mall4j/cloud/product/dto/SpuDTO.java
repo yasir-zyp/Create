@@ -32,21 +32,21 @@ public class SpuDTO{
 	private String sellingPoint;
 
 
-	@NotNull(message = "商品主图不能为空")
+	//@NotNull(message = "商品主图不能为空")
 	@ApiModelProperty("商品主图")
 	private String mainImgUrl;
 
 	@ApiModelProperty("市场价")
 	private Long marketPriceFee;
 
-	@NotNull(message = "售价不能为空")
+	//@NotNull(message = "售价不能为空")
 	@ApiModelProperty("售价")
 	private Long priceFee;
 
 	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
 	private Integer status;
 
-	@NotEmpty(message = "sku信息不能为空")
+	//@NotEmpty(message = "sku信息不能为空")
 	@ApiModelProperty("服务方案规格列表")
 	private List<SkuDTO> skuList;
 

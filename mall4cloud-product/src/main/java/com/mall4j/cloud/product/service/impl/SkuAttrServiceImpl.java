@@ -64,4 +64,9 @@ public class SkuAttrServiceImpl implements SkuAttrService {
             skuAttrMapper.deleteById(skuAttrList.get(i).getSkuAttrId());
         }
     }
+
+    @Override
+    public void insertSelective(SkuAttr skuAttr) {
+        skuAttrMapper.insertSelective(skuAttr);
+    }
 }

@@ -75,4 +75,5 @@ public class SpuVO extends BaseVO {
 
 	@ApiModelProperty("分类标签")
 	private List<String> spuCategoryName;
+
 }

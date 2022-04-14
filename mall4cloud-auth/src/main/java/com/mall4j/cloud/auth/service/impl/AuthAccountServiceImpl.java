@@ -165,10 +165,10 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 		if (PrincipalUtil.isMobile(phoneMessageDTO.getAccountPhone())) {
 			inputUserNameEnum = InputUserNameEnum.PHONE;
 		}
-		Integer sysType=1;
+
 
 		AuthAccountInVerifyBO authAccountInVerifyBO = authAccountMapper
-				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(),phoneMessageDTO.getAccountPhone(),sysType);
+				.getAuthAccountInVerifyByInputUserName(inputUserNameEnum.value(),phoneMessageDTO.getAccountPhone(),phoneMessageDTO.getSysType());
 		if (authAccountInVerifyBO == null) {
 			return ServerResponseEntity.showFailMsg("该用户不存在");
 		}

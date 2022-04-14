@@ -1,13 +1,18 @@
 package com.mall4j.cloud.product.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.mall4j.cloud.api.product.vo.AttrVO;
 import com.mall4j.cloud.api.product.vo.SkuAttrVO;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.StatusEnum;
+import com.mall4j.cloud.product.dto.SkuAttrDTO;
 import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.dto.SpuDTO;
+import com.mall4j.cloud.product.mapper.AttrMapper;
+import com.mall4j.cloud.product.mapper.SkuAttrMapper;
 import com.mall4j.cloud.product.mapper.SkuMapper;
+import com.mall4j.cloud.product.model.Attr;
 import com.mall4j.cloud.product.model.Sku;
 import com.mall4j.cloud.product.model.SkuAttr;
 import com.mall4j.cloud.product.service.SkuService;
@@ -42,7 +47,10 @@ public class SkuServiceImpl implements SkuService {
     private SkuAttrService skuAttrService;
     @Autowired
     private MapperFacade mapperFacade;
-
+    @Autowired
+    private AttrMapper attrMapper;
+    @Autowired
+    private SkuAttrMapper skuAttrMapper;
     @Override
     public void save(Long spuId, List<SkuDTO> skuList) {
         skuList.forEach(sku -> {
@@ -51,17 +59,25 @@ public class SkuServiceImpl implements SkuService {
         });
         // 处理数据，保存库存、属性
         skuMapper.saveBatch(skuList);
-        List<SkuAttr> skuAttrs = new ArrayList<>();
-        for (SkuDTO skuDTO : skuList) {
-            List<SkuAttr> skuAttrList = mapperFacade.mapAsList(skuDTO.getSkuAttrs(), SkuAttr.class);
-            for (SkuAttr skuAttr : skuAttrList) {
+        //List<SkuAttr> skuAttrs = new ArrayList<>();
+      for (SkuDTO skuDTO : skuList) {
+          List<SkuAttr> skuAttrList = mapperFacade.mapAsList(skuDTO.getSkuAttrs(), SkuAttr.class);
+          for (int i = 0; i <skuAttrList.size() ; i++) {
+              SkuAttr skuAttr=mapperFacade.map(skuDTO.getSkuAttrs().get(i), SkuAttr.class);
+              skuAttr.setSpuId(spuId);
+              skuAttr.setSkuId(skuDTO.getSkuId());
+              skuAttr.setStatus(StatusEnum.ENABLE.value());
+              skuAttr.setPriceFee(skuDTO.getSkuAttrs().get(i).getPrice());
+              skuAttrService.insertSelective(skuAttr);
+          }
+        }
+        /*   for (SkuAttr skuAttr : skuAttrList) {
                 skuAttr.setSpuId(spuId);
                 skuAttr.setSkuId(skuDTO.getSkuId());
                 skuAttr.setStatus(StatusEnum.ENABLE.value());
                 skuAttrs.add(skuAttr);
-            }
-        }
-        skuAttrService.saveBatch(skuAttrs);
+                skuAttrService.insertSelective(skuAttrs);
+            }*/
     }
 
 
@@ -89,6 +105,25 @@ public class SkuServiceImpl implements SkuService {
         // 已有的sku--更新
         if(CollUtil.isNotEmpty(updateSkus)){
             List<Sku> skus = mapperFacade.mapAsList(updateSkus, Sku.class);
+            for (SkuDTO sku : skuList
+                 ) {
+                List<SkuAttrDTO> skuAttrDTOS=sku.getSkuAttrs();
+                for (int i = 0; i <skuAttrDTOS.size() ; i++) {
+                    if (skuAttrDTOS.get(i).getSpuSkuAttrId()!=null){
+                        SkuAttr skuAttr=new SkuAttr();
+                        skuAttr.setPriceFee(skuAttrDTOS.get(i).getPrice());
+                        skuAttr.setSkuAttrId(skuAttrDTOS.get(i).getSpuSkuAttrId());
+                        skuAttrMapper.update(skuAttr);
+                    }else {
+                        SkuAttr skuAttr=new SkuAttr();
+                        skuAttr.setSpuId(spuId);
+                        skuAttr.setSkuId(sku.getSkuId());
+                        skuAttr.setStatus(StatusEnum.ENABLE.value());
+                        skuAttr.setPriceFee(skuAttrDTOS.get(i).getSpuSkuAttrId());
+                        skuAttrService.insertSelective(skuAttr);
+                    }
+                }
+            }
             skuMapper.updateBatch(skus);
         }
         // 不存在的sku--删除
@@ -132,7 +167,18 @@ public class SkuServiceImpl implements SkuService {
 
     @Override
     public List<SkuVO> listBySpuIdAndExtendInfo(Long spuId) {
-        return skuMapper.listBySpuIdAndExtendInfo(spuId);
+        List<SkuVO> skuVOLis=skuMapper.listBySpuIdAndExtendInfo(spuId);
+        for (SkuVO skuVo:skuVOLis
+             ) {
+            List<SkuAttrVO> skuAttrVOS=skuVo.getSkuAttrs();
+            for (int i = 0; i <skuAttrVOS.size() ; i++) {
+                AttrVO attrVO=attrMapper.getByAttrId(skuAttrVOS.get(i).getAttrId());
+                skuAttrVOS.get(i).setStandardName(attrVO.getStandardName());
+                skuAttrVOS.get(i).setCycle(attrVO.getCycle());
+                skuAttrVOS.get(i).setPrice(attrVO.getPrice());
+            }
+        }
+        return skuVOLis;
     }
 
     @Override

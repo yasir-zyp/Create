@@ -66,4 +66,7 @@ public interface AttrMapper {
     void addKHexcel(Attr attr);
 
 	void insertSelective(Attr attr);
+
+	void updateByPrimaryKeySelective(Attr attr);
+
 }

@@ -288,4 +288,5 @@
     </set>
     where attr_id = #{attrId,jdbcType=BIGINT}
   </update>
+
 </mapper>

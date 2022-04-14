@@ -24,12 +24,22 @@ public class SkuAttrVO extends BaseVO {
 	private Long skuId;
 
 	@ApiModelProperty("检测项ID")
-	private Integer attrId;
+	private Long attrId;
 
 	@ApiModelProperty("检测项名称")
 	private String attrName;
 
+	@ApiModelProperty("检测周期(工作日)")
+	private Integer cycle;
 
+	@ApiModelProperty("标准名称")
+	private String standardName;
+
+	@ApiModelProperty("售价")
+	private Long priceFee;
+
+	@ApiModelProperty("售价")
+	private Long price;
 	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
 	private Integer status;
 }

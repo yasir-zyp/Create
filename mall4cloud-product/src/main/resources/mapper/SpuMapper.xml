@@ -188,7 +188,7 @@
     </foreach>
   </update>
   <select id="listBySpuIds" resultMap="spuDetailMap">
-    select spu_id,name,main_img_url,status,price_fee from spu where spu_id in
+    select spu_id,name,main_img_url,status,price_fee ,shop_id from spu where spu_id in
     <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
         #{spuId}
     </foreach>
