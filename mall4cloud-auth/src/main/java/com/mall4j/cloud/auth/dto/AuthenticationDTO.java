@@ -33,7 +33,7 @@ public class AuthenticationDTO {
 	 * sysType 参考SysTypeEnum
 	 */
 	@NotNull(message = "sysType不能为空")
-	@ApiModelProperty(value = "系统类型 0.普通用户系统 1.商家端", required = true)
+	@ApiModelProperty(value = "系统类型 0.普通用户系统 1.商家端,2平台管理员", required = true)
 	protected Integer sysType;
 
 	@ApiModelProperty(value = "微信绑定唯一id", required = false)

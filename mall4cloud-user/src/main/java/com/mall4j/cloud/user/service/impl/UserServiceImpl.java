@@ -88,7 +88,6 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public Long save(UserRegisterDTO param) {
         this.checkRegisterInfo(param);
-        if(param.getRegisterType() == 0){
             //判断验证码是否输入正确
             String codes= RedisUtil.getLongValues(param.getAccountPhone());
             if (codes==null){
@@ -97,8 +96,6 @@ public class UserServiceImpl implements UserService {
             if (!codes.equals(param.getCode())){
                 throw new Mall4cloudException("验证码不正确");
             }
-        }
-
         ServerResponseEntity<Long> segmentIdResponse = segmentFeignClient.getSegmentId(User.DISTRIBUTED_ID_KEY);
         if (!segmentIdResponse.isSuccess()) {
             throw new Mall4cloudException(ResponseEnum.EXCEPTION);

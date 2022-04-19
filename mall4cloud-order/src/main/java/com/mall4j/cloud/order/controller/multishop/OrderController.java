@@ -48,10 +48,10 @@ public class OrderController {
     /**
      * 分页获取
      */
-    @GetMapping("/page")
+    @GetMapping("/ua/page")
     @ApiOperation(value = "分页获取订单详情")
     public ServerResponseEntity<EsPageVO<EsOrderVO>> page(OrderSearchDTO orderSearchDTO) {
-        Long shopId = AuthUserContext.get().getTenantId();
+        Long shopId = (long)663;
         orderSearchDTO.setShopId(shopId);
         return searchOrderFeignClient.getOrderPage(orderSearchDTO);
     }
@@ -63,7 +63,7 @@ public class OrderController {
     @ApiOperation(value = "根据id获取订单详情")
     public ServerResponseEntity<OrderVO> info(@PathVariable("orderId") Long orderId) {
         // 订单和订单项
-        Order order = orderService.getOrderAndOrderItemData(orderId, AuthUserContext.get().getTenantId());
+        Order order = orderService.getOrderAndOrderItemData(orderId,AuthUserContext.get().getTenantId());
         // 详情用户收货地址
         OrderAddr orderAddr = orderAddrService.getByOrderAddrId(order.getOrderAddrId());
         order.setOrderAddr(mapperFacade.map(orderAddr, OrderAddr.class));

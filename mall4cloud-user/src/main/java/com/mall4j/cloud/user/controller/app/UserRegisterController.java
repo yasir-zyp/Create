@@ -34,7 +34,7 @@ public class UserRegisterController {
     @Autowired
     private AccountFeignClient accountFeignClient;
 
-    @ApiOperation(value="注册")
+    @ApiOperation(value="用户注册")
     @PostMapping
     public ServerResponseEntity<TokenInfoVO> register(@Valid @RequestBody UserRegisterDTO param) {
 

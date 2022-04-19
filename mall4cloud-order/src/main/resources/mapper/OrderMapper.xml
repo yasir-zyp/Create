@@ -212,12 +212,13 @@
         oi.`delivery_type` oi_delivery_type,
         oi.`shop_cart_time` oi_shop_cart_time,
         oi.`price` oi_price,
-        oi.`spu_total_amount` oi_spu_total_amount
+        oi.`spu_total_amount` oi_spu_total_amount,
+        oi.order_addr_id
         from `order` o
-        join order_item oi on o.order_id = oi.order_id
+        left join order_item oi on o.order_id = oi.order_id
         where o.order_id = #{orderId}
         <if test="shopId != null">
-            and o.shop_id = #{shopId}
+            and oi.shop_id = #{shopId}
         </if>
     </select>
     <select id="getSubmitOrderPayAmountInfo" resultType="com.mall4j.cloud.order.bo.SubmitOrderPayAmountInfoBO">

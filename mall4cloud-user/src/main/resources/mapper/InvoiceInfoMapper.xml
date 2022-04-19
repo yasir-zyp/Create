@@ -190,7 +190,7 @@
   </update>
 
   <select id="findInvoiceInfo" resultType="com.mall4j.cloud.user.vo.InvoiceInfoVO">
-    select    invoice_id, need_invoice, invoice_looked, taxpayer_identification_number, invoice_make_type,
+    select  invoice_id, need_invoice, invoice_looked, taxpayer_identification_number, invoice_make_type,
     invoice_registered_address, invoice_opening_bank, invoice_bank_account, invoice_registered_phone,
     invoice_mailing_address, create_time, update_time, user_id
     from invoice_info where user_id = #{userId}
