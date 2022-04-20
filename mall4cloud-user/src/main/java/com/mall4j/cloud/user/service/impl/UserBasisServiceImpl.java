@@ -10,17 +10,15 @@ import com.mall4j.cloud.user.mapper.ConsultInfoMapper;
 import com.mall4j.cloud.user.mapper.InvoiceInfoMapper;
 import com.mall4j.cloud.user.model.ConsultInfo;
 import com.mall4j.cloud.user.model.InvoiceInfo;
-import com.mall4j.cloud.user.service.BasisService;
+import com.mall4j.cloud.user.service.UserBasisService;
 import com.mall4j.cloud.user.vo.ConsultInfoVO;
 import com.mall4j.cloud.user.vo.InvoiceInfoVO;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class BasisServiceImpl implements BasisService {
+public class UserBasisServiceImpl implements UserBasisService {
     @Autowired
     private InvoiceInfoMapper invoiceInfoMapper;
     @Autowired

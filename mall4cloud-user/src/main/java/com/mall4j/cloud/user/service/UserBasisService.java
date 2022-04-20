@@ -7,9 +7,7 @@ import com.mall4j.cloud.user.dto.InvoiceInfoDTO;
 import com.mall4j.cloud.user.vo.ConsultInfoVO;
 import com.mall4j.cloud.user.vo.InvoiceInfoVO;
 
-import java.util.List;
-
-public interface BasisService {
+public interface UserBasisService {
     void creatInvoiceInfo(InvoiceInfoDTO invoiceInfoDTO);
 
     PageVO<InvoiceInfoVO> findInvoiceInfo(PageDTO pageDTO);
