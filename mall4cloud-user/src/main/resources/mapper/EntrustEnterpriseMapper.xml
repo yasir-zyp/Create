@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.user.mapper.EntrustEnterpriseMapper" >
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.EntrustEnterprise" >
+    <id column="entrust_enterprise_id" property="entrustEnterpriseId" jdbcType="BIGINT" />
+    <result column="business_license" property="businessLicense" jdbcType="VARCHAR" />
+    <result column="entrust_number" property="entrustNumber" jdbcType="VARCHAR" />
+    <result column="entrust_legal" property="entrustLegal" jdbcType="VARCHAR" />
+    <result column="entrust_address" property="entrustAddress" jdbcType="VARCHAR" />
+    <result column="entrust_bank_deposit" property="entrustBankDeposit" jdbcType="VARCHAR" />
+    <result column="entrust_bank_account" property="entrustBankAccount" jdbcType="VARCHAR" />
+    <result column="enterprise_name" property="enterpriseName" jdbcType="VARCHAR" />
+    <result column="enterperse_status" property="enterperseStatus" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    entrust_enterprise_id, business_license, entrust_number, entrust_legal, entrust_address, 
+    entrust_bank_deposit, entrust_bank_account, enterprise_name, enterperse_status, create_time, 
+    update_time, del_flag, user_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from entrust_enterprise
+    where entrust_enterprise_id = #{entrustEnterpriseId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from entrust_enterprise
+    where entrust_enterprise_id = #{entrustEnterpriseId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mall4j.cloud.user.model.EntrustEnterprise" >
+    <selectKey resultType="java.lang.Long" keyProperty="entrustEnterpriseId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into entrust_enterprise (business_license, entrust_number, entrust_legal, 
+      entrust_address, entrust_bank_deposit, entrust_bank_account, 
+      enterprise_name, enterperse_status, create_time, 
+      update_time, del_flag, user_id
+      )
+    values (#{businessLicense,jdbcType=VARCHAR}, #{entrustNumber,jdbcType=VARCHAR}, #{entrustLegal,jdbcType=VARCHAR}, 
+      #{entrustAddress,jdbcType=VARCHAR}, #{entrustBankDeposit,jdbcType=VARCHAR}, #{entrustBankAccount,jdbcType=VARCHAR}, 
+      #{enterpriseName,jdbcType=VARCHAR}, #{enterperseStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mall4j.cloud.user.model.EntrustEnterprise" >
+    <selectKey resultType="java.lang.Long" keyProperty="entrustEnterpriseId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into entrust_enterprise
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="businessLicense != null" >
+        business_license,
+      </if>
+      <if test="entrustNumber != null" >
+        entrust_number,
+      </if>
+      <if test="entrustLegal != null" >
+        entrust_legal,
+      </if>
+      <if test="entrustAddress != null" >
+        entrust_address,
+      </if>
+      <if test="entrustBankDeposit != null" >
+        entrust_bank_deposit,
+      </if>
+      <if test="entrustBankAccount != null" >
+        entrust_bank_account,
+      </if>
+      <if test="enterpriseName != null" >
+        enterprise_name,
+      </if>
+      <if test="enterperseStatus != null" >
+        enterperse_status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="businessLicense != null" >
+        #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustNumber != null" >
+        #{entrustNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustLegal != null" >
+        #{entrustLegal,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustAddress != null" >
+        #{entrustAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustBankDeposit != null" >
+        #{entrustBankDeposit,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustBankAccount != null" >
+        #{entrustBankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseName != null" >
+        #{enterpriseName,jdbcType=VARCHAR},
+      </if>
+      <if test="enterperseStatus != null" >
+        #{enterperseStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mall4j.cloud.user.model.EntrustEnterprise" >
+    update entrust_enterprise
+    <set >
+      <if test="businessLicense != null" >
+        business_license = #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustNumber != null" >
+        entrust_number = #{entrustNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustLegal != null" >
+        entrust_legal = #{entrustLegal,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustAddress != null" >
+        entrust_address = #{entrustAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustBankDeposit != null" >
+        entrust_bank_deposit = #{entrustBankDeposit,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustBankAccount != null" >
+        entrust_bank_account = #{entrustBankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseName != null" >
+        enterprise_name = #{enterpriseName,jdbcType=VARCHAR},
+      </if>
+      <if test="enterperseStatus != null" >
+        enterperse_status = #{enterperseStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where entrust_enterprise_id = #{entrustEnterpriseId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mall4j.cloud.user.model.EntrustEnterprise" >
+    update entrust_enterprise
+    set business_license = #{businessLicense,jdbcType=VARCHAR},
+      entrust_number = #{entrustNumber,jdbcType=VARCHAR},
+      entrust_legal = #{entrustLegal,jdbcType=VARCHAR},
+      entrust_address = #{entrustAddress,jdbcType=VARCHAR},
+      entrust_bank_deposit = #{entrustBankDeposit,jdbcType=VARCHAR},
+      entrust_bank_account = #{entrustBankAccount,jdbcType=VARCHAR},
+      enterprise_name = #{enterpriseName,jdbcType=VARCHAR},
+      enterperse_status = #{enterperseStatus,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT}
+    where entrust_enterprise_id = #{entrustEnterpriseId,jdbcType=BIGINT}
+  </update>
+
+  <select id="echoEntrust" resultType="com.mall4j.cloud.user.vo.EntrustEnterpriseVO">
+    select
+    <include refid="Base_Column_List" />
+    from entrust_enterprise
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+</mapper>

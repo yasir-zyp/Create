@@ -5,13 +5,17 @@ import com.mall4j.cloud.common.database.util.PageUtil;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.user.dto.ConsultInfoDTO;
+import com.mall4j.cloud.user.dto.EntrustEnterpriseDTO;
 import com.mall4j.cloud.user.dto.InvoiceInfoDTO;
 import com.mall4j.cloud.user.mapper.ConsultInfoMapper;
+import com.mall4j.cloud.user.mapper.EntrustEnterpriseMapper;
 import com.mall4j.cloud.user.mapper.InvoiceInfoMapper;
 import com.mall4j.cloud.user.model.ConsultInfo;
+import com.mall4j.cloud.user.model.EntrustEnterprise;
 import com.mall4j.cloud.user.model.InvoiceInfo;
 import com.mall4j.cloud.user.service.UserBasisService;
 import com.mall4j.cloud.user.vo.ConsultInfoVO;
+import com.mall4j.cloud.user.vo.EntrustEnterpriseVO;
 import com.mall4j.cloud.user.vo.InvoiceInfoVO;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,8 @@ public class UserBasisServiceImpl implements UserBasisService {
     private MapperFacade mapperFacade;
     @Autowired
     private ConsultInfoMapper consultInfoMapper;
-
+    @Autowired
+    private EntrustEnterpriseMapper entrustEnterpriseMapper;
     @Override
     public void creatInvoiceInfo(InvoiceInfoDTO invoiceInfoDTO) {
         InvoiceInfo invoiceInfo=mapperFacade.map(invoiceInfoDTO, InvoiceInfo.class);
@@ -76,5 +81,25 @@ public class UserBasisServiceImpl implements UserBasisService {
     @Override
     public ConsultInfoVO echoConsultInfo(Long consultId) {
         return consultInfoMapper.selectByPrimaryKeys(consultId);
+    }
+
+    @Override
+    public void creatEntrust(EntrustEnterpriseDTO entrustEnterpriseDTO) {
+        if (entrustEnterpriseDTO.getEntrustEnterpriseId()==null){
+        Long userId = AuthUserContext.get().getUserId();
+        EntrustEnterprise entrustEnterprise=mapperFacade.map(entrustEnterpriseDTO, EntrustEnterprise.class);
+        entrustEnterprise.setEnterperseStatus(0);
+        entrustEnterprise.setUserId(userId);
+        entrustEnterpriseMapper.insertSelective(entrustEnterprise);
+        }else {
+            EntrustEnterprise entrustEnterprise=mapperFacade.map(entrustEnterpriseDTO, EntrustEnterprise.class);
+            entrustEnterprise.setEnterperseStatus(0);
+            entrustEnterpriseMapper.updateByPrimaryKeySelective(entrustEnterprise);
+        }
+    }
+
+    @Override
+    public EntrustEnterpriseVO echoEntrust(Long userId) {
+        return entrustEnterpriseMapper.echoEntrust(userId);
     }
 }

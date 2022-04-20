@@ -3,8 +3,10 @@ package com.mall4j.cloud.user.service;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.user.dto.ConsultInfoDTO;
+import com.mall4j.cloud.user.dto.EntrustEnterpriseDTO;
 import com.mall4j.cloud.user.dto.InvoiceInfoDTO;
 import com.mall4j.cloud.user.vo.ConsultInfoVO;
+import com.mall4j.cloud.user.vo.EntrustEnterpriseVO;
 import com.mall4j.cloud.user.vo.InvoiceInfoVO;
 
 public interface UserBasisService {
@@ -25,4 +27,8 @@ public interface UserBasisService {
     void delConsultInfo(Long consultId);
 
     ConsultInfoVO echoConsultInfo(Long consultId);
+
+    void creatEntrust(EntrustEnterpriseDTO entrustEnterpriseDTO);
+
+    EntrustEnterpriseVO echoEntrust(Long userId);
 }

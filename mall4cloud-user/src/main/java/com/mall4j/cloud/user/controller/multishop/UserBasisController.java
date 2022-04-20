@@ -3,10 +3,14 @@ package com.mall4j.cloud.user.controller.multishop;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.user.dto.ConsultInfoDTO;
+import com.mall4j.cloud.user.dto.EntrustEnterpriseDTO;
 import com.mall4j.cloud.user.dto.InvoiceInfoDTO;
+import com.mall4j.cloud.user.model.EntrustEnterprise;
 import com.mall4j.cloud.user.service.UserBasisService;
 import com.mall4j.cloud.user.vo.ConsultInfoVO;
+import com.mall4j.cloud.user.vo.EntrustEnterpriseVO;
 import com.mall4j.cloud.user.vo.InvoiceInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -103,6 +107,24 @@ public class UserBasisController {
         Map<String,Object> map=new HashMap<>();
         map.put("msg","回显成功");
         map.put("consultInfoVO",consultInfoVO);
+        return ServerResponseEntity.success(map);
+    }
+    @PostMapping("/add_entrust_all")
+    @ApiOperation(value = "申请企业委托信息(添加和修改)", notes = "申请企业委托信息")
+    public ServerResponseEntity<Object> findEntrust(@RequestBody EntrustEnterpriseDTO entrustEnterpriseDTO) {
+        userBasisService.creatEntrust(entrustEnterpriseDTO);
+        Map<String,Object> map=new HashMap<>();
+        map.put("msg","提交成功");
+        return ServerResponseEntity.success(map);
+    }
+    @PostMapping("/ec_entrust_all")
+    @ApiOperation(value = "查询企业委托信息", notes = "查询企业委托信息")
+    public ServerResponseEntity<Object> echoEntrust() {
+        Long userId = AuthUserContext.get().getUserId();
+        EntrustEnterpriseVO entrustEnterpriseVO=userBasisService.echoEntrust(userId);
+        Map<String,Object> map=new HashMap<>();
+        map.put("msg","查询成功");
+        map.put("entrustEnterpriseVO",entrustEnterpriseVO);
         return ServerResponseEntity.success(map);
     }
 }
