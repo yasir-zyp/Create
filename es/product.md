@@ -16,35 +16,21 @@ PUT product
           "attrName" : {
             "type" : "keyword"
           },
-          "attrValueId" : {
-            "type" : "long"
-          },
-          "attrValueName" : {
+          "standard" : {
             "type" : "keyword"
-          }
-        }
-      },
-      "tags" : {
-        "type" : "nested",
-        "properties" : {
-          "tagId" : {
-            "type" : "long"
           },
-          "seq" : {
-            "type" : "integer"
-          }
+          "standardName" : {
+            "type" : "keyword"
+          },
+          "attrType" : {
+             "type" : "integer"
+          },
+          "cycle" : {
+              "type" : "integer"
+           }
         }
       },
-      "brandId" : {
-        "type" : "long"
-      },
-      "brandImg" : {
-        "type" : "keyword"
-      },
-      "brandName" : {
-        "type" : "keyword"
-      },
-      "code" : {
+      "partyCode" : {
         "type" : "text",
         "fields" : {
           "keyword" : {
@@ -53,19 +39,14 @@ PUT product
           }
         }
       },
-      "commentNum" : {
+      "cycle" : {
         "type" : "integer"
       },
       "createTime" : {
         "type" : "date"
       },
-      "hasStock" : {
-        "type" : "boolean"
-      },
-      "imgUrls" : {
-        "type" : "keyword",
-        "index" : false,
-        "doc_values" : false
+      "searchType" : {
+        "type" : "integer"
       },
       "mainImgUrl" : {
         "type" : "text",
@@ -106,18 +87,6 @@ PUT product
       "shopType" : {
         "type" : "integer"
       },
-      "shopPrimaryCategoryId" : {
-        "type" : "long"
-      },
-      "shopPrimaryCategoryName" : {
-        "type" : "keyword"
-      },
-      "shopSecondaryCategoryId" : {
-        "type" : "long"
-      },
-      "shopSecondaryCategoryName" : {
-        "type" : "keyword"
-      },
       "primaryCategoryId" : {
         "type" : "long"
       },
@@ -131,6 +100,9 @@ PUT product
         "type" : "keyword"
       },
       "categoryId" : {
+        "type" : "long"
+      },
+      "addrId" : {
         "type" : "long"
       },
       "categoryName" : {
@@ -147,8 +119,8 @@ PUT product
       "spuStatus" : {
         "type" : "integer"
       },
-      "success" : {
-        "type" : "boolean"
+      "seq" : {
+        "type" : "integer"
       }
     }
   }

@@ -20,12 +20,28 @@ public class EsProductBO {
     private Long spuId;
 
     /**
-     * 商品名称
+     * 服务方案编号
+     */
+    private String partyCode;
+    /**
+     * 服务方案名称
      */
     private String spuName;
-
     /**
-     * 卖点
+     * 店铺id
+     */
+    private Long shopId;
+    /**
+     * 分类id
+     */
+    private Long categoryId;
+    /**
+     * 送样地址id
+     */
+
+    private Long addrId;
+    /**
+     * 检测产品名称
      */
     private String sellingPoint;
 
@@ -50,10 +66,7 @@ public class EsProductBO {
      */
     private String shopName;
 
-    /**
-     * 店铺id
-     */
-    private Long shopId;
+
 
     /**
      * 店铺logo
@@ -69,6 +82,10 @@ public class EsProductBO {
      * 商品状态
      */
     private Integer spuStatus;
+    /**
+     * 送样要求
+     */
+    private String sample_Request;
 
 
     /**
@@ -77,7 +94,7 @@ public class EsProductBO {
     private Integer saleNum;
 
     /**
-     * 商品创建时间
+     * 服务方案创建时间
      */
     private Date createTime;
 
@@ -87,25 +104,26 @@ public class EsProductBO {
      */
     private Integer seq;
 
-    /**
-     * 分类id
-     */
-    private Long categoryId;
+
 
     /**
      * 分类名称
      */
     private String categoryName;
-
     /**
-     * 商家一级分类id
+     *检测周期
      */
-    private Long shopPrimaryCategoryId;
+    private Integer cycle;
+    /**
+     * 热门搜索0不需要，1需要
+     */
+    private Integer searchType;
 
     /**
      * 平台一级分类id
      */
     private Long primaryCategoryId;
+
 
     /**
      * 平台一级分类名称

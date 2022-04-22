@@ -1,9 +1,13 @@
 package com.mall4j.cloud.api.product.bo;
 
+import io.swagger.models.auth.In;
+import lombok.Data;
+
 /**
  * @author FrozenWatermelon
  * @date 2020/11/12
  */
+@Data
 public class EsAttrBO {
 
     /**
@@ -12,59 +16,26 @@ public class EsAttrBO {
     private Long attrId;
 
     /**
-     * 规格名
+     * 检测项名称
      */
     private String attrName;
 
-    /**
-     * 规格值id
-     */
-    private Long attrValueId;
 
     /**
-     * 规格值名称
+     * 标准号
      */
-    private String attrValueName;
+    private String standard;
+    /**
+     * 标准名称
+     */
+    private String standardName;
+    /**
+     * 检测资质
+     */
+    private Integer attrType;
+    /**
+     * 检测周期
+     */
+    private Integer cycle;
 
-    public Long getAttrId() {
-        return attrId;
-    }
-
-    public void setAttrId(Long attrId) {
-        this.attrId = attrId;
-    }
-
-    public String getAttrName() {
-        return attrName;
-    }
-
-    public void setAttrName(String attrName) {
-        this.attrName = attrName;
-    }
-
-    public Long getAttrValueId() {
-        return attrValueId;
-    }
-
-    public void setAttrValueId(Long attrValueId) {
-        this.attrValueId = attrValueId;
-    }
-
-    public String getAttrValueName() {
-        return attrValueName;
-    }
-
-    public void setAttrValueName(String attrValueName) {
-        this.attrValueName = attrValueName;
-    }
-
-    @Override
-    public String toString() {
-        return "EsAttrBO{" +
-                "attrId=" + attrId +
-                ", attrName='" + attrName + '\'' +
-                ", attrValueId=" + attrValueId +
-                ", attrValueName='" + attrValueName + '\'' +
-                '}';
-    }
 }

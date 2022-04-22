@@ -17,9 +17,9 @@
     <result column="sample_request" property="sampleRequest"/>
     <result column="price_fee" property="priceFee"/>
     <result column="market_price_fee" property="marketPriceFee"/>
-      <result column="addr_id" property="addrId"/>
-      <result column="cycle" property="cycle"/>
-      <result column="sale_num" property="saleNum"/>
+    <result column="addr_id" property="addrId"/>
+    <result column="cycle" property="cycle"/>
+    <result column="sale_num" property="saleNum"/>
     <result column="status" property="status"/>
     <result column="seq" property="seq"/>
   </resultMap>
@@ -33,7 +33,7 @@
   <select id="list" resultType="com.mall4j.cloud.api.product.vo.SpuVO">
     select distinct <include refid="Vo_Column_List"/> ,s.sale_num from spu s
     <if test="spu.partyCode != null and spu.partyCode != ''">
-        join `sku` sku on s.`spu_id` = sku.`spu_id` and sku.party_code = #{spu.partyCode}
+        join `sku` sku on s.`spu_id` = sku.`spu_id` and s.party_code = #{spu.partyCode}
     </if>
     where s.status <![CDATA[<>]]> -1
     <if test="spu.spuId != null">
@@ -139,7 +139,7 @@
 
   <select id="loadEsProductBO" resultType="com.mall4j.cloud.api.product.bo.EsProductBO">
     SELECT s.spu_id,s.name AS spu_name,s.shop_id,s.selling_point,s.price_fee,s.market_price_fee,s.status AS spu_status,
-           s.seq, s.sale_num,s.create_time,s.category_id,s.main_img_url,s.category_id,
+           s.seq, s.sale_num,s.create_time,s.category_id,s.main_img_url,s.addr_id,s.sample_request,s.cycle,s.search_type,s.party_code
     FROM spu s
     WHERE s.spu_id = #{spuId}
   </select>

@@ -1,9 +1,12 @@
 package com.mall4j.cloud.product.vo.app;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mall4j.cloud.api.product.vo.SkuAttrVO;
 import com.mall4j.cloud.common.serializer.ImgJsonSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * sku信息VO
@@ -32,5 +35,9 @@ public class SkuAppVO{
 
 	@ApiModelProperty("检测项")
 	private String properties;
+
+	@ApiModelProperty("当前sku检测项列表")
+	private List<SkuAttrVO> skuAttrs;
+
 
 }

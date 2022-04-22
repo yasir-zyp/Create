@@ -31,6 +31,11 @@ public class SkuAttrVO extends BaseVO {
 
 	@ApiModelProperty("检测周期(工作日)")
 	private Integer cycle;
+	/**
+	 * 标准号
+	 */
+	@ApiModelProperty("标准号")
+	private String standard;
 
 	@ApiModelProperty("标准名称")
 	private String standardName;

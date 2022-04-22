@@ -7,9 +7,7 @@ import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.api.product.bo.EsAttrBO;
 import com.mall4j.cloud.api.product.bo.EsProductBO;
-import com.mall4j.cloud.api.product.vo.CategoryVO;
-import com.mall4j.cloud.api.product.vo.SkuVO;
-import com.mall4j.cloud.api.product.vo.SpuCategoryVO;
+import com.mall4j.cloud.api.product.vo.*;
 import com.mall4j.cloud.common.cache.constant.CacheNames;
 import com.mall4j.cloud.common.cache.util.RedisUtil;
 import com.mall4j.cloud.common.constant.Constant;
@@ -28,10 +26,10 @@ import com.mall4j.cloud.product.mapper.SpuMapper;
 import com.mall4j.cloud.product.model.Sku;
 import com.mall4j.cloud.product.model.SpuCategory;
 import com.mall4j.cloud.product.service.*;
-import com.mall4j.cloud.api.product.vo.SpuVO;
 import com.mall4j.cloud.product.model.Spu;
 import com.mall4j.cloud.product.model.SpuDetail;
 
+import com.mall4j.cloud.product.vo.app.SkuAppVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.aop.framework.AopContext;
@@ -207,11 +205,22 @@ public class SpuServiceImpl implements SpuService {
 
     @Override
     public EsProductBO loadEsProductBO(Long spuId) {
-        // 获取商品、品牌数据
+        // 获取服务方案数据
         EsProductBO esProductBO = spuMapper.loadEsProductBO(spuId);
         // 获取分类数据
         CategoryVO category = categoryService.getPathNameByCategoryId(esProductBO.getCategoryId());
+        List<SkuAppVO> skuVOList=skuService.getSkuBySpuId(spuId);
         String[] categoryIdArray = category.getPath().split(Constant.CATEGORY_INTERVAL);
+        List<SkuAttrVO> skuAttrVOList=new ArrayList<>();
+        for(SkuAppVO skuAppVO:skuVOList){
+            skuAttrVOList.addAll(skuAppVO.getSkuAttrs());
+        }
+        List<EsAttrBO> esAttrBOList=new ArrayList<>();
+        for (SkuAttrVO attr:skuAttrVOList
+             ) {
+            esAttrBOList.add(mapperFacade.map(attr,EsAttrBO.class));
+        }
+        esProductBO.setAttrs(esAttrBOList);
         esProductBO.setCategoryName(category.getName());
         for (int i = 0;i<categoryIdArray.length;i++) {
             if (i == 0) {

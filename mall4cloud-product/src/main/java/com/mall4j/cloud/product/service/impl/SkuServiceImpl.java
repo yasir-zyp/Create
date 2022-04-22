@@ -207,15 +207,14 @@ public class SkuServiceImpl implements SkuService {
     @Override
     @Cacheable(cacheNames = CacheNames.SKU_OF_SPU_DETAIL_KEY, key = "#spuId",sync = true)
     public List<SkuAppVO> getSkuBySpuId(Long spuId) {
-        String attrUnionAttrValue = ":";
         String attrUnionAttr = ";";
         List<SkuAppVO> skuAppList = new ArrayList<>();
         List<SkuVO> skuData = skuMapper.getSkuBySpuId(spuId);
         for (SkuVO sku : skuData) {
             SkuAppVO skuAppVO = mapperFacade.map(sku, SkuAppVO.class);
             String properties = "";
-            for (SkuAttrVO spuSkuAttr : sku.getSkuAttrs()) {
-                properties = properties + spuSkuAttr.getAttrName()  + attrUnionAttr;
+            for (SkuAttrVO skuAttr : sku.getSkuAttrs()) {
+                properties = properties + skuAttr.getAttrName()  + attrUnionAttr;
             }
             skuAppVO.setProperties(properties.substring(0, properties.length()-1));
             skuAppList.add(skuAppVO);

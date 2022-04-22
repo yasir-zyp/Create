@@ -2,11 +2,15 @@ package com.mall4j.cloud.product.feign;
 
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
 import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
+import com.mall4j.cloud.api.product.bo.EsAttrBO;
 import com.mall4j.cloud.api.product.bo.EsProductBO;
 import com.mall4j.cloud.api.product.feign.ProductFeignClient;
+import com.mall4j.cloud.api.product.feign.SkuFeignClient;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.product.service.AttrService;
 import com.mall4j.cloud.product.service.SpuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,6 +27,9 @@ public class ProductFeignController implements ProductFeignClient {
     private SpuService spuService;
     @Autowired
     private ShopDetailFeignClient shopDetailFeignClient;
+    @Autowired
+    private AttrService attrService;
+
 
     @Override
     public ServerResponseEntity<EsProductBO> loadEsProductBO(Long spuId) {
