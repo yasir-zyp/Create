@@ -2,6 +2,7 @@ package com.mall4j.cloud.search.bo;
 
 import cn.throwx.canal.gule.annotation.CanalModel;
 import cn.throwx.canal.gule.common.FieldNamingPolicy;
+import lombok.Data;
 
 /**
  * 品牌信息
@@ -10,6 +11,7 @@ import cn.throwx.canal.gule.common.FieldNamingPolicy;
  * @date 2020-12-23 15:27:24
  */
 @CanalModel(database = "mall4cloud_multishop", table = "shop_detail", fieldNamingPolicy = FieldNamingPolicy.LOWER_UNDERSCORE)
+@Data
 public class ShopDetailBO {
     /**
      * 店铺id
@@ -36,54 +38,5 @@ public class ShopDetailBO {
      */
     private Integer shopStatus;
 
-    public Long getShopId() {
-        return shopId;
-    }
 
-    public void setShopId(Long shopId) {
-        this.shopId = shopId;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getShopName() {
-        return shopName;
-    }
-
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
-    }
-
-    public String getShopLogo() {
-        return shopLogo;
-    }
-
-    public void setShopLogo(String shopLogo) {
-        this.shopLogo = shopLogo;
-    }
-
-    public Integer getShopStatus() {
-        return shopStatus;
-    }
-
-    public void setShopStatus(Integer shopStatus) {
-        this.shopStatus = shopStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "ShopDetail{" +
-                "shopId=" + shopId +
-                ",type=" + type +
-                ",shopName=" + shopName +
-                ",shopLogo=" + shopLogo +
-                ",shopStatus=" + shopStatus +
-                '}';
-    }
 }
