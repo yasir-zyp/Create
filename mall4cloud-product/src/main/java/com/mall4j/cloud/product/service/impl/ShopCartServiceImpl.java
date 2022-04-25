@@ -66,7 +66,7 @@ public class ShopCartServiceImpl implements ShopCartService {
 
     @Override
     public List<ShopCartItemVO> getShopCartItems() {
-        Long userId = AuthUserContext.get().getUserId();
+        Long userId =AuthUserContext.get().getUserId();
         List<ShopCartItemVO> shopCartItems = shopCartItemMapper.getShopCartItems(userId, false, null);
         for (ShopCartItemVO shopCartItem : shopCartItems) {
             shopCartItem.setTotalAmount(shopCartItem.getCount() * shopCartItem.getSkuPriceFee());

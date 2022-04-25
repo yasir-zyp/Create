@@ -5,6 +5,7 @@ import com.mall4j.cloud.common.order.vo.UserAddrVO;
 import com.mall4j.cloud.user.mapper.UserAddrMapper;
 import com.mall4j.cloud.user.model.UserAddr;
 import com.mall4j.cloud.user.service.UserAddrService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,12 @@ public class UserAddrServiceImpl implements UserAddrService {
 
     @Override
     public List<UserAddrVO> list(Long userId) {
-        return userAddrMapper.list(userId);
+        List<UserAddrVO> userAddrVOS=userAddrMapper.list(userId);
+        for (int i = 0; i <userAddrVOS.size() ; i++) {
+            Integer array[]={Math.toIntExact(userAddrVOS.get(i).getProvinceId()),Math.toIntExact(userAddrVOS.get(i).getCityId()),Math.toIntExact(userAddrVOS.get(i).getAreaId())};
+            userAddrVOS.get(i).setAreas(array);
+        }
+        return userAddrVOS;
     }
 
     @Override
@@ -54,9 +60,15 @@ public class UserAddrServiceImpl implements UserAddrService {
     public UserAddrVO getUserAddrByUserId(Long addrId, Long userId) {
         // 获取用户默认地址
         if (addrId == 0) {
-            return userAddrMapper.getUserDefaultAddrByUserId(userId);
+            UserAddrVO userAddrVO=userAddrMapper.getUserDefaultAddrByUserId(userId);
+            Integer array[]={Math.toIntExact(userAddrVO.getProvinceId()), Math.toIntExact(userAddrVO.getCityId()), Math.toIntExact(userAddrVO.getAreaId())};
+            userAddrVO.setAreas(array);
+            return userAddrVO;
         }
-        return userAddrMapper.getByAddrId(addrId,userId);
+        UserAddrVO userAddrVO=userAddrMapper.getByAddrId(addrId,userId);
+        Integer array[]={Math.toIntExact(userAddrVO.getProvinceId()), Math.toIntExact(userAddrVO.getCityId()), Math.toIntExact(userAddrVO.getAreaId())};
+        userAddrVO.setAreas(array);
+        return userAddrVO;
     }
 
     @Override

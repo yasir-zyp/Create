@@ -48,10 +48,10 @@ public class OrderController {
     /**
      * 分页获取
      */
-    @GetMapping("/ua/page")
+    @GetMapping("/page")
     @ApiOperation(value = "分页获取订单详情")
     public ServerResponseEntity<EsPageVO<EsOrderVO>> page(OrderSearchDTO orderSearchDTO) {
-        Long shopId = (long)663;
+        Long shopId = AuthUserContext.get().getTenantId();
         orderSearchDTO.setShopId(shopId);
         return searchOrderFeignClient.getOrderPage(orderSearchDTO);
     }

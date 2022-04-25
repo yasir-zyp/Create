@@ -40,5 +40,5 @@ public class UserRegisterDTO {
 
 	@NotNull
 	@ApiModelProperty("注册端类型，pc端：0,公众号1，小程序：2")
-	private Integer sysType;
+	private Integer registerType;
 }

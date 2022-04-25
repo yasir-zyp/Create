@@ -4,6 +4,7 @@ import com.mall4j.cloud.product.dto.shopcart.CheckShopCartItemDTO;
 import com.mall4j.cloud.product.model.ShopCartItem;
 import com.mall4j.cloud.common.order.vo.ShopCartItemVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author FrozenWatermelon
  * @date 2020-11-21 10:01:23
  */
+@Repository
 public interface ShopCartItemMapper {
 
 	/**

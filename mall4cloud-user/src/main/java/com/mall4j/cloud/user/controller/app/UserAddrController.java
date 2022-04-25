@@ -64,6 +64,10 @@ public class UserAddrController {
         }
         userAddr.setAddrId(null);
         userAddr.setUserId(userId);
+       /* Integer array[]=userAddr.getAreas();
+        userAddr.setProvinceId((long)array[0]);
+        userAddr.setCityId((long)array[1]);
+        userAddr.setAreaId((long)array[2]);*/
         userAddrService.save(userAddr);
         // 清除默认地址缓存
         if (UserAddr.DEFAULT_ADDR.equals(userAddr.getIsDefault())) {
@@ -86,6 +90,12 @@ public class UserAddrController {
         }
         UserAddr userAddr = mapperFacade.map(userAddrDTO, UserAddr.class);
         userAddr.setUserId(userId);
+        if (userAddr.getAreas()!=null) {
+            Integer array[] = userAddr.getAreas();
+            userAddr.setProvinceId((long) array[0]);
+            userAddr.setCityId((long) array[1]);
+            userAddr.setAreaId((long) array[2]);
+        }
         userAddrService.update(userAddr);
         // 清除默认地址缓存
         if (userAddr.getIsDefault().equals(UserAddr.DEFAULT_ADDR)) {

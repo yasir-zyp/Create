@@ -75,5 +75,17 @@ public class OssController {
         ossVo.setFileName(fileName);
         return ossVo;
     }
+    @GetMapping(value = "/info")
+    @ApiOperation(value = "token", notes = "获取文件上传需要的token")
+    @ApiImplicitParam(name = "fileNum", value = "需要获取token的文件数量", defaultValue = "0")
+    public ServerResponseEntity<OssVO> infos(@RequestParam("fileNum") Integer fileNum) {
+        OssVO ossVO = new OssVO();
+        // minio文件上传
+        if (Objects.equals(ossConfig.getOssType(), OssType.MINIO.value())) {
+            fillMinIoInfo(ossVO, fileNum);
+        }
+        return ServerResponseEntity.success(ossVO);
+    }
+
 
 }

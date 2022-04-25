@@ -55,4 +55,7 @@ public class UserAddrVO extends BaseVO{
 
     @ApiModelProperty("纬度")
     private Double lat;
+
+    @ApiModelProperty("地区")
+    private Integer areas[];
 }

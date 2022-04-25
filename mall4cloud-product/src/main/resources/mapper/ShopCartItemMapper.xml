@@ -83,7 +83,7 @@
         SELECT sci.*,
                spu.name  spuName,
                spu.category_id,
-               IFNULL(spu.main_img_url,sku.img_url)AS imgUrl,
+               spu.main_img_url AS imgUrl,
                sku.price_fee             skuPriceFee,
                sku.sku_name
         FROM shop_cart_item sci

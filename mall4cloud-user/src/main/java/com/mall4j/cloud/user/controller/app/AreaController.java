@@ -33,9 +33,21 @@ public class AreaController {
         return ServerResponseEntity.success(list);
     }
 
+    @GetMapping("/list")
+    @ApiOperation(value = "获取省市区地区信息列表", notes = "获取省市区地区信息列表")
+    public ServerResponseEntity<List<AreaVO>> lists() {
+        List<AreaVO> list = areaService.listAreaOfEnable();
+        return ServerResponseEntity.success(list);
+    }
     @GetMapping("/ua/list_by_pid")
     @ApiOperation(value = "通过父级id获取区域列表", notes = "通过父级id获取区域列表")
     public ServerResponseEntity<List<AreaVO>> listByPid(Long pid) {
+        List<AreaVO> list = areaService.listByPid(pid);
+        return ServerResponseEntity.success(list);
+    }
+    @GetMapping("/list_by_pid")
+    @ApiOperation(value = "通过父级id获取区域列表", notes = "通过父级id获取区域列表")
+    public ServerResponseEntity<List<AreaVO>> listByPids(Long pid) {
         List<AreaVO> list = areaService.listByPid(pid);
         return ServerResponseEntity.success(list);
     }
