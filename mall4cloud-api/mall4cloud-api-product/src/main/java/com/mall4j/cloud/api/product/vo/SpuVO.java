@@ -1,6 +1,7 @@
 package com.mall4j.cloud.api.product.vo;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mall4j.cloud.api.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.common.serializer.ImgJsonSerializer;
 import com.mall4j.cloud.common.vo.BaseVO;
 import io.swagger.annotations.ApiModelProperty;
@@ -75,5 +76,12 @@ public class SpuVO extends BaseVO {
 
 	@ApiModelProperty("分类标签")
 	private List<String> spuCategoryName;
+
+	@ApiModelProperty("地址id")
+	private Long addrId;
+
+	@ApiModelProperty("地址")
+	private ShopAddrVO shopAddr;
+
 
 }

@@ -62,5 +62,9 @@ public class SpuDTO{
 	@ApiModelProperty("不需要,店铺id")
 	private Long shopId;
 
+	@ApiModelProperty("地址id")
+	private Long addrId;
 
+	@ApiModelProperty("收样地址")
+	private ShopAddrDTO shopAddrDTO;
 }

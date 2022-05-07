@@ -2,6 +2,8 @@ package com.mall4j.cloud.product.controller.admin;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
+import com.mall4j.cloud.api.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.common.constant.Constant;
 import com.mall4j.cloud.common.constant.StatusEnum;
 import com.mall4j.cloud.common.database.dto.PageDTO;
@@ -13,10 +15,12 @@ import com.mall4j.cloud.product.dto.SkuDTO;
 import com.mall4j.cloud.product.dto.SpuDTO;
 import com.mall4j.cloud.product.dto.SpuIdDTO;
 import com.mall4j.cloud.product.dto.SpuPageSearchDTO;
+import com.mall4j.cloud.product.model.ShopAddr;
 import com.mall4j.cloud.product.service.*;
 import com.mall4j.cloud.api.product.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +49,10 @@ public class SpuController {
     private AttrService attrService;
     @Autowired
     private SkuAttrService skuAttrService;
-
+    @Autowired
+    ShopDetailFeignClient shopDetailFeignClient;
+    @Autowired
+    private MapperFacade mapperFacade;
     @GetMapping("/platform_page")
     @ApiOperation(value = "获取平台spu信息列表", notes = "分页获取平台spu信息列表")
     public ServerResponseEntity<PageVO<SpuVO>> platformPage(PageDTO pageDTO, SpuPageSearchDTO spuDTO) {
@@ -71,6 +78,9 @@ public class SpuController {
         spuVO.setSpuCategoryName(spuService.SpuCategoryById(spuId));
         // 平台分类信息
         spuVO.setCategory(categoryService.getPathNameByCategoryId(spuVO.getCategoryId()));
+        //地址信息
+        ServerResponseEntity<ShopAddrVO> serverResponseEntity=shopDetailFeignClient.getAdderById(spuVO.getAddrId());
+        spuVO.setShopAddr(serverResponseEntity.getData());
         return ServerResponseEntity.success(spuVO);
     }
 

@@ -3,6 +3,7 @@ package com.mall4j.cloud.product.model;
 import java.io.Serializable;
 
 import com.mall4j.cloud.common.model.BaseModel;
+
 import lombok.Data;
 
 /**
@@ -95,4 +96,6 @@ public class Spu extends BaseModel implements Serializable{
      * 序号
      */
     private Integer seq;
+
+    private ShopAddr shopAddr;
 }

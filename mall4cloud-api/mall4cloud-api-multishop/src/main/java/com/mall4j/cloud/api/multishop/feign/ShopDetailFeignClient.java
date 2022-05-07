@@ -1,6 +1,7 @@
 package com.mall4j.cloud.api.multishop.feign;
 
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
+import com.mall4j.cloud.api.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import com.mall4j.cloud.common.feign.FeignInsideAuthConfig;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
@@ -59,4 +60,6 @@ public interface ShopDetailFeignClient {
     @GetMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/shopDetail/getShopDetailByShopIdAndShopName")
     ServerResponseEntity<List<ShopDetailVO>> getShopDetailByShopIdAndShopName(@RequestParam("shopIds") List<Long> shopIds,
                                                                               @RequestParam(value = "shopName",defaultValue = "") String shopName);
+    @GetMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/shopDetail/getAdderById")
+    ServerResponseEntity<ShopAddrVO> getAdderById(@RequestParam("shopIds") Long shopIds);
 }

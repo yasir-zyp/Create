@@ -40,4 +40,5 @@ public class SkuAppVO{
 	private List<SkuAttrVO> skuAttrs;
 
 
+
 }

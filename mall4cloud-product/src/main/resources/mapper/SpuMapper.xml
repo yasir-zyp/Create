@@ -28,7 +28,7 @@
   </resultMap>
   <sql id="Vo_Column_List">
     s.`spu_id`,s.`shop_id`,s.`create_time`,s.`update_time`,s.`category_id`,s.`name`,s.`selling_point`,s.`main_img_url`,s.`price_fee`
-    ,s.`market_price_fee`,s.`status`,s.`seq`,s.party_code
+    ,s.`market_price_fee`,s.`status`,s.`seq`,s.party_code,s.addr_id
   </sql>
   <select id="list" resultType="com.mall4j.cloud.api.product.vo.SpuVO">
     select distinct <include refid="Vo_Column_List"/> ,s.sale_num from spu s
@@ -89,7 +89,8 @@
   </select>
 
   <select id="getBySpuId" resultMap="spuDetailMap">
-    select <include refid="Vo_Column_List"/> ,
+    select  s.`spu_id`,s.`shop_id`,s.`create_time`,s.`update_time`,s.`category_id`,s.`name`,s.`selling_point`,s.`main_img_url`,s.`price_fee`
+    ,s.`market_price_fee`,s.`status`,s.`seq`,s.party_code,s.addr_id ,
     sd.`detail`
     FROM `spu` s
     LEFT JOIN spu_detail sd ON s.`spu_id` = sd.`spu_id`

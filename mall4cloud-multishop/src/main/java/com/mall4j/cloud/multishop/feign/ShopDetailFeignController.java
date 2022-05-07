@@ -2,11 +2,15 @@ package com.mall4j.cloud.multishop.feign;
 
 import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
 import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
+import com.mall4j.cloud.api.multishop.vo.ShopAddrVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.multishop.mapper.ShopAddrMapper;
+import com.mall4j.cloud.multishop.model.ShopAddr;
 import com.mall4j.cloud.multishop.model.ShopDetail;
 import com.mall4j.cloud.multishop.service.ShopDetailService;
 import com.mall4j.cloud.api.multishop.vo.ShopDetailVO;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +28,8 @@ public class ShopDetailFeignController implements ShopDetailFeignClient {
     private ShopDetailService shopDetailService;
     @Autowired
     private MapperFacade mapperFacade;
-
+    @Autowired
+    private ShopAddrMapper shopAddrMapper;
     @Override
     public ServerResponseEntity<String> getShopNameByShopId(Long shopId) {
         ShopDetailVO shopDetail = shopDetailService.getByShopId(shopId);
@@ -58,5 +63,10 @@ public class ShopDetailFeignController implements ShopDetailFeignClient {
     @Override
     public ServerResponseEntity<List<ShopDetailVO>> getShopDetailByShopIdAndShopName(List<Long> shopIds, String shopName) {
         return ServerResponseEntity.success(shopDetailService.getShopDetailByShopIdAndShopName(shopIds,shopName));
+    }
+
+    public ServerResponseEntity<ShopAddrVO> getAdderById(Long addrId) {
+        ShopAddr shopAddr=shopAddrMapper.selectByPrimaryKey(addrId);
+        return ServerResponseEntity.success(mapperFacade.map(shopAddr, ShopAddrVO.class));
     }
 }

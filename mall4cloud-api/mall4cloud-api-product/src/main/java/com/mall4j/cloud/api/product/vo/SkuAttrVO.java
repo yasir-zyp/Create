@@ -47,4 +47,7 @@ public class SkuAttrVO extends BaseVO {
 	private Long price;
 	@ApiModelProperty("状态 1:enable, 0:disable, -1:deleted")
 	private Integer status;
+
+	@ApiModelProperty("规格属性描述")
+	private String attrDesc;
 }

@@ -1,5 +1,9 @@
 package com.mall4j.cloud.product.controller.app;
 
+import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
+import com.mall4j.cloud.api.multishop.feign.ShopDetailFeignClient;
+import com.mall4j.cloud.api.multishop.vo.ShopAddrVO;
+import com.mall4j.cloud.product.model.ShopAddr;
 import com.mall4j.cloud.product.vo.app.*;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.product.service.SkuService;
@@ -39,15 +43,18 @@ public class SpuController {
     @Autowired
     private MapperFacade mapperFacade;
 
+    @Autowired
+    ShopDetailFeignClient shopDetailFeignClient;
     @GetMapping("/prod_info")
     @ApiOperation(value = "服务方案详情信息", notes = "根据服务方案ID（prodId）获取商品信息")
     @ApiImplicitParam(name = "spuId", value = "服务方案ID", required = true, dataType = "Long")
-    public ServerResponseEntity<SpuAppVO> prodInfo(@RequestParam("spuId") Long spuId) {
-
+    public ServerResponseEntity<SpuAppVO> prodInfo(@RequestParam("spuId") Long spuId){
         SpuVO spu = spuService.getBySpuId(spuId);
         SpuAppVO spuAppVO = mapperFacade.map(spu, SpuAppVO.class);
-
         List<SkuAppVO> skuAppVO = skuService.getSkuBySpuId(spu.getSpuId());
+        ServerResponseEntity<ShopAddrVO> serverResponseEntity=shopDetailFeignClient.getAdderById(spu.getAddrId());
+        ShopAddr shopAddr=mapperFacade.map(serverResponseEntity.getData(), ShopAddr.class);
+        spuAppVO.setShopAddr(shopAddr);
         spuAppVO.setSkus(skuAppVO);
         return ServerResponseEntity.success(spuAppVO);
     }

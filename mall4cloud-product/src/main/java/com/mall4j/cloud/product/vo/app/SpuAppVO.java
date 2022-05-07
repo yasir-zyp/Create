@@ -1,7 +1,9 @@
 package com.mall4j.cloud.product.vo.app;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mall4j.cloud.api.multishop.bo.EsShopDetailBO;
 import com.mall4j.cloud.common.serializer.ImgJsonSerializer;
+import com.mall4j.cloud.product.model.ShopAddr;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -49,4 +51,12 @@ public class SpuAppVO {
 
 	@ApiModelProperty("商品销量")
 	private Integer saleNum;
+
+	@ApiModelProperty("地址")
+	private ShopAddr shopAddr;
+
+
+
+
+
 }

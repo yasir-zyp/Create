@@ -125,6 +125,7 @@ public class SpuServiceImpl implements SpuService {
         Spu spu = mapperFacade.map(spuDTO, Spu.class);
         spu.setShopId(AuthUserContext.get().getTenantId());
         spu.setStatus(StatusEnum.DISABLE.value());
+        spu.setAddrId(spu.getShopAddr().getShopAddrId());
         // 1.保存商品信息
         spuMapper.save(spu);
         // 2.保存商品其他信息、详细、扩展信息
@@ -151,6 +152,7 @@ public class SpuServiceImpl implements SpuService {
         Spu spu = mapperFacade.map(spuDTO, Spu.class);
         SpuServiceImpl spuService = (SpuServiceImpl) AopContext.currentProxy();
         SpuVO dbSpu = spuService.getBySpuId(spu.getSpuId());
+        spu.setAddrId(spu.getShopAddr().getShopAddrId());
         // 1.修改商品信息
         spuMapper.update(spu);
         // 2.修改商品详情

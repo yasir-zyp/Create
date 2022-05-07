@@ -2,6 +2,7 @@ package com.mall4j.cloud.payment.mapper;
 
 import com.mall4j.cloud.payment.model.PayInfo;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 订单支付记录
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
  * @author FrozenWatermelon
  * @date 2020-12-25 09:50:59
  */
+@Repository
 public interface PayInfoMapper {
 
 	/**

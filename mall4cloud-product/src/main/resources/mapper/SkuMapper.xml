@@ -26,6 +26,7 @@
       <result column="attr_id" property="attrId"/>
       <result column="status" property="status"/>
       <result column="attr_name" property="attrName"/>
+      <result column="attr_desc" property="attrDesc"/>
     </collection>
   </resultMap>
   <sql id="Vo_Column_List">
