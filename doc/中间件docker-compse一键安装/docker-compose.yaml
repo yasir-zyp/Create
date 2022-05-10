@@ -116,7 +116,8 @@ services:
       - ./canal/conf/canal.properties:/home/admin/canal-server/conf/canal.properties
       - ./canal/logs:/home/admin/canal-server/logs
 
-
+  mall4cloud-gateway:
+    image: gateway
 
 
   mall4cloud-rocketmq-namesrv:
