@@ -15,7 +15,7 @@ import javax.validation.Valid;
  * @author zyp
  * @date 2022/5/13
  */
-@FeignClient(value = "mall4cloud-payment",contextId = "config")
+@FeignClient(value = "mall4cloud-payment",contextId = "pay")
 public interface PaymentFeignClient {
 
     /**

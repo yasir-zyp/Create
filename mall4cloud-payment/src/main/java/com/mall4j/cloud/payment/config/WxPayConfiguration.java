@@ -10,6 +10,7 @@
 
 package com.mall4j.cloud.payment.config;
 
+import cn.hutool.core.io.resource.ClassPathResource;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -34,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,13 +69,12 @@ public class WxPayConfiguration {
         PrivateKey merchantPrivateKey = null;
 
 
-        try {
-            merchantPrivateKey = PemUtil.loadPrivateKey(
-                    new FileInputStream(wxPay.getPrivateKeyPath()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-     String mchId=wxPay.getMchId();
+        ClassPathResource classPathResource = new ClassPathResource(wxPay.getPrivateKeyPath());
+           /* merchantPrivateKey = PemUtil.loadPrivateKey(
+                    new FileInputStream(wxPay.getPrivateKeyPath()));*/
+
+        merchantPrivateKey = PemUtil.loadPrivateKey(classPathResource.getStream());
+        String mchId=wxPay.getMchId();
 
         CertificatesManager certificatesManager = CertificatesManager.getInstance();
 
