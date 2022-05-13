@@ -6,7 +6,9 @@ import com.mall4j.cloud.common.feign.FeignInsideAuthConfig;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,7 +25,7 @@ public interface PaymentFeignClient {
      * @param request request
      * @return 配置信息json
      */
-    @GetMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/pay")
-    ServerResponseEntity<PayInfoBo> pay(HttpServletRequest request, @Valid @RequestBody PayInfoDto payParam);
+    @PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/pay")
+    ServerResponseEntity<PayInfoBo> pay(HttpServletRequest request, @Valid @RequestParam("payInfoDto") PayInfoDto payParam);
 
 }
