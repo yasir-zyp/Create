@@ -57,4 +57,6 @@ public interface PayInfoMapper {
 	 * @return 是否已经支付
 	 */
 	Integer isPay(@Param("orderIds") String orderIds, @Param("userId") Long userId);
+
+    PayInfo getByByBizPayNo(@Param("outTradeNo") String outTradeNo);
 }

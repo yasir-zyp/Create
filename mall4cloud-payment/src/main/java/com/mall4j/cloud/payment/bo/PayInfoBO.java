@@ -1,9 +1,12 @@
 package com.mall4j.cloud.payment.bo;
 
+import lombok.Data;
+
 /**
  * @author FrozenWatermelon
  * @date 2020/12/25
  */
+@Data
 public class PayInfoBO {
 
     /**
@@ -35,6 +38,16 @@ public class PayInfoBO {
      * 第三方用户id
      */
     private String bizUserId;
+
+    private String timeStamp;
+    private String nonceStr;
+    private String appId;
+    private String prepay;
+    private String sign;
+    /**
+     * 签名类型
+     */
+    private String signType;
 
     public String getBody() {
         return body;

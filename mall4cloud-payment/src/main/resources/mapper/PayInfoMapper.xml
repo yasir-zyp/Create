@@ -23,6 +23,9 @@
   <select id="getByPayId" resultMap="payInfoMap">
     select <include refid="Vo_Column_List"/> from pay_info where pay_id = #{payId}
   </select>
+  <select id="getByByBizPayNo" resultMap="payInfoMap">
+    select <include refid="Vo_Column_List"/> from pay_info where biz_pay_no = #{outTradeNo}
+  </select>
   <insert id="save">
     insert into pay_info (`pay_id`, `user_id`,`order_ids`,`biz_pay_no`,`sys_type`,`pay_status`,
                           `pay_amount`,`version`,`callback_content`,`callback_time`,`confirm_time`)
@@ -69,6 +72,7 @@
   <select id="getPayStatusByOrderIds" resultType="java.lang.Integer">
     select pay_status from pay_info where order_ids = #{orderIds}
   </select>
+
 
   <select id="isPay" resultType="java.lang.Integer">
     select count(*) from pay_info where order_ids = #{orderIds} and pay_status = 1 and user_id = #{userId}

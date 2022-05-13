@@ -44,6 +44,11 @@
         </dependency>
         <dependency>
             <groupId>com.mall4j.cloud</groupId>
+            <artifactId>mall4cloud-api-payment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mall4j.cloud</groupId>
             <artifactId>mall4cloud-api-leaf</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -62,6 +67,22 @@
             <artifactId>wechatpay-apache-httpclient</artifactId>
             <version>0.4.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-pay</artifactId>
+            <version>4.3.2.B</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.20</version>
+        </dependency>
+
     </dependencies>
 
     <build>

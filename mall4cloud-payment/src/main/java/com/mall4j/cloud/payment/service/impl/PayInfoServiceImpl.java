@@ -1,6 +1,13 @@
 package com.mall4j.cloud.payment.service.impl;
 
+import cn.hutool.core.lang.id.NanoId;
 import cn.hutool.core.util.StrUtil;
+import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
 import com.mall4j.cloud.api.leaf.feign.SegmentFeignClient;
 import com.mall4j.cloud.api.order.feign.OrderFeignClient;
 import com.mall4j.cloud.api.order.vo.OrderAmountVO;
@@ -12,11 +19,15 @@ import com.mall4j.cloud.common.rocketmq.config.RocketMqConstant;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import com.mall4j.cloud.payment.bo.PayInfoBO;
 import com.mall4j.cloud.payment.bo.PayInfoResultBO;
+import com.mall4j.cloud.payment.config.WxConfig;
 import com.mall4j.cloud.payment.constant.PayStatus;
 import com.mall4j.cloud.payment.dto.PayInfoDTO;
 import com.mall4j.cloud.payment.mapper.PayInfoMapper;
 import com.mall4j.cloud.payment.model.PayInfo;
 import com.mall4j.cloud.payment.service.PayInfoService;
+import com.mall4j.cloud.payment.util.DateDealwith;
+import com.mall4j.cloud.payment.util.WXPayUtil;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +35,8 @@ import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * 订单支付记录
@@ -48,10 +58,12 @@ public class PayInfoServiceImpl implements PayInfoService {
 
     @Autowired
     private RocketMQTemplate orderNotifyTemplate;
+    @Autowired
+    private WxPayService wxPayService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayInfoBO pay(Long userId, PayInfoDTO payParam) {
+    public PayInfoBO pay(HttpServletRequest request,Long userId, PayInfoDTO payParam,String openId) {
         // 支付单号
         ServerResponseEntity<Long> segmentIdResponse = segmentFeignClient.getSegmentId(PayInfo.DISTRIBUTED_ID_KEY);
         if (!segmentIdResponse.isSuccess()) {
@@ -66,6 +78,33 @@ public class PayInfoServiceImpl implements PayInfoService {
             throw new Mall4cloudException(ordersAmountAndIfNoCancelResponse.getMsg());
         }
         OrderAmountVO orderAmount = ordersAmountAndIfNoCancelResponse.getData();
+
+        String yuanMoney = String.valueOf(orderAmount.getPayAmount());
+        //外部订单号
+        String bizPayNo= NanoId.randomNanoId(16);
+        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest=new WxPayUnifiedOrderRequest();
+        //签名类型
+        wxPayUnifiedOrderRequest.setSignType(WxPayConstants.SignType.MD5);
+        wxPayUnifiedOrderRequest.setBody("安徽国科检测科技有限公司-检测");
+        //外部订单号
+        wxPayUnifiedOrderRequest.setOutTradeNo(bizPayNo); //自己生成order_No
+        //交易类型
+        wxPayUnifiedOrderRequest.setTradeType(WxPayConstants.TradeType.JSAPI);
+        wxPayUnifiedOrderRequest.setTotalFee(BaseWxPayRequest.yuanToFen(yuanMoney));//直接分
+        wxPayUnifiedOrderRequest.setOpenid(openId); // 获取微信支付用户的openId
+        wxPayUnifiedOrderRequest.setSpbillCreateIp(DateDealwith.getIpAddress(request));
+        Date now = new Date();
+        Date afterDate = new Date(now.getTime() + 600000); //10分钟后的时间
+        wxPayUnifiedOrderRequest.setTimeStart(DateFormatUtils.format(now, "yyyyMMddHHmmss"));
+        wxPayUnifiedOrderRequest.setTimeExpire(DateFormatUtils.format(afterDate, "yyyyMMddHHmmss"));
+        wxPayUnifiedOrderRequest.setNotifyUrl(WxConfig.noticeUrl);
+        WxPayUnifiedOrderResult wxPayUnifiedOrderResult=null;
+        try {
+             wxPayUnifiedOrderResult=  wxPayService.createOrder(wxPayUnifiedOrderRequest);
+        } catch (WxPayException e) {
+            e.printStackTrace();
+        }
+
         PayInfo payInfo = new PayInfo();
         payInfo.setPayId(payId);
         payInfo.setUserId(userId);
@@ -73,14 +112,34 @@ public class PayInfoServiceImpl implements PayInfoService {
         payInfo.setPayStatus(PayStatus.UNPAY.value());
         payInfo.setSysType(AuthUserContext.get().getSysType());
         payInfo.setVersion(0);
+        payInfo.setBizPayNo(bizPayNo);
         // 保存多个支付订单号
         payInfo.setOrderIds(StrUtil.join(StrUtil.COMMA, orderIds));
         // 保存预支付信息
         payInfoMapper.save(payInfo);
+        //3. 生成小程序调起支付所需的数据
+        String NonceStr=WXPayUtil.generateNonceStr();
         PayInfoBO payInfoDto = new PayInfoBO();
-        payInfoDto.setBody("商城订单");
+        payInfoDto.setBody("安徽国科检测科技有限公司-检测");
         payInfoDto.setPayAmount(orderAmount.getPayAmount());
         payInfoDto.setPayId(payId);
+        payInfoDto.setAppId(wxPayUnifiedOrderResult.getAppid());
+        payInfoDto.setTimeStamp((System.currentTimeMillis()/1000)+"");
+        payInfoDto.setPrepay("prepay_id="+wxPayUnifiedOrderResult.getPrepayId());
+        payInfoDto.setNonceStr(NonceStr);
+        payInfoDto.setSignType("MD5");
+        Map<String, String> data=new HashMap<>();
+        data.put("appid",wxPayUnifiedOrderResult.getAppid());
+        data.put("body","小程序订单");
+        data.put("device_info","WEB");
+        data.put("mch_id",WxConfig.mch_id);
+        data.put("nonce_str",NonceStr);
+        try {
+            payInfoDto.setSign(WXPayUtil.generateSignature(data,WxConfig.mchKey));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return payInfoDto;
     }
 
@@ -116,5 +175,10 @@ public class PayInfoServiceImpl implements PayInfoService {
     @Override
     public Integer isPay(String orderIds, Long userId) {
         return payInfoMapper.isPay(orderIds, userId);
+    }
+
+    @Override
+    public PayInfo getByByBizPayNo(String outTradeNo) {
+        return payInfoMapper.getByByBizPayNo(outTradeNo);
     }
 }

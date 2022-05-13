@@ -1,6 +1,10 @@
 package com.mall4j.cloud.payment.controller;
 
 
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.security.AuthUserContext;
@@ -31,6 +35,7 @@ public class PayController {
     @Autowired
     private PayNoticeController payNoticeController;
 
+
     /**
      * 支付接口
      */
@@ -41,13 +46,10 @@ public class PayController {
         String gatewayUri = "http://192.168.11.120/mall4cloud_payment";
         UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
         Long userId = userInfoInTokenBO.getUserId();
-        PayInfoBO payInfo = payInfoService.pay(userId, payParam);
+        String openId=userInfoInTokenBO.getUnionId();
+        PayInfoBO payInfo = payInfoService.pay(request,userId, payParam,openId);
         payInfo.setBizUserId(userInfoInTokenBO.getBizUserId());
-        // 回调地址
-        payInfo.setApiNoticeUrl(gatewayUri + "/notice/pay/order");
-        payInfo.setReturnUrl(payParam.getReturnUrl());
-        payNoticeController.submit(payInfo.getPayId());
-        return ServerResponseEntity.success(payInfo.getPayId());
+        return ServerResponseEntity.success(payInfo);
     }
 
     @GetMapping("/isPay/{orderIds}")

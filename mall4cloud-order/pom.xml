@@ -74,6 +74,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.mall4j.cloud</groupId>
+            <artifactId>mall4cloud-api-payment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>

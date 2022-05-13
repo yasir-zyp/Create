@@ -5,6 +5,7 @@ import com.mall4j.cloud.payment.bo.PayInfoResultBO;
 import com.mall4j.cloud.payment.dto.PayInfoDTO;
 import com.mall4j.cloud.payment.model.PayInfo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public interface PayInfoService {
      * @param payParam 支付参数
      * @return 前端唤起支付需要的参数
      */
-    PayInfoBO pay(Long userId, PayInfoDTO payParam);
+    PayInfoBO pay(HttpServletRequest request,Long userId, PayInfoDTO payParam,String openId);
 
     /**
      * 根据订单支付记录id获取订单支付记录
@@ -52,4 +53,6 @@ public interface PayInfoService {
      * @return 是否已经支付
      */
     Integer isPay(String orderIds, Long userId);
+
+    PayInfo getByByBizPayNo(String outTradeNo);
 }
