@@ -11,4 +11,6 @@ public class PayInfoDto {
     @NotEmpty(message = "订单号不能为空")
     @ApiModelProperty(value = "订单号", required = true)
     private List<Long> orderIds;
+    private String openId;
+    private Long userId;
 }

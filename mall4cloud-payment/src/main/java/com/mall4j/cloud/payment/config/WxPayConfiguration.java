@@ -12,7 +12,6 @@ package com.mall4j.cloud.payment.config;
 
 import cn.hutool.core.io.resource.ClassPathResource;
 import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 
@@ -66,16 +65,12 @@ public class WxPayConfiguration {
         String mchSerialNo=wxPay.getMchSerialNo();
         String apiV3Key=wxPay.getMchKey();
         // 加载商户私钥（privateKey：私钥字符串）
-        PrivateKey merchantPrivateKey = null;
-
 
         ClassPathResource classPathResource = new ClassPathResource(wxPay.getPrivateKeyPath());
-           /* merchantPrivateKey = PemUtil.loadPrivateKey(
-                    new FileInputStream(wxPay.getPrivateKeyPath()));*/
 
-        merchantPrivateKey = PemUtil.loadPrivateKey(classPathResource.getStream());
+        PrivateKey  merchantPrivateKey = PemUtil.loadPrivateKey(classPathResource.getStream());
         String mchId=wxPay.getMchId();
-
+//加载支付平台证书
         CertificatesManager certificatesManager = CertificatesManager.getInstance();
 
         try {
@@ -103,11 +98,13 @@ public class WxPayConfiguration {
 // 通过WechatPayHttpClientBuilder构造的HttpClient，会自动的处理签名和验签，并进行证书自动更新
         CloseableHttpClient httpClient = builder.build();
         WxPayConfig payConfig = new WxPayConfig();
-        payConfig.setApiV3HttpClient(httpClient);
+        //payConfig.setApiV3HttpClient(httpClient);
         payConfig.setAppId(appid);
         payConfig.setMchId(mchId);
-        payConfig.setApiV3Key(apiV3Key);
+        //payConfig.setApiV3Key(apiV3Key);
+        payConfig.setMchKey(wxPay.getMchKey2());
         payConfig.setCertSerialNo(mchSerialNo);
+        //payConfig.setSignType("RSA");
         payConfig.setNotifyUrl(WxConfig.noticeUrl);
         WxPayService wxPayService = new WxPayServiceImpl();
         wxPayService.setConfig(payConfig);

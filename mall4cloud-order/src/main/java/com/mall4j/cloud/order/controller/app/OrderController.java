@@ -2,6 +2,7 @@ package com.mall4j.cloud.order.controller.app;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.mall4j.cloud.api.auth.bo.UserInfoInTokenBO;
 import com.mall4j.cloud.api.payment.bo.PayInfoBo;
 import com.mall4j.cloud.api.payment.dto.PayInfoDto;
 import com.mall4j.cloud.api.payment.feign.PaymentFeignClient;
@@ -29,8 +30,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -101,8 +100,9 @@ public class OrderController {
      */
     @PostMapping("/submit")
     @ApiOperation(value = "提交订单，返回支付流水号", notes = "根据传入的参数判断是否为购物车提交订单，同时对购物车进行删除，用户开始进行支付")
-    public ServerResponseEntity<PayInfoBo> submitOrders(HttpServletRequest request) {
-        Long userId = AuthUserContext.get().getUserId();
+    public ServerResponseEntity<PayInfoBo> submitOrders() {
+        UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
+        Long userId = userInfoInTokenBO.getUserId();
         ShopCartOrderMergerVO mergerOrder = cacheManagerUtil.getCache(OrderCacheNames.ORDER_CONFIRM_KEY, String.valueOf(userId));
         // 看看订单有没有过期
         if (mergerOrder == null) {
@@ -116,7 +116,9 @@ public class OrderController {
         List<Long> orderIds = orderService.submit(userId,mergerOrder);
         PayInfoDto payInfoDto=new PayInfoDto();
         payInfoDto.setOrderIds(orderIds);
-        ServerResponseEntity<PayInfoBo>  responseEntity=paymentFeignClient.pay(request,payInfoDto);
+        payInfoDto.setOpenId(userInfoInTokenBO.getUnionId());
+        payInfoDto.setUserId(userInfoInTokenBO.getUserId());
+        ServerResponseEntity<PayInfoBo>  responseEntity=paymentFeignClient.pay(payInfoDto);
         return ServerResponseEntity.success(responseEntity.getData());
     }
 

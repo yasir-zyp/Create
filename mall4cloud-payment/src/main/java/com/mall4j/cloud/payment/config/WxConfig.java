@@ -5,7 +5,7 @@ public class WxConfig {
     public static String noticeUrl=gatewayUri+ "/notice/pay/order";
     public static String appid= "wxfc85e760981b183b";
     public static String mch_id= "1625153713";
-    public static String mchKey= "yasirzypgkjc2478Yasirzypgkjc2478";
+    public static String mchKey= "yasirzypgkjc2478Yasirzypgkjc2472";
     public static String keyPath= "src/main/resources/cert/apiclient_cert.p12";
     public static String mchSerialNo= "1F7CA86A042DEFB8241B3257D306E592F0ED3910";
     public static String privateKeyPath= "src/main/resources/cert/apiclient_key.pem";

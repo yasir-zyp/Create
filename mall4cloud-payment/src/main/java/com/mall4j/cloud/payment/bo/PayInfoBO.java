@@ -41,7 +41,7 @@ public class PayInfoBO {
 
     private String timeStamp;
     private String nonceStr;
-    private String appId;
+
     private String prepay;
     private String sign;
     /**

@@ -22,10 +22,10 @@ public interface PaymentFeignClient {
 
     /**
      * 内部支付接口
-     * @param request request
+
      * @return 配置信息json
      */
     @PostMapping(value = FeignInsideAuthConfig.FEIGN_INSIDE_URL_PREFIX + "/insider/pay")
-    ServerResponseEntity<PayInfoBo> pay(HttpServletRequest request, @Valid @RequestParam("payInfoDto") PayInfoDto payParam);
+    ServerResponseEntity<PayInfoBo> pay( @Valid @RequestBody PayInfoDto payParam);
 
 }

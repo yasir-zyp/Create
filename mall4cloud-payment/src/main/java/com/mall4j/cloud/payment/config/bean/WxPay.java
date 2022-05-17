@@ -34,6 +34,10 @@ public class WxPay {
      * 微信支付v3mchKey
      */
     private String mchKey;
+    /**
+     * 微信支付v2mchKey
+     */
+    private String mchKey2;
 
 	/**
 	 * 支付证书路径

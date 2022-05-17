@@ -12,6 +12,8 @@ import com.mall4j.cloud.payment.service.PayInfoService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,14 +25,12 @@ public class PaymentFeignController implements PaymentFeignClient {
     @Autowired
     private MapperFacade mapperFacade;
     @Override
-    public ServerResponseEntity<PayInfoBo> pay(HttpServletRequest request, @Valid PayInfoDto payParam) {
-        UserInfoInTokenBO userInfoInTokenBO = AuthUserContext.get();
-        Long userId = userInfoInTokenBO.getUserId();
-        String openId=userInfoInTokenBO.getUnionId();
+    public ServerResponseEntity<PayInfoBo> pay( @Valid PayInfoDto payParam) {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request=requestAttributes.getRequest();
         PayInfoDTO payInfoDto=new PayInfoDTO();
         payInfoDto.setOrderIds(payParam.getOrderIds());
-        PayInfoBO payInfo = payInfoService.pay(request,userId, payInfoDto,openId);
-        payInfo.setBizUserId(userInfoInTokenBO.getBizUserId());
+        PayInfoBO payInfo = payInfoService.pay(request,payParam.getUserId(), payInfoDto,payParam.getOpenId());
         PayInfoBo payInfoBo=mapperFacade.map(payInfo, PayInfoBo.class);
         return ServerResponseEntity.success(payInfoBo);
     }
