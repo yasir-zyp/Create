@@ -64,12 +64,13 @@ public class WxPayConfiguration {
     private WxPayService getWxMpPayServiceByAppId(String appid) {
         String mchSerialNo=wxPay.getMchSerialNo();
         String apiV3Key=wxPay.getMchKey();
+        String mchId=wxPay.getMchId();
         // 加载商户私钥（privateKey：私钥字符串）
 
-        ClassPathResource classPathResource = new ClassPathResource(wxPay.getPrivateKeyPath());
+        /*ClassPathResource classPathResource = new ClassPathResource(wxPay.getPrivateKeyPath());
 
         PrivateKey  merchantPrivateKey = PemUtil.loadPrivateKey(classPathResource.getStream());
-        String mchId=wxPay.getMchId();
+
 //加载支付平台证书
         CertificatesManager certificatesManager = CertificatesManager.getInstance();
 
@@ -96,7 +97,7 @@ public class WxPayConfiguration {
 // ... 接下来，你仍然可以通过builder设置各种参数，来配置你的HttpClient
 
 // 通过WechatPayHttpClientBuilder构造的HttpClient，会自动的处理签名和验签，并进行证书自动更新
-        CloseableHttpClient httpClient = builder.build();
+        CloseableHttpClient httpClient = builder.build();*/
         WxPayConfig payConfig = new WxPayConfig();
         //payConfig.setApiV3HttpClient(httpClient);
         payConfig.setAppId(appid);
