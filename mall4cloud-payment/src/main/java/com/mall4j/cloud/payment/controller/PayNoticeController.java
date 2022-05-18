@@ -26,7 +26,7 @@ import java.util.List;
  */
 @ApiIgnore
 @RestController
-@RequestMapping("/notice/pay")
+@RequestMapping("/ua/notice/pay")
 public class PayNoticeController {
 
     @Autowired
@@ -54,20 +54,24 @@ public class PayNoticeController {
             // 结果正确 outTradeNo
             String outTradeNo = notifyResult.getOutTradeNo();
             String tradeNo = notifyResult.getTransactionId();
-            String totalFee = BaseWxPayResult.fenToYuan(notifyResult.getTotalFee());
+            Integer totalFee = notifyResult.getTotalFee();
             // 自己处理订单的业务逻辑，需要判断订单是否已经支付过，否则可能会重复调用
             PayInfo payInfo = payInfoService.getByByBizPayNo(outTradeNo);
-            String[] orderIdStrArr = payInfo.getOrderIds().split(StrUtil.COMMA);
-            List<Long> orderIdList = new ArrayList<>();
-            for (String s : orderIdStrArr) {
-                orderIdList.add(Long.valueOf(s));
+            int payStatus=payInfo.getPayStatus();
+            if(payStatus ==0){
+                String[] orderIdStrArr = payInfo.getOrderIds().split(StrUtil.COMMA);
+                List<Long> orderIdList = new ArrayList<>();
+                for (String s : orderIdStrArr) {
+                    orderIdList.add(Long.valueOf(s));
+                }
+                PayInfoResultBO payInfoResult = new PayInfoResultBO();
+                payInfoResult.setPayId(payInfo.getPayId());
+                payInfoResult.setBizPayNo(payInfo.getBizPayNo());
+                payInfoResult.setCallbackContent(tradeNo);
+                // 支付成功
+                payInfoService.paySuccess(payInfoResult,orderIdList);
             }
-            PayInfoResultBO payInfoResult = new PayInfoResultBO();
-            payInfoResult.setPayId(payInfo.getPayId());
-            payInfoResult.setBizPayNo(payInfo.getBizPayNo());
-            payInfoResult.setCallbackContent(payInfo.getCallbackContent());
-            // 支付成功
-            payInfoService.paySuccess(payInfoResult,orderIdList);
+
             // 通知微信.异步确认成功.必写.不然会一直通知后台.十次之后就认为交易失败了.
             resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
                     + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
@@ -79,7 +83,7 @@ public class PayNoticeController {
 //            return WxPayNotifyResponse.success("成功");
             return resXml;
         } catch (Exception e) {
-            // WxPayNotifyResponse.fail(e.getMessage());
+             //WxPayNotifyResponse.fail(e.getMessage());
 
             return WxPayNotifyResponse.success("code:" + 9999 + "微信回调结果异常,异常原因:" + e.getMessage());
         }

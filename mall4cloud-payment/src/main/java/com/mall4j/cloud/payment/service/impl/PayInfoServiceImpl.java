@@ -80,7 +80,7 @@ public class PayInfoServiceImpl implements PayInfoService {
         }
         OrderAmountVO orderAmount = ordersAmountAndIfNoCancelResponse.getData();
 
-        String yuanMoney = String.valueOf(orderAmount.getPayAmount());
+        Integer fenMoney = orderAmount.getPayAmount().intValue();
         //外部订单号
         String bizPayNo= NanoId.randomNanoId(16);
         WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest=new WxPayUnifiedOrderRequest();
@@ -92,7 +92,7 @@ public class PayInfoServiceImpl implements PayInfoService {
         wxPayUnifiedOrderRequest.setOutTradeNo(bizPayNo); //自己生成order_No
         //交易类型
         wxPayUnifiedOrderRequest.setTradeType(WxPayConstants.TradeType.JSAPI);
-        //wxPayUnifiedOrderRequest.setTotalFee(BaseWxPayRequest.yuanToFen(yuanMoney));//直接分
+        //wxPayUnifiedOrderRequest.setTotalFee(fenMoney);//直接分
         wxPayUnifiedOrderRequest.setTotalFee(1);
         wxPayUnifiedOrderRequest.setOpenid(openId); // 获取微信支付用户的openId
         wxPayUnifiedOrderRequest.setSpbillCreateIp(DateDealwith.getIpAddress(request));
