@@ -11,6 +11,8 @@ import com.mall4j.cloud.common.response.ServerResponseEntity;
 import com.mall4j.cloud.common.util.Json;
 import com.mall4j.cloud.search.bo.SpuBO;
 import com.mall4j.cloud.search.constant.EsIndexEnum;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -80,14 +82,27 @@ public class SpuCanalListener extends BaseCanalBinlogEventProcessor<SpuBO> {
             log.info(updateResponse.toString());
         } catch (IOException e) {
             log.error(e.toString());
-            throw new Mall4cloudException("删除es信息异常",e);
+            throw new Mall4cloudException("更新es信息异常",e);
         }
     }
 
     @Override
     protected ExceptionHandler exceptionHandler() {
         return (CanalBinLogEvent event, Throwable throwable) -> {
-            throw new Mall4cloudException("创建索引异常",throwable);
+            throw new Mall4cloudException("创建索引异常"+event.getDatabase(),throwable);
         };
+    }
+
+    @Override
+    protected void processDeleteInternal(CanalBinLogResult<SpuBO> result){
+        Long spuId = result.getPrimaryKey();
+        DeleteRequest request=new DeleteRequest(EsIndexEnum.PRODUCT.value(), String.valueOf(spuId));
+        try {
+            DeleteResponse deleteResponse = restHighLevelClient.delete(request, RequestOptions.DEFAULT);
+            log.info(deleteResponse.toString());
+        } catch (IOException e) {
+            log.error(e.toString());
+            throw new Mall4cloudException("删除es信息异常",e);
+        }
     }
 }
