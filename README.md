@@ -162,20 +162,4 @@ mall4cloud
 ![uniapp-1625469707350](doc/img/readme/uniapp.png)
 
 
-## 提交反馈
-- Mall4j官网 https://www.mall4j.com
-- 商务合作微信
 
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0703/131508_13858876_5094767.jpeg "法宝微信2.jpg")
-
-
-- mall4cloud开源技术QQ群：561496886
-
-![输入图片说明](https://images.gitee.com/uploads/images/2021/1119/134157_dd977d46_5094767.png "微信图片_20211119134107.png")
-
-## springboot版本商城请点击
-https://gitee.com/gz-yami/mall4j
-
-## 你的点赞鼓励，是我们前进的动力~
-## 你的点赞鼓励，是我们前进的动力~
-## 你的点赞鼓励，是我们前进的动力~
