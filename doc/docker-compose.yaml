@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+  cloud-gateway:
+    image: registry.cn-hangzhou.aliyuncs.com/cloud_zyp/cloud-gateway:1.0
+    container_name: cloud-gateway
+      restart: always
+      ports:
+        - 8000:8000
+  cloud-user:
+    image: registry.cn-hangzhou.aliyuncs.com/cloud_zyp/mall4cloud-user:1.0
+    container_name: cloud-user
+    restart: always
+    ports:
+      - 9105:9105
+  cloud-search:
+    image: registry.cn-hangzhou.aliyuncs.com/cloud_zyp/cloud-search:1.0
+    container_name: cloud-search
+    restart: always
+    ports:
+      - 9108:9108
+  cloud-payment:
+    image: registry.cn-hangzhou.aliyuncs.com/cloud_zyp/cloud-payment:1.0
+    container_name: cloud-payment
+    restart: always
+    ports:
+      - 9113:9113

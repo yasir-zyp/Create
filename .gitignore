@@ -31,7 +31,19 @@ nbdist/
 
 ### maven ###
 target/
+*.class
 *.war
+*.properties
+*.lst
+*.original
+*.kotlin_module
+*.yml
+*.png
+*.xml
+*.json
+*.CaptchaCacheService
+*.pem
+*.p12
 *.ear
 *.zip
 *.tar
@@ -60,3 +72,24 @@ gen_code
 
 ### node ###
 node_modules
+mall4cloud-api/mall4cloud-api-payment/src/main/resources/
+mall4cloud-api/mall4cloud-api-payment/src/test/
+mall4cloud-product/src/main/java/com/mall4j/cloud/product/listener/
+/mall4cloud-common/mall4cloud-common-cache/target/mall4cloud-common-cache.jar
+/mall4cloud-common/mall4cloud-common-core/target/mall4cloud-common-core.jar
+/mall4cloud-common/mall4cloud-common-database/target/mall4cloud-common-database.jar
+/mall4cloud-common/mall4cloud-common-order/target/mall4cloud-common-order.jar
+/mall4cloud-common/mall4cloud-common-rocketmq/target/mall4cloud-common-rocketmq.jar
+/mall4cloud-common/mall4cloud-common-security/target/mall4cloud-common-security.jar
+/mall4cloud-api/mall4cloud-api-auth/target/mall4cloud-api-auth.jar
+/mall4cloud-api/mall4cloud-api-biz/target/mall4cloud-api-biz.jar
+/mall4cloud-api/mall4cloud-api-leaf/target/mall4cloud-api-leaf.jar
+/mall4cloud-api/mall4cloud-api-multishop/target/mall4cloud-api-multishop.jar
+/mall4cloud-api/mall4cloud-api-order/target/mall4cloud-api-order.jar
+/mall4cloud-api/mall4cloud-api-payment/target/mall4cloud-api-payment.jar
+/mall4cloud-api/mall4cloud-api-platform/target/mall4cloud-api-platform.jar
+/mall4cloud-api/mall4cloud-api-product/target/mall4cloud-api-product.jar
+/mall4cloud-api/mall4cloud-api-rbac/target/mall4cloud-api-rbac.jar
+/mall4cloud-api/mall4cloud-api-search/target/mall4cloud-api-search.jar
+/mall4cloud-api/mall4cloud-api-user/target/mall4cloud-api-user.jar
+/.gitattributes
